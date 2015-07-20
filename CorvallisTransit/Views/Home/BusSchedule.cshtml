@@ -1,0 +1,99 @@
+﻿@model IEnumerable<CorvallisTransit.Models.BusRoute>
+
+@{
+    ViewBag.Title = "Estimated Bus Arrival Times for Corvallis";
+}
+<script src="@Server.UrlPathEncode("/Scripts/schedule.js")" type="text/javascript"></script>
+<div class="container" style="max-width: 300px; margin-left: auto; margin-right: auto;">
+    <h3 style="margin-top: 5px;">Corvallis Bus Arrival Times </h3>
+    <h5>(Up to 30 minutes in advance)</h5>
+</div>
+<div id="searchBox" class="container panel panel-default" style="margin-left: 0px; width: 100%">
+
+
+    <div class="row">
+        <div class="col-md-3 col-sm-4 col-xs-6">
+            <label for="stopSearch">Search by Street/Stop#</label>
+
+        </div>
+        <div class="col-md-3 col-sm-4 col-xs-6">
+
+            <label for="searchType" class="lbl">Match terms</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 col-sm-4 col-xs-6">
+
+            <input type="text" id="stopSearch" name="stopSearch" class="stop-input form-control" placeholder="Type here to search" />
+        </div>
+        <div class="col-md-3 col-sm-4 col-xs-6">
+            <select class="form-control" id="searchType">
+                <option value="and">All</option>
+                <option value="or">Any</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 col-sm-4 col-xs-6" >
+
+            <input type="button" class="form-control btn btn-default" id="searchButton" onclick="searchStop();" value="Search">
+        </div> 
+        <div class="col-md-3 col-sm-4 col-xs-6">
+            <div class="h3 hidden alert-warning" style="margin-top: 5px; padding: 2px 2px 2px 2px;" id="searchResultHeader">Search Results:</div>
+        </div>
+    </div>
+
+    
+</div>
+
+<div class="container panel-group" id="accordion">
+    @if (Model != null && Model.Any())
+    {
+
+        foreach (var route in Model)
+        {
+            <div class="panel panel-default @(!route.Stops.Any(st => st.Eta > 0) ? "hidden" : string.Empty)" id="Route@(route.RouteNo)">
+
+                <div class="Route">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#Route@(route.RouteNo)Panel">
+                        <div class="panel-heading">
+                            <div class="panel-title h3">
+                                <span class="panelIcon">+</span>
+                                <span class="h3"></span>Route @route.RouteNo
+                            </div>
+                        </div>
+                    </a>
+                    <div class="panel-collapse collapse" id="Route@(route.RouteNo)Panel">
+                        <div class="panel-body container">
+                            @if (route.RouteTimeWarning)
+                            {
+                                <div class="alert-warning" id="RouteTimeWarning">
+                                    * Route may not be accurately reporting time. Assume next stop arrives in 1 minute.
+                                </div>
+
+                            }
+
+                            <table class="table-responsive table">
+                                @{Html.RenderPartial("BusRoutePartial", route);}
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        }
+    }
+</div>
+
+@section css {
+    @Styles.Render("/Content/schedule.css")
+}
+
+@section scripts {
+    <script type="text/javascript">
+        var routes = @(new MvcHtmlString(Json.Encode(Model.Select(m => m.ClientData))))
+        true;
+    </script>
+}

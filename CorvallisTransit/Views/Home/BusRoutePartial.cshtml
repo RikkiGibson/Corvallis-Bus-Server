@@ -1,0 +1,21 @@
+﻿@model CorvallisTransit.Models.BusRoute
+
+@if (Model != null)
+{
+    <tr><th class="stop-address">Stop Location</th><th class="eta">ETA</th></tr>
+
+    foreach (var stop in Model.Stops)
+    {
+        if (!string.IsNullOrWhiteSpace(stop.StopModel.Name))
+        {
+            var classes = string.Format("{0} {1}",
+                Model.RouteTimeWarning ? "suspiciousTime" : string.Empty,
+                stop.Eta == 0 ? "hidden" : string.Empty
+            );
+            var extension = Model.RouteTimeWarning ? "*" : string.Empty;
+            
+            <tr class="@(classes)"><td class="stop-address"><a href='#searchBox' onclick='searchStop(@stop.StopModel.Id);'>@stop.StopModel.Name  (@stop.StopModel.Id)</a></td><td class="eta">@(stop.Eta)m@(extension)</td></tr>
+        }
+
+    }
+}

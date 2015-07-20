@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Platforms" targetNamespace="urn:connexionz-co-nz" xmlns:mstns="urn:connexionz-co-nz" xmlns="urn:connexionz-co-nz" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="Platforms" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_DataSetName="Platforms" msprop:Generator_UserDSName="Platforms">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Content" msprop:Generator_TableClassName="ContentDataTable" msprop:Generator_TableVarName="tableContent" msprop:Generator_TablePropName="Content" msprop:Generator_RowDeletingName="ContentRowDeleting" msprop:Generator_RowChangingName="ContentRowChanging" msprop:Generator_RowEvHandlerName="ContentRowChangeEventHandler" msprop:Generator_RowDeletedName="ContentRowDeleted" msprop:Generator_UserTableName="Content" msprop:Generator_RowChangedName="ContentRowChanged" msprop:Generator_RowEvArgName="ContentRowChangeEvent" msprop:Generator_RowClassName="ContentRow" maxOccurs="1" minOccurs="1">
+          <xs:complexType>
+            <xs:attribute name="Expires" form="unqualified" msprop:Generator_ColumnVarNameInTable="columnExpires" msprop:Generator_ColumnPropNameInRow="Expires" msprop:Generator_ColumnPropNameInTable="ExpiresColumn" msprop:Generator_UserColumnName="Expires" type="xs:dateTime" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Platform" msprop:Generator_TableClassName="PlatformDataTable" msprop:Generator_TableVarName="tablePlatform" msprop:Generator_TablePropName="Platform" msprop:Generator_RowDeletingName="PlatformRowDeleting" msprop:Generator_RowChangingName="PlatformRowChanging" msprop:Generator_RowEvHandlerName="PlatformRowChangeEventHandler" msprop:Generator_RowDeletedName="PlatformRowDeleted" msprop:Generator_UserTableName="Platform" msprop:Generator_RowChangedName="PlatformRowChanged" msprop:Generator_RowEvArgName="PlatformRowChangeEvent" msprop:Generator_RowClassName="PlatformRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Position" msprop:Generator_TableClassName="PositionDataTable" msprop:Generator_TableVarName="tablePosition" msprop:Generator_TablePropName="Position" msprop:Generator_RowDeletingName="PositionRowDeleting" msprop:Generator_RowChangingName="PositionRowChanging" msprop:Generator_RowEvHandlerName="PositionRowChangeEventHandler" msprop:Generator_RowDeletedName="PositionRowDeleted" msprop:Generator_UserTableName="Position" msprop:Generator_RowChangedName="PositionRowChanged" msprop:Generator_RowEvArgName="PositionRowChangeEvent" msprop:Generator_RowClassName="PositionRow" minOccurs="1" maxOccurs="1">
+                <xs:complexType>
+                  <xs:attribute name="Lat" form="unqualified" msprop:Generator_ColumnVarNameInTable="columnLat" msprop:Generator_ColumnPropNameInRow="Lat" msprop:Generator_ColumnPropNameInTable="LatColumn" msprop:Generator_UserColumnName="Lat" type="xs:double" />
+                  <xs:attribute name="Long" form="unqualified" msprop:Generator_ColumnVarNameInTable="columnLong" msprop:Generator_ColumnPropNameInRow="Long" msprop:Generator_ColumnPropNameInTable="LongColumn" msprop:Generator_UserColumnName="Long" type="xs:double" />
+                  <xs:attribute name="Platform_Id" msprop:Generator_ColumnVarNameInTable="columnPlatform_Id" msprop:Generator_ColumnPropNameInRow="Platform_Id" msprop:Generator_ColumnPropNameInTable="Platform_IdColumn" msprop:Generator_UserColumnName="Platform_Id" type="xs:int" use="prohibited" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="PlatformTag" form="unqualified" msprop:Generator_ColumnVarNameInTable="columnPlatformTag" msprop:Generator_ColumnPropNameInRow="PlatformTag" msprop:Generator_ColumnPropNameInTable="PlatformTagColumn" msprop:Generator_UserColumnName="PlatformTag" type="xs:string" />
+            <xs:attribute name="PlatformNo" form="unqualified" msprop:Generator_ColumnVarNameInTable="columnPlatformNo" msprop:Generator_ColumnPropNameInRow="PlatformNo" msprop:Generator_ColumnPropNameInTable="PlatformNoColumn" msprop:Generator_UserColumnName="PlatformNo" type="xs:string" />
+            <xs:attribute name="Name" form="unqualified" msprop:Generator_ColumnVarNameInTable="columnName" msprop:Generator_ColumnPropNameInRow="Name" msprop:Generator_ColumnPropNameInTable="NameColumn" msprop:Generator_UserColumnName="Name" type="xs:string" />
+            <xs:attribute name="BearingToRoad" form="unqualified" msprop:Generator_ColumnVarNameInTable="columnBearingToRoad" msprop:Generator_ColumnPropNameInRow="BearingToRoad" msprop:Generator_ColumnPropNameInTable="BearingToRoadColumn" msprop:Generator_UserColumnName="BearingToRoad" type="xs:double" />
+            <xs:attribute name="RoadName" form="unqualified" msprop:Generator_ColumnVarNameInTable="columnRoadName" msprop:Generator_ColumnPropNameInRow="RoadName" msprop:Generator_ColumnPropNameInTable="RoadNameColumn" msprop:Generator_UserColumnName="RoadName" type="xs:string" />
+            <xs:attribute name="Platform_Id" msdata:AutoIncrement="true" msprop:Generator_ColumnVarNameInTable="columnPlatform_Id" msprop:Generator_ColumnPropNameInRow="Platform_Id" msprop:Generator_ColumnPropNameInTable="Platform_IdColumn" msprop:Generator_UserColumnName="Platform_Id" type="xs:int" msdata:AllowDBNull="false" use="prohibited" />
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:Platform" />
+      <xs:field xpath="@mstns:Platform_Id" />
+    </xs:unique>
+    <xs:keyref name="Platform_Position" refer="Constraint1" msdata:IsNested="true" msprop:rel_Generator_UserChildTable="Position" msprop:rel_Generator_ChildPropName="GetPositionRows" msprop:rel_Generator_UserRelationName="Platform_Position" msprop:rel_Generator_ParentPropName="PlatformRow" msprop:rel_Generator_RelationVarName="relationPlatform_Position" msprop:rel_Generator_UserParentTable="Platform">
+      <xs:selector xpath=".//mstns:Position" />
+      <xs:field xpath="@mstns:Platform_Id" />
+    </xs:keyref>
+  </xs:element>
+</xs:schema>
