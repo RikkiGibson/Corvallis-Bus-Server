@@ -26,7 +26,6 @@ namespace CorvallisTransit.Models
             {
                 return Stops
                     .Where(s => s.Eta != 0)
-                    .OrderBy(s => s, TransitComparers.TransitComparer)
                     .ToList();
             }
         }
