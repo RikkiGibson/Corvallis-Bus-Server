@@ -263,13 +263,13 @@ namespace CorvallisTransit.Models
     public partial class RoutePositionPlatformRouteDestination
     {
 
-        private RoutePositionPlatformRouteDestinationTrip tripField;
+        private RoutePositionPlatformRouteDestinationTrip[] tripField;
 
         private string nameField;
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("Trip")]
-        public RoutePositionPlatformRouteDestinationTrip Trip
+        public RoutePositionPlatformRouteDestinationTrip[] Trip
         {
             get
             {

@@ -184,9 +184,6 @@ namespace CorvallisTransit.Components
         }
         public static void InitializeAndUpdate()
         {
-            foreach (var route in ConnexionzClient.Routes.Value)
-                Console.WriteLine(route);
-
             // TODO: only get the route pattern if necessary
             //var tempRoutes = PatternToBusRoutes(ConnexionzClient.GetRoutePattern());
 
@@ -226,10 +223,9 @@ namespace CorvallisTransit.Components
             }
         }
 
-
         internal static void UpdateClients()
         {
-            if (UpdateRoute == null)
+            if (UpdateRoute == null || Routes == null)
             {
                 return;
             }
@@ -238,6 +234,65 @@ namespace CorvallisTransit.Components
             {
                 UpdateRoute(route);
             }
+        }
+        
+        public static string Encode(IEnumerable<LatLong> points)
+        {
+            var str = new StringBuilder();
+
+            var encodeDiff = (Action<int>)(diff => {
+                int shifted = diff << 1;
+                if (diff < 0)
+                    shifted = ~shifted;
+                int rem = shifted;
+                while (rem >= 0x20)
+                {
+                    str.Append((char)((0x20 | (rem & 0x1f)) + 63));
+                    rem >>= 5;
+                }
+                str.Append((char)(rem + 63));
+            });
+
+            int lastLat = 0;
+            int lastLng = 0;
+            foreach (var point in points)
+            {
+                int lat = (int)Math.Round(point.Lat * 1E5);
+                int lng = (int)Math.Round(point.Lon * 1E5);
+                encodeDiff(lat - lastLat);
+                encodeDiff(lng - lastLng);
+                lastLat = lat;
+                lastLng = lng;
+            }
+            return str.ToString();
+        }
+
+        public static object GetStaticData()
+        {
+            var connexionzRoutes = ConnexionzClient.Routes.Value;
+            var connexionzPlatforms = ConnexionzClient.Platforms.Value;
+
+            var routes = connexionzRoutes.Select(r => new
+            {
+                routeNo = r.RouteNo,
+                path = r.Path,
+                polyline = Encode(r.Polyline)
+            }).ToDictionary(r => r.routeNo);
+
+            var stops = connexionzPlatforms.Select(p => new
+            {
+                id = p.PlatformNo,
+                name = p.Name,
+                routes = connexionzRoutes
+                    .Where(r => r.Path.Contains(p.PlatformNo))
+                    .Select(r => r.RouteNo)
+            }).ToDictionary(p => p.id);
+
+            return new
+            {
+                routes = routes,
+                stops = stops
+            };
         }
     }
 }
@@ -261,9 +316,6 @@ public static class ConnexionzClient
         {
             string s = client.DownloadString(url);
 
-            // TODO: migrate to LINQ to XML because the generated models are wrong
-            //var element = XElement.Parse(s);
-
             TextReader reader = new StringReader(s);
             return serializer.Deserialize(reader) as T;
         }
@@ -285,7 +337,7 @@ public static class ConnexionzClient
         return routePatternProject.Route.Select(r => new ConnexionzRoute(r));
     }
 
-    private static IEnumerable<ConnexionzPlatformET> GetPlatformEta(string platformTag)
+    public static IEnumerable<ConnexionzPlatformET> GetPlatformEta(string platformTag)
     {
         RoutePosition position = GetEntity<RoutePosition>(BASE_URL + "&Name=RoutePositionET.xml&PlatformTag=" + platformTag);
 

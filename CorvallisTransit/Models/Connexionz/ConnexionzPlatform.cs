@@ -15,8 +15,8 @@ namespace CorvallisTransit.Models.Connexionz
             PlatformTag = int.Parse(platformsPlatform.PlatformTag);
             PlatformNo = int.Parse(platformsPlatform.PlatformNo);
             Name = platformsPlatform.Name;
-            Lat = platformsPlatform.Position.Lat;
-            Long = platformsPlatform.Position.Long;
+            Lat = platformsPlatform.Position?.Lat;
+            Long = platformsPlatform.Position?.Long;
         }
 
         /// <summary>
@@ -31,9 +31,9 @@ namespace CorvallisTransit.Models.Connexionz
 
         public string Name { get; private set; }
 
-        public double Lat { get; private set; }
+        public double? Lat { get; private set; }
 
-        public double Long { get; private set; }
+        public double? Long { get; private set; }
 
     }
 }

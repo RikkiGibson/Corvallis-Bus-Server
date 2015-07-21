@@ -13,6 +13,9 @@ namespace CorvallisTransit.Controllers
     [RoutePrefix("transit")]
     public class TransitController : ApiController
     {
+        [HttpGet]
+        [Route("static")]
+        public JsonResult<object> GetStaticData() => Json(TransitClient.GetStaticData());
         // GET api/transit
 
         [HttpGet]
