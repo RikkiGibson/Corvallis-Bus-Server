@@ -27,6 +27,8 @@ We assume no liability for any missed buses.  Buses may be erratic in their arri
 
 Returns a JSON dictionary containing static route and stop information.  Recommended usage is a one-time download and then local storage on the device.  This will allow for simpler and far less data-intensive calls later.
 
+Url: https://www.corvallisbus.azurewebsites.net/transit/static
+
 ```
 {
    "routes":
