@@ -2,7 +2,7 @@
 
 The backend that powers the best apps for the Corvallis Transit System.
 
-## Prerequisites
+## Prerequisites for running
 
 - Visual Studio 2015
 - Azure Account
@@ -21,6 +21,39 @@ To have a more convenient way to get real-time information about the free buses 
 
 We assume no liability for any missed buses.  Buses may be erratic in their arrival behavior, and we cannot control that.
 
-## Routes
+## API Routes
 
-todo
+###/transit/static
+
+Returns a JSON dictionary containing static route and stop information.  Recommended usage is a one-time download and then local storage on the device.  This will allow for simpler and far less data-intensive calls later.
+
+```
+{
+   "routes":
+   {
+      "1":
+      {
+        "path": [
+          14244,
+          13265,
+          ...
+        ]
+      }
+      "2":
+      {
+        ...
+      }
+    }
+    "stops":
+    {
+      "10019": 
+      {
+        "id": 10019,
+        "name": "Benton Oaks RV Park",
+        "routes": [
+          "C3"
+        ]
+      },
+      ...
+    }
+```
