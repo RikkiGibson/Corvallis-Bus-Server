@@ -10,13 +10,15 @@ using System.Web.Http.Results;
 
 namespace CorvallisTransit.Controllers
 {
+    /// <summary>
+    /// API routes for CTS.
+    /// </summary>
     [RoutePrefix("transit")]
     public class TransitController : ApiController
     {
         [HttpGet]
         [Route("static")]
         public JsonResult<object> GetStaticData() => Json(TransitClient.StaticData.Value);
-        // GET api/transit
 
         [HttpGet]
         [Route("")]

@@ -13,7 +13,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CorvallisTransit</RootNamespace>
     <AssemblyName>CorvallisTransit</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -224,9 +224,9 @@
     <Content Include="Models\GeneratedModels\RoutePattern.xss" />
     <Content Include="Models\GeneratedModels\StopRoutes.xsc" />
     <Content Include="Models\GeneratedModels\StopRoutes.xss" />
+    <None Include="Properties\PublishProfiles\corvallisbus - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\corvallisbus - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\gear.pubxml" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />

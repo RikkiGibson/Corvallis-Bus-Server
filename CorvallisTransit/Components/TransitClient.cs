@@ -236,8 +236,14 @@ namespace CorvallisTransit.Components
             }
         }
 
+        /// <summary>
+        /// Lazy-loaded static route and stop data for the /static route.
+        /// </summary>
         public static Lazy<object> StaticData = new Lazy<object>(GetStaticData);
 
+        /// <summary>
+        /// Performs route and stop lookups and builds the static data used in the /static route.
+        /// </summary>
         private static object GetStaticData()
         {
             var connexionzRoutes = ConnexionzClient.Routes.Value;
