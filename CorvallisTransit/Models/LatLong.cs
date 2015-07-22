@@ -6,8 +6,8 @@ namespace CorvallisTransit.Models
         public LatLong(double lat, double lon)
             : this()
         {
-            this.Lat = lat;
-            this.Lon = lon;
+            Lat = lat;
+            Lon = lon;
         }
 
         public double Lat { get; private set; }

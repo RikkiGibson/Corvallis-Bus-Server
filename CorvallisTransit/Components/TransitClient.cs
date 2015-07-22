@@ -235,39 +235,10 @@ namespace CorvallisTransit.Components
                 UpdateRoute(route);
             }
         }
-        
-        public static string Encode(IEnumerable<LatLong> points)
-        {
-            var str = new StringBuilder();
 
-            var encodeDiff = (Action<int>)(diff => {
-                int shifted = diff << 1;
-                if (diff < 0)
-                    shifted = ~shifted;
-                int rem = shifted;
-                while (rem >= 0x20)
-                {
-                    str.Append((char)((0x20 | (rem & 0x1f)) + 63));
-                    rem >>= 5;
-                }
-                str.Append((char)(rem + 63));
-            });
+        public static Lazy<object> StaticData = new Lazy<object>(GetStaticData);
 
-            int lastLat = 0;
-            int lastLng = 0;
-            foreach (var point in points)
-            {
-                int lat = (int)Math.Round(point.Lat * 1E5);
-                int lng = (int)Math.Round(point.Lon * 1E5);
-                encodeDiff(lat - lastLat);
-                encodeDiff(lng - lastLng);
-                lastLat = lat;
-                lastLng = lng;
-            }
-            return str.ToString();
-        }
-
-        public static object GetStaticData()
+        private static object GetStaticData()
         {
             var connexionzRoutes = ConnexionzClient.Routes.Value;
             var connexionzPlatforms = ConnexionzClient.Platforms.Value;
@@ -276,7 +247,7 @@ namespace CorvallisTransit.Components
             {
                 routeNo = r.RouteNo,
                 path = r.Path,
-                polyline = Encode(r.Polyline)
+                polyline = r.Polyline
             }).ToDictionary(r => r.routeNo);
 
             var stops = connexionzPlatforms.Select(p => new
@@ -304,9 +275,9 @@ public static class ConnexionzClient
 {
     private const string BASE_URL = "http://www.corvallistransit.com/rtt/public/utility/file.aspx?contenttype=SQLXML";
 
-    // TODO: handle expiration?
-    public static Lazy<IEnumerable<ConnexionzPlatform>> Platforms = new Lazy<IEnumerable<ConnexionzPlatform>>(() => DownloadPlatforms());
-    public static Lazy<IEnumerable<ConnexionzRoute>> Routes = new Lazy<IEnumerable<ConnexionzRoute>>(() => DownloadRoutes());
+    // TODO: handle expiration
+    public static Lazy<IEnumerable<ConnexionzPlatform>> Platforms = new Lazy<IEnumerable<ConnexionzPlatform>>(DownloadPlatforms);
+    public static Lazy<IEnumerable<ConnexionzRoute>> Routes = new Lazy<IEnumerable<ConnexionzRoute>>(DownloadRoutes);
 
     private static T GetEntity<T>(string url) where T : class
     {
