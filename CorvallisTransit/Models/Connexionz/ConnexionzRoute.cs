@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 
 namespace CorvallisTransit.Models.Connexionz
 {
-
     /// <summary>
     /// Represents all the information about a Connexionz route that is pertinent to the app.
     /// </summary>
@@ -18,14 +17,14 @@ namespace CorvallisTransit.Models.Connexionz
 
             // Some routes have multiple paths. Let's just take whichever path is longest.
             var longestPattern = routePatternProjectRoute.Destination
-                .Select(d => d.Pattern.First())
-                .Aggregate((p1, p2) => p1.Platform.Length > p2.Platform.Length ? p1 : p2);
+                                 .Select(d => d.Pattern.First())
+                                 .Aggregate((p1, p2) => p1.Platform.Length > p2.Platform.Length ? p1 : p2);
 
             Polyline = EncodePolyline(GetPoints(longestPattern.Mif));
 
             Path = longestPattern.Platform
-                .Select(p => int.Parse(p.PlatformNo))
-                .ToList();
+                   .Select(p => int.Parse(p.PlatformNo))
+                   .ToList();
         }
 
         public static IEnumerable<LatLong> GetPoints(string mif)
@@ -38,20 +37,26 @@ namespace CorvallisTransit.Models.Connexionz
             }
         }
 
+        /// <summary>
+        /// Encodes a collection of LatLongs into GoogleMaps-style polylines.
+        /// </summary>
         public static string EncodePolyline(IEnumerable<LatLong> points)
         {
             var str = new StringBuilder();
 
-            Action<int> encodeDiff = diff => {
+            Action<int> encodeDiff = diff =>
+            {
                 int shifted = diff << 1;
                 if (diff < 0)
                     shifted = ~shifted;
+
                 int rem = shifted;
                 while (rem >= 0x20)
                 {
                     str.Append((char)((0x20 | (rem & 0x1f)) + 63));
                     rem >>= 5;
                 }
+
                 str.Append((char)(rem + 63));
             };
 
@@ -61,11 +66,14 @@ namespace CorvallisTransit.Models.Connexionz
             {
                 int lat = (int)Math.Round(point.Lat * 1E5);
                 int lng = (int)Math.Round(point.Lon * 1E5);
+
                 encodeDiff(lat - lastLat);
                 encodeDiff(lng - lastLng);
+
                 lastLat = lat;
                 lastLng = lng;
             }
+
             return str.ToString();
         }
 
