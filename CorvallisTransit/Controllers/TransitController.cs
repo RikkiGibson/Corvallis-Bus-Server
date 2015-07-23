@@ -33,5 +33,14 @@ namespace CorvallisTransit.Controllers
         {
                return Json(TransitClient.Routes.FirstOrDefault(rt => rt.RouteNo == routeNo).ClientData);
         }
+
+        [HttpPost]
+        [Route("tasks/google")]
+        public void DoGoogleTask()
+        {
+            throw new NotImplementedException();
+
+            GoogleTransitImport.DoTask();
+        }
     }
 }

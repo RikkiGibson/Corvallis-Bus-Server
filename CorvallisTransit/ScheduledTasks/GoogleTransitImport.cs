@@ -17,7 +17,7 @@ namespace CorvallisTransit.Components
         /// <summary>
         /// Downloads and interprets the ZIP file CTS uploads for Google.  This is primarily to get route colors and route schedules.
         /// </summary>
-        public static List<GoogleRoute> Import()
+        public static List<GoogleRoute> DoTask()
         {
             List<GoogleRoute> routes = null;
 

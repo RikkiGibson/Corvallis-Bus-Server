@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using CorvallisTransit.Models.Connexionz;
 using System.Xml.Linq;
+using CorvallisTransit.Models.GoogleTransit;
 
 namespace CorvallisTransit.Components
 {
@@ -240,13 +241,19 @@ namespace CorvallisTransit.Components
         public static Lazy<object> StaticData = new Lazy<object>(GetStaticData);
 
         /// <summary>
+        /// Lazy-loaded set of google data parsed from downloaded and zipped csvs.
+        /// 
+        /// TODO - make this come from a blob and then a cache, NOT constantly re-downloaded.
+        /// </summary>
+        private static Lazy<List<GoogleRoute>> GoogleRoutes = new Lazy<List<GoogleRoute>>(GoogleTransitImport.DoTask);
+
+        /// <summary>
         /// Performs route and stop lookups and builds the static data used in the /static route.
         /// </summary>
         private static object GetStaticData()
         {
             var connexionzRoutes = ConnexionzClient.Routes.Value;
-            var googleRoutes = GoogleTransitImport.Import()
-                .ToDictionary(r => r.ConnexionzName);
+            var googleRoutes = GoogleRoutes.Value.ToDictionary(r => r.ConnexionzName);
 
             var connexionzPlatforms = ConnexionzClient.Platforms.Value;
 

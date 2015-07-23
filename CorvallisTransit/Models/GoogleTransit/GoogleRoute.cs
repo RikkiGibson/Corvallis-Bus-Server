@@ -5,6 +5,9 @@ using System.Web;
 
 namespace CorvallisTransit.Models.GoogleTransit
 {
+    /// <summary>
+    /// Representation of a CTS Route from Google Transit data.
+    /// </summary>
     public class GoogleRoute
     {
         public GoogleRoute(string[] csv)
@@ -12,7 +15,6 @@ namespace CorvallisTransit.Models.GoogleTransit
             Name = csv[0].Replace("\"", string.Empty); ;
             Color = csv[csv.Length - 2].Replace("\"", string.Empty);
             Url = csv[csv.Length - 3].Replace("\"", string.Empty);
-
         }
 
         /// <summary>
