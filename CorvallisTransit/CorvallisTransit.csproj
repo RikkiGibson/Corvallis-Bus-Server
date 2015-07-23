@@ -190,9 +190,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Components\ConnexionzClient.cs" />
     <Compile Include="Components\RouteHub.cs" />
-    <Compile Include="Components\TransitComparer.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Components\StorageManager.cs" />
     <Compile Include="Components\TransitConstants.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TransitController.cs" />
@@ -210,7 +208,6 @@
       <SubType>code</SubType>
       <DependentUpon>RoutePattern.xsd</DependentUpon>
     </Compile>
-    <Compile Include="Models\BusRouteStop.cs" />
     <Compile Include="Models\GoogleTransit\GoogleRoute.cs" />
     <Compile Include="Models\LatLong.cs" />
     <Compile Include="Models\PlatformsPartial.cs" />

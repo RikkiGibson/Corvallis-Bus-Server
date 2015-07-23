@@ -1,4 +1,6 @@
 ﻿using CorvallisTransit.Components;
+using CorvallisTransit.Models.Connexionz;
+using CorvallisTransit.Models.GoogleTransit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,50 +8,48 @@ using System.Web;
 
 namespace CorvallisTransit.Models
 {
+    /// <summary>
+    /// Represents a CTS Route.
+    /// </summary>
     public class BusRoute
     {
-        public string Destination { get; set; }
+        /// <summary>
+        /// Empty Constructor for JSON Deserialization.
+        /// </summary>
+        public BusRoute() { }
 
+        public BusRoute(ConnexionzRoute connectionzRoute, Dictionary<string, GoogleRoute> googleRoute)
+        {
+            RouteNo = connectionzRoute.RouteNo;
+            Path = connectionzRoute.Path;
+            Color = googleRoute[RouteNo].Color;
+            Url = googleRoute[RouteNo].Url;
+            Polyline = connectionzRoute.Polyline;
+        }
+
+        /// <summary>
+        /// Route Number (e.g. 1, 2, NON, CVA, etc).
+        /// </summary>
         public string RouteNo { get; set; }
 
-        public List<BusRouteStop> Stops { get; set; }
+        /// <summary>
+        /// List of stop ids on this route, in the order the bus reaches them.
+        /// </summary>
+        public List<int> Path { get; set; }
 
-        public int SubRouteOrder { get; set; }
+        /// <summary>
+        /// CTS-defined color for this route.
+        /// </summary>
+        public string Color { get; set; }
 
-        public bool RouteTimeWarning { get; set; }
+        /// <summary>
+        /// URL to the CTS web page for this route.
+        /// </summary>
+        public string Url { get; set; }
 
-        public bool UpdatedSuccessfully { get; set; }
-
-        public List<BusRouteStop> OrderedStops
-        {
-            get
-            {
-                return Stops
-                    .Where(s => s.Eta != 0)
-                    .ToList();
-            }
-        }
-
-        public ClientData ClientData
-        {
-            get
-            {
-                return new ClientData()
-                    {
-                        num = RouteNo,
-                        updateTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time")),
-                        warningClasses = string.Format("{0} {1}",
-                            RouteTimeWarning ? "suspiciousTime" : string.Empty,
-                            UpdatedSuccessfully ? string.Empty : "failedToUpdate"),
-                        stops = OrderedStops.Select(st =>
-                            new
-                            {
-                                eta = st.Eta,
-                                model = st.StopModel
-                            }
-                        )
-                    };
-            }
-        }
+        /// <summary>
+        /// Google maps polyline for this route.
+        /// </summary>
+        public string Polyline { get; set; }
     }
 }

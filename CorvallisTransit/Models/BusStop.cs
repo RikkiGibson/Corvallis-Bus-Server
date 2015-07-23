@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CorvallisTransit.Models.Connexionz;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,12 +9,25 @@ namespace CorvallisTransit.Models
     /// <summary>
     /// A bus stop in the Corvallis Transit System. This is analogous to the Platform entity in Connexionz.
     /// </summary>
-    public class BusStop : IEqualityComparer<BusStop>
+    public class BusStop
     {
+        /// <summary>
+        /// Empty constructor for deserialization.
+        /// </summary>
+        public BusStop() { }
+
+        public BusStop(ConnexionzPlatform platform)
+        {
+            ID = platform.PlatformNo;
+            Name = platform.Name;
+            Lat = platform.Lat.HasValue ? platform.Lat.Value : 0.0;
+            Long = platform.Long.HasValue ? platform.Long.Value : 0.0;
+        }
+
         /// <summary>
         /// This stop tag is used to get ETAs for the stop from Connexionz.
         /// </summary>
-        public string StopTag { get; set; }
+        public int ID { get; set; }
 
         /// <summary>
         /// The name of the stop, for example: "NW Monroe Ave & NW 7th St".
@@ -29,33 +43,5 @@ namespace CorvallisTransit.Models
         /// The longitude value for the stop (between -180 and 180 degrees).
         /// </summary>
         public double Long { get; set; }
-
-        /// <summary>
-        /// The stop ID. This is what is written on the bus stop signs in real life.
-        /// </summary>
-        public string Id { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            var stop = obj as BusStop;
-            return stop != null ? Id == stop.Id : false;
-        }
-
-        // TODO: figure out how to organize scheduled arrival information for a route at a stop.
-
-        public override int GetHashCode()
-        {
-            return Id.GetHashCode();
-        }
-
-        public bool Equals(BusStop x, BusStop y)
-        {
-            return x.Equals(y);
-        }
-
-        public int GetHashCode(BusStop obj)
-        {
-            return obj.GetHashCode();
-        }
     }
 }

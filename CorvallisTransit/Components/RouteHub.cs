@@ -18,19 +18,19 @@ namespace CorvallisTransit.Components
 
         public void UpdateRoute(BusRoute route)
         {
-            Clients.All.UpdateRoute(route.ClientData);
+            //Clients.All.UpdateRoute(route.ClientData);
         }
 
         public void GetAllRouteInformation()
         {
-            var clientData = TransitClient.Routes.Select(rt => rt.ClientData);
-            Clients.Caller.UpdateRoutes(clientData);
+            //var clientData = TransitClient.Routes.Select(rt => rt.ClientData);
+            //Clients.Caller.UpdateRoutes(clientData);
          
         }
 
         public void GetRouteInformation(string routeNo)
         {
-            Clients.Caller.UpdateRoute(TransitClient.Routes.FirstOrDefault(rt => rt.RouteNo == routeNo).ClientData);
+            //Clients.Caller.UpdateRoute(TransitClient.Routes.FirstOrDefault(rt => rt.RouteNo == routeNo).ClientData);
         }
     }
 }

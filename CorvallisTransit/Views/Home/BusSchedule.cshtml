@@ -51,7 +51,7 @@
     @if (Model != null && Model.Any())
     {
 
-        foreach (var route in Model)
+        @*foreach (var route in Model)
         {
             <div class="panel panel-default @(!route.Stops.Any(st => st.Eta > 0) ? "hidden" : string.Empty)" id="Route@(route.RouteNo)">
 
@@ -83,7 +83,7 @@
                 </div>
             </div>
 
-                                        }
+                                        }*@
                                     }
 </div>
 

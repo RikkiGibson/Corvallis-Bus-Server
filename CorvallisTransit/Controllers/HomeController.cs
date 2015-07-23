@@ -59,13 +59,13 @@ namespace CorvallisTransit.Controllers
             return PartialView("BusRoutePartial",route);
         }
 
-        /// <summary>
-        /// Gets the client route data.
-        /// </summary>
-        /// <returns></returns>
-        public JsonResult ClientRouteData(string id) 
-        {
-            return Json(TransitClient.Routes.FirstOrDefault(rt => rt.RouteNo == id).ClientData, JsonRequestBehavior.AllowGet);
-        }
+        ///// <summary>
+        ///// Gets the client route data.
+        ///// </summary>
+        ///// <returns></returns>
+        //public JsonResult ClientRouteData(string id) 
+        //{
+        //    return Json(TransitClient.Routes.FirstOrDefault(rt => rt.RouteNo == id).ClientData, JsonRequestBehavior.AllowGet);
+        //}
     }
 }
