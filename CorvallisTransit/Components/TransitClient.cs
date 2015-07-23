@@ -69,33 +69,20 @@ namespace CorvallisTransit.Components
             }
         }
 
-        /// <summary>
-        /// Lazy-loaded static route and stop data for the /static route.
-        /// </summary>
-        public static Lazy<object> StaticData = new Lazy<object>(GetStaticData);
-
-        /// <summary>
-        /// Lazy-loaded set of google data parsed from downloaded and zipped csvs.
-        /// 
-        /// TODO - make this come from a blob and then a cache, NOT constantly re-downloaded.
-        /// </summary>
         public static Lazy<List<GoogleRoute>> GoogleRoutes = new Lazy<List<GoogleRoute>>(GoogleTransitImport.DoTask);
 
         /// <summary>
         /// Performs route and stop lookups and builds the static data used in the /static route.
         /// </summary>
-        private static object GetStaticData()
+        public static async Task<object> GetStaticData()
         {
             var routesTask = Task.Run(() => StorageManager.GetRoutesAsync());
             var stopsTask = Task.Run(() => StorageManager.GetStopsAsync());
 
-            routesTask.Wait();
-            stopsTask.Wait();
-
             return new
             {
-                routes = routesTask.Result.ToDictionary(r => r.RouteNo),
-                stops = stopsTask.Result.ToDictionary(s => s.ID)
+                routes = (await routesTask).ToDictionary(r => r.RouteNo),
+                stops = (await stopsTask).ToDictionary(s => s.ID)
             };
         }
     }
