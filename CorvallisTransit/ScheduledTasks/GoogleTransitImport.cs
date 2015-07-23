@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CorvallisTransit.Models.GoogleTransit;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -16,9 +17,9 @@ namespace CorvallisTransit.Components
         /// <summary>
         /// Downloads and interprets the ZIP file CTS uploads for Google.  This is primarily to get route colors and route schedules.
         /// </summary>
-        public static void Import()
+        public static List<GoogleRoute> Import()
         {
-            List<string> colors = new List<string>();
+            List<GoogleRoute> routes = null;
 
             using (var archive = new ZipArchive(GetZipFile()))
             {
@@ -26,24 +27,25 @@ namespace CorvallisTransit.Components
                 {
                     if (entry.FullName.EndsWith("routes.txt"))
                     {
-                        colors.AddRange(GetRouteColorsFromEntry(entry));
+                        routes = ParseRouteCSV(entry);
                     }
-                    else if (entry.FullName.EndsWith("calendar.txt"))
+                    else if (entry.FullName.EndsWith("stop_times.txt"))
                     {
-                        // get schedule?
+                        // TODO: get schedule
                     }
                 }
             }
+
+            return routes ?? new List<GoogleRoute>();
         }
 
         /// <summary>
         /// Reads a ZipArchive entry as the routes CSV and extracts the route colors.
         /// </summary>
-        private static List<string> GetRouteColorsFromEntry(ZipArchiveEntry entry)
+        private static List<GoogleRoute> ParseRouteCSV(ZipArchiveEntry entry)
         {
-            List<string> colors = new List<string>();
-            string color;
-
+            var routes = new List<GoogleRoute>();
+            
             using (var reader = new StreamReader(entry.Open()))
             {
                 // Ignore the format line
@@ -60,17 +62,11 @@ namespace CorvallisTransit.Components
                         continue;
                     }
 
-                    // color is the second-to-last entry in the zipped CSV.
-                    color = parts[parts.Length - 2];
-
-                    // Trim off the stupid escapes that the StreamReader can't tell are strings.
-                    color = color.Substring(1, color.Length - 3);
-
-                    colors.Add(color);
+                    routes.Add(new GoogleRoute(parts));
                 }
             }
 
-            return colors;
+            return routes;
         }
 
         /// <summary>

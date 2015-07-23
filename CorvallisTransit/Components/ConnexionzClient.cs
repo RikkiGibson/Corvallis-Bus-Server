@@ -32,7 +32,7 @@ namespace CorvallisTransit.Components
             {
                 string s = client.DownloadString(url);
 
-                TextReader reader = new StringReader(s);
+                var reader = new StringReader(s);
 
                 return serializer.Deserialize(reader) as T;
             }
@@ -66,14 +66,15 @@ namespace CorvallisTransit.Components
         /// <summary>
         /// Gets the Connexionz-estimated time of arrival for a given stop.
         /// </summary>
-        public static IEnumerable<ConnexionzPlatformET> GetPlatformEta(string platformTag)
+        public static ConnexionzPlatformET GetPlatformEta(string platformTag)
         {
             RoutePosition position = GetEntity<RoutePosition>(BASE_URL + "&Name=RoutePositionET.xml&PlatformTag=" + platformTag);
 
-            return position.Items
-                   .Where(p => p is RoutePositionPlatform)
-                   .Cast<RoutePositionPlatform>()
-                   .Select(p => new ConnexionzPlatformET(p));
+            var positionPlatform = position.Items.FirstOrDefault(p => p is RoutePositionPlatform) as RoutePositionPlatform;
+
+            return positionPlatform != null ?
+                new ConnexionzPlatformET(positionPlatform) :
+                null;
         }
     }
 }

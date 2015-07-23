@@ -181,6 +181,7 @@
       <DependentUpon>RoutePattern.xsd</DependentUpon>
     </Compile>
     <Compile Include="Models\BusRouteStop.cs" />
+    <Compile Include="Models\GoogleTransit\GoogleRoute.cs" />
     <Compile Include="Models\LatLong.cs" />
     <Compile Include="Models\PlatformsPartial.cs" />
     <Compile Include="Models\RoutePatternPartial.cs" />
@@ -223,10 +224,6 @@
     <Content Include="Models\Connexionz\GeneratedModels\RoutePattern.xss">
       <DependentUpon>RoutePattern.xsd</DependentUpon>
     </Content>
-    <Content Include="Models\GeneratedModels\RoutePattern.xsc" />
-    <Content Include="Models\GeneratedModels\RoutePattern.xss" />
-    <Content Include="Models\GeneratedModels\StopRoutes.xsc" />
-    <Content Include="Models\GeneratedModels\StopRoutes.xss" />
     <None Include="Properties\PublishProfiles\corvallisbus - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\corvallisbus - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\gear.pubxml" />

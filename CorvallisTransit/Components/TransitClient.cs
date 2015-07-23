@@ -245,12 +245,17 @@ namespace CorvallisTransit.Components
         private static object GetStaticData()
         {
             var connexionzRoutes = ConnexionzClient.Routes.Value;
+            var googleRoutes = GoogleTransitImport.Import()
+                .ToDictionary(r => r.ConnexionzName);
+
             var connexionzPlatforms = ConnexionzClient.Platforms.Value;
 
             var routes = connexionzRoutes.Select(r => new
             {
                 routeNo = r.RouteNo,
                 path = r.Path,
+                color = googleRoutes[r.RouteNo].Color,
+                url = googleRoutes[r.RouteNo].Url,
                 polyline = r.Polyline
             }).ToDictionary(r => r.routeNo);
 
