@@ -85,16 +85,17 @@ namespace CorvallisTransit.Components
             };
         }
 
-        public static async Task<object> GetEtas(string[] stopIds)
+        public static async Task<object> GetEtas(IEnumerable<string> stopIds)
         {
-            var toPlatformTag = await StorageManager.GetPlatformTagsAsync();
+            Dictionary<string, string> toPlatformTag = await StorageManager.GetPlatformTagsAsync();
 
-            string tag;
-            var idTags = stopIds.Select(id =>
-                Tuple.Create(id, toPlatformTag.TryGetValue(id, out tag) ? tag : string.Empty));
+            Func<string, Tuple<string, ConnexionzPlatformET>> getEtaIfTagExists =
+                id => Tuple.Create(id, toPlatformTag.ContainsKey(id) ?
+                                       ConnexionzClient.GetPlatformEta(toPlatformTag[id]) :
+                                       null);
 
-            var etas = idTags.AsParallel()
-                .Select(idTag => Tuple.Create(idTag.Item1, ConnexionzClient.GetPlatformEta(idTag.Item2)));
+            var etas = stopIds.AsParallel()
+                              .Select(getEtaIfTagExists);
 
             return etas.ToDictionary(
                 eta => eta.Item1,
