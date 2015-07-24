@@ -24,7 +24,6 @@ namespace CorvallisTransit.Components
         private const int PLATFORM_WARNING_CUTOFF = 4;
 
         public static object StopsLocker { get; set; }
-        private static object locker = new object();
 
         public static bool IsRunning { get; set; }
 
@@ -84,6 +83,24 @@ namespace CorvallisTransit.Components
                 routes = routes.ToDictionary(r => r.RouteNo),
                 stops = stops.ToDictionary(s => s.ID)
             };
+        }
+
+        public static async Task<object> GetEtas(string[] stopIds)
+        {
+            var toPlatformTag = await StorageManager.GetPlatformTagsAsync();
+
+            string tag;
+            var idTags = stopIds.Select(id =>
+                Tuple.Create(id, toPlatformTag.TryGetValue(id, out tag) ? tag : string.Empty));
+
+            var etas = idTags.AsParallel()
+                .Select(idTag => Tuple.Create(idTag.Item1, ConnexionzClient.GetPlatformEta(idTag.Item2)));
+
+            return etas.ToDictionary(
+                eta => eta.Item1,
+                eta => eta.Item2?.RouteEstimatedArrivals?.ToDictionary(
+                    route => route.RouteNo,
+                    route => route.EstimatedArrivalTimes) ?? new object());
         }
     }
 }

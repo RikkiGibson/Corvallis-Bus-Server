@@ -18,7 +18,7 @@ namespace CorvallisTransit.Models
 
         public BusStop(ConnexionzPlatform platform)
         {
-            ID = platform.PlatformNo;
+            ID = int.Parse(platform.PlatformNo);
             Name = platform.Name;
             Lat = platform.Lat.HasValue ? platform.Lat.Value : 0.0;
             Long = platform.Long.HasValue ? platform.Long.Value : 0.0;

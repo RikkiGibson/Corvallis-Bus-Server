@@ -17,12 +17,16 @@ namespace CorvallisTransit.Components
     /// </summary>
     public static class StorageManager
     {
+        public const string ROUTES_KEY = "routes";
+        public const string STOPS_KEY = "stops";
+        public const string PLATFORM_TAGS_KEY = "platformTags";
+
         /// <summary>
         /// Gets the JSON-encoded CTS routes from Azure.
         /// </summary>
         public static async Task<List<BusRoute>> GetRoutesAsync()
         {
-            var blob = GetBlockBlob("routes");
+            var blob = GetBlockBlob(ROUTES_KEY);
             string json = await blob.DownloadTextAsync();
             return await Task.Run(() => JsonConvert.DeserializeObject<List<BusRoute>>(json));
         }
@@ -32,9 +36,16 @@ namespace CorvallisTransit.Components
         /// </summary>
         public static async Task<List<BusStop>> GetStopsAsync()
         {
-            var blob = GetBlockBlob("stops");
+            var blob = GetBlockBlob(STOPS_KEY);
             string json = await blob.DownloadTextAsync();
             return await Task.Run(() => JsonConvert.DeserializeObject<List<BusStop>>(json));
+        }
+
+        public static async Task<Dictionary<string, string>> GetPlatformTagsAsync()
+        {
+            var blob = GetBlockBlob(PLATFORM_TAGS_KEY);
+            string json = await blob.DownloadTextAsync();
+            return await Task.Run(() => JsonConvert.DeserializeObject<Dictionary<string, string>>(json));
         }
 
         /// <summary>
@@ -47,7 +58,7 @@ namespace CorvallisTransit.Components
                 throw new ArgumentNullException(nameof(googleRoutes), "Google routes must have a value.");
             }
 
-            CloudBlockBlob blob = GetBlockBlob("routes");
+            CloudBlockBlob blob = GetBlockBlob(ROUTES_KEY);
 
             string json = blob.DownloadText();
 
@@ -74,7 +85,7 @@ namespace CorvallisTransit.Components
                 throw new ArgumentNullException(nameof(routes), "CTS routes need some data!");
             }
 
-            CloudBlockBlob blob = GetBlockBlob("routes");
+            CloudBlockBlob blob = GetBlockBlob(ROUTES_KEY);
 
             string json = JsonConvert.SerializeObject(routes);
 
@@ -91,17 +102,37 @@ namespace CorvallisTransit.Components
                 throw new ArgumentNullException(nameof(stops), "CTS routes need some data!");
             }
 
-            CloudBlockBlob blob = GetBlockBlob("stops");
+            CloudBlockBlob blob = GetBlockBlob(STOPS_KEY);
 
             string json = JsonConvert.SerializeObject(stops);
 
             blob.UploadText(json);
-        }        
+        }   
+        
+        /// <summary>
+        /// Puts a dictionary that takes a PlatformNo (5-digit number) to PlatformTag (3-digit number).
+        /// </summary>
+        /// <param name="platformTags"></param>
+        public static void Put(Dictionary<string, string> platformTags)
+        {
+            if (platformTags == null || !platformTags.Any())
+            {
+                throw new ArgumentNullException(nameof(platformTags), "An empty dictionary can't be put in the datastore.");
+            }
+
+            CloudBlockBlob blob = GetBlockBlob(PLATFORM_TAGS_KEY);
+
+            string json = JsonConvert.SerializeObject(platformTags);
+
+            blob.UploadText(json);
+        }
+
+
 
         /// <summary>
         /// Given the name of a block blob, gets a reference to allow read/write to that blob.
         /// </summary>
-        private static CloudBlockBlob GetBlockBlob(string blobkBlobName)
+        private static CloudBlockBlob GetBlockBlob(string blockBlobName)
         {
             CloudStorageAccount account = CloudStorageAccount.Parse(ConfigurationManager.AppSettings["BlobStorageConnectionString"]);
 
@@ -109,7 +140,7 @@ namespace CorvallisTransit.Components
 
             CloudBlobContainer container = client.GetContainerReference("routesandstopsstore");
 
-            return container.GetBlockBlobReference(blobkBlobName);
+            return container.GetBlockBlobReference(blockBlobName);
         }
     }
 }

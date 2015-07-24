@@ -12,8 +12,8 @@ namespace CorvallisTransit.Models.Connexionz
     {
         public ConnexionzPlatform(PlatformsPlatform platformsPlatform)
         {
-            PlatformTag = int.Parse(platformsPlatform.PlatformTag);
-            PlatformNo = int.Parse(platformsPlatform.PlatformNo);
+            PlatformTag = platformsPlatform.PlatformTag;
+            PlatformNo = platformsPlatform.PlatformNo;
             Name = platformsPlatform.Name;
             Lat = platformsPlatform.Position?.Lat;
             Long = platformsPlatform.Position?.Long;
@@ -22,12 +22,12 @@ namespace CorvallisTransit.Models.Connexionz
         /// <summary>
         /// The 3 digit number which is used in the Connexionz API to get arrival estimates.
         /// </summary>
-        public int PlatformTag { get; private set; }
+        public string PlatformTag { get; private set; }
 
         /// <summary>
         /// The 5 digit number which is printed on bus stop signs in Corvallis.
         /// </summary>
-        public int PlatformNo { get; private set; }
+        public string PlatformNo { get; private set; }
 
         public string Name { get; private set; }
 
