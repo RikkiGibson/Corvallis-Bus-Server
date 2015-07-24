@@ -1,4 +1,5 @@
 ﻿using CorvallisTransit.Models;
+using CorvallisTransit.Models.Connexionz;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System;
@@ -31,13 +32,13 @@ namespace CorvallisTransit.Components
         /// </summary>
         public static async Task<List<BusRoute>> GetStaticRoutesAsync()
         {
-            var database = Connection.GetDatabase();
+            var cache = Connection.GetDatabase();
 
-            var json = await database.StringGetAsync(ROUTES_KEY);
+            var json = await cache.StringGetAsync(ROUTES_KEY);
             if (string.IsNullOrEmpty(json))
             {
                 json = await StorageManager.GetStaticRouteDataAsync();
-                database.StringSet(ROUTES_KEY, json);
+                cache.StringSet(ROUTES_KEY, json);
             }
 
             return JsonConvert.DeserializeObject<List<BusRoute>>(json);
@@ -49,13 +50,13 @@ namespace CorvallisTransit.Components
         /// <returns></returns>
         public static async Task<List<BusStop>> GetStaticStopsAsync()
         {
-            var database = Connection.GetDatabase();
+            var cache = Connection.GetDatabase();
 
-            var json = await database.StringGetAsync(STOPS_KEY);
+            var json = await cache.StringGetAsync(STOPS_KEY);
             if (string.IsNullOrEmpty(json))
             {
                 json = await StorageManager.GetStaticStopDataAsync();
-                database.StringSet(STOPS_KEY, json);
+                cache.StringSet(STOPS_KEY, json);
             }
 
             return JsonConvert.DeserializeObject<List<BusStop>>(json);
@@ -66,16 +67,60 @@ namespace CorvallisTransit.Components
         /// </summary>
         public static async Task<Dictionary<string, string>> GetPlatformTagsAsync()
         {
-            var database = Connection.GetDatabase();
+            var cache = Connection.GetDatabase();
 
-            var json = await database.StringGetAsync(PLATFORM_TAGS_KEY);
+            var json = await cache.StringGetAsync(PLATFORM_TAGS_KEY);
             if (string.IsNullOrWhiteSpace(json))
             {
                 json = await StorageManager.GetPlatformTagsAsync();
-                database.StringSet(PLATFORM_TAGS_KEY, json);
+                cache.StringSet(PLATFORM_TAGS_KEY, json);
             }
 
             return JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+        }
+
+        /// <summary>
+        /// Extracts a platform ETA from the cache.  Handles entry management.
+        /// </summary>
+        public static async Task<ConnexionzPlatformET> GetEta(string platformTag)
+        {
+            var cache = Connection.GetDatabase();
+
+            ConnexionzPlatformET arrival;
+
+            var json = await cache.StringGetAsync(platformTag);
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return UpdateCacheAndReturnETA(platformTag, cache);
+            }
+            else
+            {
+                arrival = JsonConvert.DeserializeObject<ConnexionzPlatformET>(json);
+                
+                // It's save to assume that a bus will be arriving to a different stop
+                // after one minute, so we update when that is the case.
+                if ((DateTime.Now - arrival.LastUpdated).Minutes >= 1)
+                {
+                    return UpdateCacheAndReturnETA(platformTag, cache);
+                }
+                else
+                {
+                    return arrival;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Computes the new ETA info for the given Connexionz Stop, and puts that in the cache.
+        /// </summary>
+        private static ConnexionzPlatformET UpdateCacheAndReturnETA(string platformTag, IDatabase cache)
+        {
+            var newArrival = ConnexionzClient.GetPlatformEta(platformTag);
+            var json = JsonConvert.SerializeObject(newArrival);
+
+            cache.StringSet(platformTag, json);
+
+            return newArrival;
         }
     }
 }

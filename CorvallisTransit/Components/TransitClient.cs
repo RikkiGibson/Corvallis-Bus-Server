@@ -48,17 +48,24 @@ namespace CorvallisTransit.Components
         {
             Dictionary<string, string> toPlatformTag = await CacheManager.GetPlatformTagsAsync();
 
-            Func<string, Tuple<string, ConnexionzPlatformET>> getEtaIfTagExists =
-                id => Tuple.Create(id, toPlatformTag.ContainsKey(id) ?
-                                       ConnexionzClient.GetPlatformEta(toPlatformTag[id]) :
-                                       null);
+            //Func<string, Tuple<string, ConnexionzPlatformET>> getEtaIfTagExists =
+            //    id => Tuple.Create(id, toPlatformTag.ContainsKey(id) ?
+            //                           await CacheManager.GetEta(toPlatformTag[id]) :
+            //                           null);
+
+            Func<string, Task<Tuple<string, ConnexionzPlatformET>>> getEtaIfTagExistsAsync = async stopId =>
+            {
+                return Tuple.Create(stopId, toPlatformTag.ContainsKey(stopId)
+                                            ? await CacheManager.GetEta(toPlatformTag[stopId])
+                                            : null);
+            };
 
             var etas = stopIds.AsParallel()
-                              .Select(getEtaIfTagExists);
+                              .Select(getEtaIfTagExistsAsync);
 
             return etas.ToDictionary(
-                eta => eta.Item1,
-                eta => eta.Item2?.RouteEstimatedArrivals?.ToDictionary(
+                eta => eta.Result.Item1,
+                eta => eta.Result.Item2?.RouteEstimatedArrivals?.ToDictionary(
                     route => route.RouteNo,
                     route => route.EstimatedArrivalTime) ?? new object());
         }
