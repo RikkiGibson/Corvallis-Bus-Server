@@ -48,26 +48,20 @@ namespace CorvallisTransit.Components
         {
             Dictionary<string, string> toPlatformTag = await CacheManager.GetPlatformTagsAsync();
 
-            //Func<string, Tuple<string, ConnexionzPlatformET>> getEtaIfTagExists =
-            //    id => Tuple.Create(id, toPlatformTag.ContainsKey(id) ?
-            //                           await CacheManager.GetEta(toPlatformTag[id]) :
-            //                           null);
+            Func<string, Tuple<string, ConnexionzPlatformET>> getEtaIfTagExists =
+                id => Tuple.Create(id, toPlatformTag.ContainsKey(id) ?
+                                       CacheManager.GetEta(toPlatformTag[id]) :
+                                       null);
 
-            Func<string, Task<Tuple<string, ConnexionzPlatformET>>> getEtaIfTagExistsAsync = async stopId =>
-            {
-                return Tuple.Create(stopId, toPlatformTag.ContainsKey(stopId)
-                                            ? await CacheManager.GetEta(toPlatformTag[stopId])
-                                            : null);
-            };
-
-            var etas = stopIds.AsParallel()
-                              .Select(getEtaIfTagExistsAsync);
-
-            return etas.ToDictionary(
-                eta => eta.Result.Item1,
-                eta => eta.Result.Item2?.RouteEstimatedArrivals?.ToDictionary(
-                    route => route.RouteNo,
-                    route => route.EstimatedArrivalTime) ?? new object());
+            // Extracting the ETA is done as a query run in parallel such that one thread is dedicated to one ETA.
+            // The results are then coalesced into a dictionary where the keys are the requested stop IDs, and the
+            // values are also dictionaries.  These sub-dictionaries are a pair of { route, ETA in minutes}, where
+            // the route name is the key.
+            return stopIds.AsParallel()
+                          .Select(getEtaIfTagExists)
+                          .ToDictionary(eta => eta.Item1, // The Stop ID for this ETA
+                                        eta => eta.Item2?.RouteEstimatedArrivals?.ToDictionary(route => route.RouteNo, // The dictionary of { Route Number, ETA } for the above Stop ID.
+                                                                                               route => route.EstimatedArrivalTime));
         }
     }
 }

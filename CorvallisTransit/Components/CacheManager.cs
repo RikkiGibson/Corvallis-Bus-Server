@@ -80,15 +80,15 @@ namespace CorvallisTransit.Components
         }
 
         /// <summary>
-        /// Extracts a platform ETA from the cache.  Handles entry management.
+        /// Extracts a platform ETA from the cache.  Handles entry management.  Note that this is a synchronous call!
         /// </summary>
-        public static async Task<ConnexionzPlatformET> GetEta(string platformTag)
+        public static ConnexionzPlatformET GetEta(string platformTag)
         {
             var cache = Connection.GetDatabase();
 
             ConnexionzPlatformET arrival;
 
-            var json = await cache.StringGetAsync(platformTag);
+            var json = cache.StringGet(platformTag);
             if (string.IsNullOrWhiteSpace(json))
             {
                 return UpdateCacheAndReturnETA(platformTag, cache);
