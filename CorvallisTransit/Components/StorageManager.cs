@@ -24,28 +24,25 @@ namespace CorvallisTransit.Components
         /// <summary>
         /// Gets the JSON-encoded CTS routes from Azure.
         /// </summary>
-        public static async Task<List<BusRoute>> GetRoutesAsync()
+        public static async Task<string> GetStaticRouteDataAsync()
         {
             var blob = GetBlockBlob(ROUTES_KEY);
-            string json = await blob.DownloadTextAsync();
-            return await Task.Run(() => JsonConvert.DeserializeObject<List<BusRoute>>(json));
+            return await blob.DownloadTextAsync();
         }
 
         /// <summary>
         /// Gets the JSON-encoded CTS stops from Azure.
         /// </summary>
-        public static async Task<List<BusStop>> GetStopsAsync()
+        public static async Task<string> GetStaticStopDataAsync()
         {
             var blob = GetBlockBlob(STOPS_KEY);
-            string json = await blob.DownloadTextAsync();
-            return await Task.Run(() => JsonConvert.DeserializeObject<List<BusStop>>(json));
+            return await blob.DownloadTextAsync();
         }
 
-        public static async Task<Dictionary<string, string>> GetPlatformTagsAsync()
+        public static async Task<string> GetPlatformTagsAsync()
         {
             var blob = GetBlockBlob(PLATFORM_TAGS_KEY);
-            string json = await blob.DownloadTextAsync();
-            return await Task.Run(() => JsonConvert.DeserializeObject<Dictionary<string, string>>(json));
+            return await blob.DownloadTextAsync();
         }
 
         /// <summary>
@@ -129,8 +126,6 @@ namespace CorvallisTransit.Components
 
             blob.UploadText(json);
         }
-
-
 
         /// <summary>
         /// Given the name of a block blob, gets a reference to allow read/write to that blob.

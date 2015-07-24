@@ -14,7 +14,7 @@ namespace CorvallisTransit.Models.Connexionz
             // uh oh-- there should be a list of ETAs here
             // Either navigate the XML document manually or regenerate the model:
             // https://msdn.microsoft.com/en-us/library/x6c1kb0s(v=vs.110).aspx
-            EstimatedArrivalTime = routePositionPlatformRoute.Destination.Trip.Select(t => t.ETA).Single();
+            EstimatedArrivalTime = routePositionPlatformRoute.Destination.Trip.Select(t => t.ETA).FirstOrDefault();
         }
 
         public string RouteNo { get; private set; }

@@ -30,8 +30,8 @@ namespace CorvallisTransit.Components
         /// </summary>
         public static async Task<object> GetStaticData()
         {
-            var routes = await StorageManager.GetRoutesAsync();
-            var stops = await StorageManager.GetStopsAsync();
+            var routes = await CacheManager.GetStaticRoutesAsync();
+            var stops = await CacheManager.GetStaticStopsAsync();
 
             return new
             {
@@ -46,7 +46,7 @@ namespace CorvallisTransit.Components
         /// </summary>
         public static async Task<object> GetEtas(IEnumerable<string> stopIds)
         {
-            Dictionary<string, string> toPlatformTag = await StorageManager.GetPlatformTagsAsync();
+            Dictionary<string, string> toPlatformTag = await CacheManager.GetPlatformTagsAsync();
 
             Func<string, Tuple<string, ConnexionzPlatformET>> getEtaIfTagExists =
                 id => Tuple.Create(id, toPlatformTag.ContainsKey(id) ?
