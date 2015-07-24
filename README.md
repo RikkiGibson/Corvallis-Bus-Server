@@ -60,7 +60,7 @@ Url: http://corvallisbus.azurewebsites.net/transit/static
     }
 ```
 
-###/transit/eta/stopIds=
+###/transit/eta/
 
 Returns a JSON dictionary, where they keys are the supplied Stop IDs, and the values are dictionaries.  These dested dictionaries are such that the keys are route numbers, and the values are integers corresponding to the ETA for that route to that stop.  For example, ``"2":[21]"`` means that Route 2 is arriving at the given stop in 21 minutes.
 
