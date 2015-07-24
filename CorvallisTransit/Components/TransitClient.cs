@@ -76,13 +76,13 @@ namespace CorvallisTransit.Components
         /// </summary>
         public static async Task<object> GetStaticData()
         {
-            var routesTask = Task.Run(() => StorageManager.GetRoutesAsync());
-            var stopsTask = Task.Run(() => StorageManager.GetStopsAsync());
+            var routes = await StorageManager.GetRoutesAsync();
+            var stops = await StorageManager.GetStopsAsync();
 
             return new
             {
-                routes = (await routesTask).ToDictionary(r => r.RouteNo),
-                stops = (await stopsTask).ToDictionary(s => s.ID)
+                routes = routes.ToDictionary(r => r.RouteNo),
+                stops = stops.ToDictionary(s => s.ID)
             };
         }
     }
