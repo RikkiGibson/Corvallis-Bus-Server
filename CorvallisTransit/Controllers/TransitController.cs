@@ -18,6 +18,10 @@ namespace CorvallisTransit.Controllers
     [RoutePrefix("transit")]
     public class TransitController : ApiController
     {
+        /// <summary>
+        /// As the name suggests, this gets static route and stop data.  The data is represented
+        /// as a dictionary with two entries, "routes" and "stops".
+        /// </summary>
         [HttpGet]
         [Route("static")]
         public async Task<JsonResult<object>> GetStaticData()
@@ -26,13 +30,19 @@ namespace CorvallisTransit.Controllers
             return Json(staticData);
         }
 
-        [Route("{stopIds}")]
+        /// <summary>
+        /// As the name suggests, this gets the ETA information for any number of stop IDs.  The data
+        /// is represented as a dictionary, where the keys are the given stop IDs and the values are dictionaries.
+        /// These nested dictionaries have route numbers as the keys and integers (ETA) as the values.
+        /// </summary>
+        /// <param name="stopIds"></param>
+        /// <returns></returns>
+        [Route("eta/{stopIds}")]
         public async Task<JsonResult<object>> GetETAs(string stopIds)
         {
             var splitStopIds = stopIds.Split(',');
             var etas = await TransitClient.GetEtas(splitStopIds);
             return Json(etas);
-
         }
 
         [HttpGet]        
