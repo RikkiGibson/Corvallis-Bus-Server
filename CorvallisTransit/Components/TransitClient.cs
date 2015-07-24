@@ -21,52 +21,7 @@ namespace CorvallisTransit.Components
     /// </summary>
     public static class TransitClient
     {
-        private const int PLATFORM_WARNING_CUTOFF = 4;
-
-        public static object StopsLocker { get; set; }
-
-        public static bool IsRunning { get; set; }
-
-        static TransitClient()
-        {
-            IsRunning = false;
-            StopsLocker = new object();
-        }
-
-        public delegate void OnRouteUpdate(BusRoute route);
-        public static event OnRouteUpdate UpdateRoute;
-
         public static List<BusRoute> Routes { get; private set; }
-
-        public static void InitializeAndUpdate()
-        {
-            // TODO: only get the route pattern if necessary
-            //var tempRoutes = PatternToBusRoutes(ConnexionzClient.GetRoutePattern());
-
-            //CheckForWarnings(tempRoutes);
-            //Routes = tempRoutes;
-            //foreach (var route in Routes)
-            //{
-            //    if (UpdateRoute != null)
-            //    {
-            //        UpdateRoute(route);
-            //    }
-
-            //}
-        }
-
-        internal static void UpdateClients()
-        {
-            if (UpdateRoute == null || Routes == null)
-            {
-                return;
-            }
-
-            foreach (var route in Routes)
-            {
-                UpdateRoute(route);
-            }
-        }
 
         public static Lazy<List<GoogleRoute>> GoogleRoutes = new Lazy<List<GoogleRoute>>(GoogleTransitImport.DoTask);
 
@@ -85,6 +40,10 @@ namespace CorvallisTransit.Components
             };
         }
 
+        /// <summary>
+        /// Gets thje ETA info for a set of stop IDS.  Performs the calls to get the info in parallel,
+        /// aggregating the data into a dictionary.
+        /// </summary>
         public static async Task<object> GetEtas(IEnumerable<string> stopIds)
         {
             Dictionary<string, string> toPlatformTag = await StorageManager.GetPlatformTagsAsync();
@@ -101,7 +60,7 @@ namespace CorvallisTransit.Components
                 eta => eta.Item1,
                 eta => eta.Item2?.RouteEstimatedArrivals?.ToDictionary(
                     route => route.RouteNo,
-                    route => route.EstimatedArrivalTimes) ?? new object());
+                    route => route.EstimatedArrivalTime) ?? new object());
         }
     }
 }

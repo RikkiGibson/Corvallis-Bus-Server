@@ -64,6 +64,9 @@ namespace CorvallisTransit.Components
 
             List<BusRoute> routes = JsonConvert.DeserializeObject<List<BusRoute>>(json);
 
+            // Filter out the ones that are currently inactive so that we don't garble up colors and URLs.
+            googleRoutes = googleRoutes.Where(gr => routes.Any(r => r.RouteNo == gr.Name)).ToList();
+
             for (int i = 0; i < routes.Count; i++)
             {
                 routes[i].Color = googleRoutes[i]?.Color;
