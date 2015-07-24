@@ -61,14 +61,15 @@ namespace CorvallisTransit.Components
 
             List<BusRoute> routes = JsonConvert.DeserializeObject<List<BusRoute>>(json);
 
-            // Filter out the ones that are currently inactive so that we don't garble up colors and URLs.
-            googleRoutes = googleRoutes.Where(gr => routes.Any(r => r.RouteNo == gr.Name)).ToList();
+            var googleRoutesLookup = googleRoutes.ToDictionary(gr => gr.ConnexionzName);
 
-            for (int i = 0; i < routes.Count; i++)
+            Action<BusRoute> UpdateColorsAndUrls = (r) =>
             {
-                routes[i].Color = googleRoutes[i]?.Color;
-                routes[i].Url = googleRoutes[i]?.Url;
-            }
+                r.Color = googleRoutesLookup[r.RouteNo]?.Color;
+                r.Url = googleRoutesLookup[r.RouteNo]?.Url.Replace(@"\/", "/");
+            };
+
+            routes.ForEach(UpdateColorsAndUrls);
 
             json = JsonConvert.SerializeObject(routes);
 
@@ -107,8 +108,8 @@ namespace CorvallisTransit.Components
             string json = JsonConvert.SerializeObject(stops);
 
             blob.UploadText(json);
-        }   
-        
+        }
+
         /// <summary>
         /// Puts a dictionary that takes a PlatformNo (5-digit number) to PlatformTag (3-digit number).
         /// </summary>
