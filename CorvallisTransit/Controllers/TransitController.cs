@@ -60,6 +60,7 @@ namespace CorvallisTransit.Controllers
         [Route("tasks/init")]
         public void Init()
         {
+            CacheManager.WipeStaticData();
             var googleRoutes = TransitClient.GoogleRoutes.Value.ToDictionary(r => r.ConnexionzName);
 
             var stops = ConnexionzClient.Platforms.Value.Select(p => new BusStop(p)).ToList();
