@@ -211,6 +211,7 @@
       <SubType>code</SubType>
       <DependentUpon>RoutePattern.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Models\DaysOfWeek.cs" />
     <Compile Include="Models\GoogleTransit\GoogleRoute.cs" />
     <Compile Include="Models\LatLong.cs" />
     <Compile Include="Models\Connexionz\GeneratedModels\StopRoutes.cs">

@@ -1,10 +1,12 @@
-﻿using CorvallisTransit.Models.GoogleTransit;
+﻿using CorvallisTransit.Models;
+using CorvallisTransit.Models.GoogleTransit;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Web;
 
 namespace CorvallisTransit.Components
@@ -31,12 +33,20 @@ namespace CorvallisTransit.Components
                     }
                     else if (entry.FullName.EndsWith("stop_times.txt"))
                     {
-                        // TODO: get schedule
+                        ParseScheduleCSV(entry);
                     }
                 }
             }
 
             return routes ?? new List<GoogleRoute>();
+        }
+
+        private static IEnumerable<string> ReadLines(StreamReader reader)
+        {
+            while (!reader.EndOfStream)
+            {
+                yield return reader.ReadLine();
+            }
         }
 
         /// <summary>
@@ -67,6 +77,23 @@ namespace CorvallisTransit.Components
             }
 
             return routes;
+        }
+
+        private static Regex m_routePattern = new Regex("^\"(BB_)?[^_]+_");
+
+        private static void ParseScheduleCSV(ZipArchiveEntry entry)
+        {
+            using (var reader = new StreamReader(entry.Open()))
+            {
+                // skip format line
+                reader.ReadLine();
+                var lines = ReadLines(reader).ToList();
+
+                var distinctRouteStops = lines.Select(line => line.Split(','))
+                    .Where(line => !string.IsNullOrWhiteSpace(line[1]))
+                    .Select(line => Tuple.Create(line[0], DaysOfWeekUtils.GetDaysOfWeek(line[0])))
+                    .GroupBy(line => m_routePattern.Match(line.Item1).Value);
+            }
         }
 
         /// <summary>

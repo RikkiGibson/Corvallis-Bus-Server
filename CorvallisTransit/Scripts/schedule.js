@@ -228,7 +228,8 @@ $(function () {
 
     // bind the hubs for SignalR
     var routeHub = $.connection.routeHub;
-    routeHub.client.updateRoute = updateRoute;
+    // we broke this :(
+    //routeHub.client.updateRoute = updateRoute;
 
     $.connection.hub.start();
 });
