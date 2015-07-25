@@ -70,6 +70,8 @@ namespace CorvallisTransit.Controllers
 
             var platformTags = ConnexionzClient.Platforms.Value.ToDictionary(p => p.PlatformNo, p => p.PlatformTag);
             StorageManager.Put(platformTags);
+
+            CacheManager.ClearCache();
         }
     }
 }

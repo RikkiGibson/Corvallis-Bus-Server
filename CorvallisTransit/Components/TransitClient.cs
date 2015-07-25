@@ -41,7 +41,7 @@ namespace CorvallisTransit.Components
         }
 
         /// <summary>
-        /// Gets thje ETA info for a set of stop IDS.  Performs the calls to get the info in parallel,
+        /// Gets the ETA info for a set of stop IDS.  Performs the calls to get the info in parallel,
         /// aggregating the data into a dictionary.
         /// </summary>
         public static async Task<object> GetEtas(IEnumerable<string> stopIds)

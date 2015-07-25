@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Xml.Linq;
 
 namespace CorvallisTransit.Models.Connexionz
 {
@@ -10,13 +11,16 @@ namespace CorvallisTransit.Models.Connexionz
     /// </summary>
     public class ConnexionzPlatform
     {
-        public ConnexionzPlatform(PlatformsPlatform platformsPlatform)
+        public ConnexionzPlatform(XElement platform)
         {
-            PlatformTag = platformsPlatform.PlatformTag;
-            PlatformNo = platformsPlatform.PlatformNo;
-            Name = platformsPlatform.Name;
-            Lat = platformsPlatform.Position?.Lat;
-            Long = platformsPlatform.Position?.Long;
+            PlatformTag = platform.Attribute("PlatformTag").Value;
+            PlatformNo = platform.Attribute("PlatformNo").Value;
+            Name = platform.Attribute("Name").Value;
+
+            XElement position = platform.Element("Position");
+            double output;
+            Lat = double.TryParse(position.Attribute("Lat").Value, out output) ? output : new double?();
+            Long = double.TryParse(position.Attribute("Long").Value, out output) ? output : new double?();
         }
 
         /// <summary>

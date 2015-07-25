@@ -203,7 +203,6 @@
     </Compile>
     <Compile Include="Models\BusRoute.cs" />
     <Compile Include="Models\BusStop.cs" />
-    <Compile Include="Models\ClientData.cs" />
     <Compile Include="Models\Connexionz\ConnexionzPlatformET.cs" />
     <Compile Include="Models\Connexionz\ConnexionzPlatform.cs" />
     <Compile Include="Models\Connexionz\ConnexionzRoute.cs" />
@@ -214,12 +213,9 @@
     </Compile>
     <Compile Include="Models\GoogleTransit\GoogleRoute.cs" />
     <Compile Include="Models\LatLong.cs" />
-    <Compile Include="Models\PlatformsPartial.cs" />
-    <Compile Include="Models\RoutePatternPartial.cs" />
     <Compile Include="Models\Connexionz\GeneratedModels\StopRoutes.cs">
       <DependentUpon>StopRoutes.xsd</DependentUpon>
     </Compile>
-    <Compile Include="Models\RoutePositionPartial.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Components\TransitClient.cs" />
     <Compile Include="Models\Connexionz\GeneratedModels\TransitStops.cs">

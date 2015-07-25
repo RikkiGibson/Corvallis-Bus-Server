@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Xml.Serialization;
+using System.Xml.Linq;
 
 namespace CorvallisTransit.Components
 {
@@ -18,8 +19,8 @@ namespace CorvallisTransit.Components
         private const string BASE_URL = "http://www.corvallistransit.com/rtt/public/utility/file.aspx?contenttype=SQLXML";
 
         // TODO: handle expiration
-        public static Lazy<IEnumerable<ConnexionzPlatform>> Platforms = new Lazy<IEnumerable<ConnexionzPlatform>>(DownloadPlatforms);
-        public static Lazy<IEnumerable<ConnexionzRoute>> Routes = new Lazy<IEnumerable<ConnexionzRoute>>(DownloadRoutes);
+        public static readonly Lazy<IEnumerable<ConnexionzPlatform>> Platforms = new Lazy<IEnumerable<ConnexionzPlatform>>(DownloadPlatforms);
+        public static readonly Lazy<IEnumerable<ConnexionzRoute>> Routes = new Lazy<IEnumerable<ConnexionzRoute>>(DownloadRoutes);
 
         /// <summary>
         /// Gets and deserializes XML from the specified Connexionz/CTS endpoints.
@@ -43,12 +44,16 @@ namespace CorvallisTransit.Components
         /// </summary>
         private static IEnumerable<ConnexionzPlatform> DownloadPlatforms()
         {
-            Platforms platforms = GetEntity<Platforms>(BASE_URL + "&Name=Platform.rxml");
+            using (var client = new WebClient())
+            {
+                string s = client.DownloadString(BASE_URL + "&Name=Platform.rxml");
 
-            return platforms.Items
-                   .Where(i => i is PlatformsPlatform)
-                   .Cast<PlatformsPlatform>()
-                   .Select(pp => new ConnexionzPlatform(pp));
+                XDocument document = XDocument.Parse(s);
+
+                return document.Element("Platforms")
+                    .Elements("Platform")
+                    .Select(e => new ConnexionzPlatform(e));
+            }
         }
 
         /// <summary>

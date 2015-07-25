@@ -27,6 +27,15 @@ namespace CorvallisTransit.Components
         /// </summary>
         public static ConnectionMultiplexer Connection => lazyConn.Value;
 
+        internal static void ClearCache()
+        {
+            var cache = Connection.GetDatabase();
+
+            cache.StringSet(ROUTES_KEY, string.Empty);
+            cache.StringSet(STOPS_KEY, string.Empty);
+            cache.StringSet(PLATFORM_TAGS_KEY, string.Empty);
+        }
+
         /// <summary>
         /// Gets static routes from the cache.  Grabs the blob data if the cache is empty.
         /// </summary>
