@@ -212,7 +212,10 @@
       <DependentUpon>RoutePattern.xsd</DependentUpon>
     </Compile>
     <Compile Include="Models\DaysOfWeek.cs" />
+    <Compile Include="Models\GoogleTransit\GoogleDaySchedule.cs" />
     <Compile Include="Models\GoogleTransit\GoogleRoute.cs" />
+    <Compile Include="Models\GoogleTransit\GoogleRouteSchedule.cs" />
+    <Compile Include="Models\GoogleTransit\GoogleStopSchedule.cs" />
     <Compile Include="Models\LatLong.cs" />
     <Compile Include="Models\Connexionz\GeneratedModels\StopRoutes.cs">
       <DependentUpon>StopRoutes.xsd</DependentUpon>
