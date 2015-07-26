@@ -11,7 +11,7 @@
             PlatformId = int.Parse(platform.PlatformNo);
 
             bool result;
-            IsScheduleAdherancePoint = bool.TryParse(platform.ScheduleAdheranceTimepoint, out result);
+            IsScheduleAdherancePoint = bool.TryParse(platform.ScheduleAdheranceTimepoint, out result) ? result : false;
         }
 
         /// <summary>
