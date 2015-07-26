@@ -119,11 +119,11 @@ namespace CorvallisTransit.Components
 
                 // Time to turn some totally flat data into totally structured data.
                 var routeDayStopSchedules = flatSchedule.GroupBy(line => new
-                    {
-                        route = line.route,
-                        stop = line.stop,
-                        days = line.days
-                    })
+                {
+                    route = line.route,
+                    stop = line.stop,
+                    days = line.days
+                })
                     .Select(grouping => grouping.Aggregate(new
                     {
                         route = grouping.Key.route,
@@ -138,7 +138,13 @@ namespace CorvallisTransit.Components
                 // This is not really functional programming.
                 foreach (var routeDayStopSchedule in routeDayStopSchedules)
                 {
-                    routeDayStopSchedule.stopSchedules.Times.Sort();
+                    // For whatever reason a simple sort in place doesn't work.
+                    routeDayStopSchedule.stopSchedules.Times =
+                        routeDayStopSchedule.stopSchedules.Times
+                            .Where(t => t != TimeSpan.Zero)
+                            .Distinct()
+                            .OrderBy(time => time)
+                            .ToList();
                 }
 
                 var routeDaySchedules = routeDayStopSchedules

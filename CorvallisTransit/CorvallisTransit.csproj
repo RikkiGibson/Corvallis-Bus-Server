@@ -207,6 +207,7 @@
     <Compile Include="Models\Connexionz\ConnexionzPlatform.cs" />
     <Compile Include="Models\Connexionz\ConnexionzRoute.cs" />
     <Compile Include="Models\Connexionz\ConnexionzRouteET.cs" />
+    <Compile Include="Models\Connexionz\ConnexionzRoutePlatform.cs" />
     <Compile Include="Models\Connexionz\GeneratedModels\RoutePattern.cs">
       <SubType>code</SubType>
       <DependentUpon>RoutePattern.xsd</DependentUpon>

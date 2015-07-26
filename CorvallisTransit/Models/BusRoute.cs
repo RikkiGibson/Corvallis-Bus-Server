@@ -21,7 +21,11 @@ namespace CorvallisTransit.Models
         public BusRoute(ConnexionzRoute connectionzRoute, Dictionary<string, GoogleRoute> googleRoute)
         {
             RouteNo = connectionzRoute.RouteNo;
-            Path = connectionzRoute.Path;
+
+            Path = connectionzRoute.Path
+                .Select(platform => platform.PlatformId)
+                .ToList();
+
             Color = googleRoute[RouteNo].Color;
             Url = googleRoute[RouteNo].Url;
             Polyline = connectionzRoute.Polyline;

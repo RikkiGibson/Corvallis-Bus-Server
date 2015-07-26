@@ -23,7 +23,7 @@ namespace CorvallisTransit.Models.Connexionz
             Polyline = EncodePolyline(GetPoints(longestPattern.Mif));
 
             Path = longestPattern.Platform
-                   .Select(p => int.Parse(p.PlatformNo))
+                   .Select(p => new ConnexionzRoutePlatform(p))
                    .ToList();
         }
 
@@ -85,7 +85,7 @@ namespace CorvallisTransit.Models.Connexionz
         /// <summary>
         /// Contains the platform numbers for the platforms that make up this route.
         /// </summary>
-        public List<int> Path { get; private set; }
+        public List<ConnexionzRoutePlatform> Path { get; private set; }
 
         /// <summary>
         /// Represents the route's path of travel. Encoded as a Google Maps polyline.
