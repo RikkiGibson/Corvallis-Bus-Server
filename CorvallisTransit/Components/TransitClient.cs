@@ -1,17 +1,9 @@
 ﻿using CorvallisTransit.Models;
-using CorvallisTransit.Components;
-using GoogleMaps.LocationServices;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
 using CorvallisTransit.Models.Connexionz;
-using System.Xml.Linq;
 using CorvallisTransit.Models.GoogleTransit;
 
 namespace CorvallisTransit.Components

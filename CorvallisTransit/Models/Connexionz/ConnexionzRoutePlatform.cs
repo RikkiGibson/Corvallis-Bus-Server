@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace CorvallisTransit.Models.Connexionz
+﻿namespace CorvallisTransit.Models.Connexionz
 {
     /// <summary>
     /// Represents one of the platforms along the path of a particular Connexionz route.
@@ -16,12 +11,12 @@ namespace CorvallisTransit.Models.Connexionz
             PlatformId = int.Parse(platform.PlatformNo);
 
             bool result;
-            IsScheduleAdherancePoint = bool.TryParse(platform.ScheduleAdheranceTimepoint, out result) ? result : false;
+            IsScheduleAdherancePoint = bool.TryParse(platform.ScheduleAdheranceTimepoint, out result);
         }
 
         /// <summary>
         /// The 5-digit platform ID. This is what is displayed on bus stop signs.
-        /// </summary>
+        /// </summary> 
         public int PlatformId { get; private set; }
 
         /// <summary>

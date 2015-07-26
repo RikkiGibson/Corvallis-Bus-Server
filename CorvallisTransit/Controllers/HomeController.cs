@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using CorvallisTransit.Models;
-using System.Xml.Serialization;
-using System.Net;
-using System.IO;
 using CorvallisTransit.Components;
-using Newtonsoft.Json;
 
 namespace CorvallisTransit.Controllers
 {

@@ -195,7 +195,6 @@
     <Compile Include="Components\CacheManager.cs" />
     <Compile Include="Components\ConnexionzClient.cs" />
     <Compile Include="Components\StorageManager.cs" />
-    <Compile Include="Components\TransitConstants.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TransitController.cs" />
     <Compile Include="Global.asax.cs">

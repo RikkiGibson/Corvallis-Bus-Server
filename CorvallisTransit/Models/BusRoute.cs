@@ -1,10 +1,7 @@
-﻿using CorvallisTransit.Components;
-using CorvallisTransit.Models.Connexionz;
+﻿using CorvallisTransit.Models.Connexionz;
 using CorvallisTransit.Models.GoogleTransit;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace CorvallisTransit.Models
 {

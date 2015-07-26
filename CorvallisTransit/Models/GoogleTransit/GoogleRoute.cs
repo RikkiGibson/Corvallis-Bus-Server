@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace CorvallisTransit.Models.GoogleTransit
+﻿namespace CorvallisTransit.Models.GoogleTransit
 {
     /// <summary>
     /// Representation of a CTS Route from Google Transit data.
