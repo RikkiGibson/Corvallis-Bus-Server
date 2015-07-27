@@ -1,0 +1,6 @@
+﻿{
+  "AppSettings": {
+    "RedisCacheConnectionString": "corvallisbus.redis.cache.windows.net,ssl=true,password=u7VehCkNYOxtrELm10+sGBtDsKzKFWi+t/OxHGeB4VY=",
+    "BlobStorageConnectionString": "DefaultEndpointsProtocol=https;AccountName=corvallisbusblobstore;AccountKey=VCxvt9Tsa4ShOuUwofwuxwOOmVmoalnOmMCRHS/Crvn1L0NUGKJWvrVL4Vxa/d60JOPK/Ca8XHh1gOkkxKKQaw=="
+  }
+}
