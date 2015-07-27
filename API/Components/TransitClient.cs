@@ -36,7 +36,7 @@ namespace API.Components
         /// Gets the ETA info for a set of stop IDS.  Performs the calls to get the info in parallel,
         /// aggregating the data into a dictionary.
         /// </summary>
-        public static async Task<object> GetEtas(IEnumerable<string> stopIds)
+        public static async Task<object> GetEtas(List<string> stopIds)
         {
             Dictionary<string, string> toPlatformTag = await CacheManager.GetPlatformTagsAsync();
 
@@ -45,6 +45,19 @@ namespace API.Components
                                        CacheManager.GetEta(toPlatformTag[id]) :
                                        null);
 
+            // If there's only one requested, it's waayyy faster to just do this serially.
+            // Running the AsParallel() query below incurs significant overhead.
+            if (stopIds.Count == 1)
+            {
+                var arrival = getEtaIfTagExists(stopIds.First());
+                var dict = new Dictionary<string, Dictionary<string, int>>();
+
+                dict.Add(arrival.Item1, // The Stop ID acting as the key for this arrival
+                         arrival.Item2?.RouteEstimatedArrivals // The ETAs, transformed into a dictionary of { routeNo, ETA }.
+                                        ?.ToDictionary(route => route.RouteNo,
+                                                       route => route.EstimatedArrivalTime));
+                return dict;
+            }
 
 
             // Extracting the ETA is done as a query run in parallel such that one thread is dedicated to one ETA.

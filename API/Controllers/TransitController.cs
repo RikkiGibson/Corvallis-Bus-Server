@@ -31,7 +31,7 @@ namespace API.Controllers
         public async Task<string> GetETAs(string stopIds)
         {
             var splitStopIds = stopIds.Split(',');
-            var etas = await TransitClient.GetEtas(splitStopIds);
+            var etas = await TransitClient.GetEtas(splitStopIds.ToList());
             return JsonConvert.SerializeObject(etas);
         }
 
