@@ -5,11 +5,10 @@ The backend that powers the best apps for the Corvallis Transit System.
 ## Prerequisites for running
 
 - Visual Studio 2015
-- Azure Account
 
 ## Purpose
 
-To have a more convenient way to get real-time information about the free buses in Corvallis.  Data from CTS (basically, huge chunks of XML) is mapped into some more easily-digestable JSON for different use cases.
+To have a more convenient way to get real-time information about the free buses in Corvallis.  Data from CTS is mapped into some more easily-digestable JSON for different use cases.
 
 ## Disclaimer
 
