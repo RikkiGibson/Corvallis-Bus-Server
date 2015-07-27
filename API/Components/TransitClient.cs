@@ -45,6 +45,8 @@ namespace API.Components
                                        CacheManager.GetEta(toPlatformTag[id]) :
                                        null);
 
+
+
             // Extracting the ETA is done as a query run in parallel such that one thread is dedicated to one ETA.
             // The results are then coalesced into a dictionary where the keys are the requested stop IDs, and the
             // values are also dictionaries.  These sub-dictionaries are a pair of { route, ETA in minutes}, where
