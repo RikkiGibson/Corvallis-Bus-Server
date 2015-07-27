@@ -15,9 +15,12 @@ namespace API.Components
         private const string STOPS_KEY = "stops";
         private const string PLATFORM_TAGS_KEY = "platformTags";
 
+        // Nothing about Configuration is accurate right now, so this is why I'm hard-coding this crap.
+        private const string REDIS_CACHE_CONN_STRING = "corvallisbus.redis.cache.windows.net,ssl=true,password=u7VehCkNYOxtrELm10+sGBtDsKzKFWi+t/OxHGeB4VY=";
+
         private static Lazy<ConnectionMultiplexer> lazyConn = new Lazy<ConnectionMultiplexer>(() =>
         {
-            return ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["RedisCacheConnectionString"]);
+            return ConnectionMultiplexer.Connect(REDIS_CACHE_CONN_STRING);
         });
 
         /// <summary>

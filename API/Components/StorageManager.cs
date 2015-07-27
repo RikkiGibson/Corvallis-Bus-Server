@@ -20,6 +20,9 @@ namespace API.Components
         public const string STOPS_KEY = "stops";
         public const string PLATFORM_TAGS_KEY = "platformTags";
 
+        // Nothing about Configuration is accurate right now, so this is why I'm hard-coding this crap.
+        public const string BLOB_STORAGE_CONN_STRING = "DefaultEndpointsProtocol=https;AccountName=corvallisbusblobstore;AccountKey=VCxvt9Tsa4ShOuUwofwuxwOOmVmoalnOmMCRHS/Crvn1L0NUGKJWvrVL4Vxa/d60JOPK/Ca8XHh1gOkkxKKQaw==";
+
         /// <summary>
         /// Gets the JSON-encoded CTS routes from Azure.
         /// </summary>
@@ -132,7 +135,7 @@ namespace API.Components
         /// </summary>
         private static CloudBlockBlob GetBlockBlob(string blockBlobName)
         {
-            CloudStorageAccount account = CloudStorageAccount.Parse(ConfigurationManager.AppSettings["BlobStorageConnectionString"]);
+            CloudStorageAccount account = CloudStorageAccount.Parse(BLOB_STORAGE_CONN_STRING);
 
             CloudBlobClient client = account.CreateCloudBlobClient();
 
