@@ -15,10 +15,13 @@ namespace API.Components
     /// </summary>
     public static class GoogleTransitImport
     {
+        public static Lazy<Tuple<List<GoogleRoute>, List<GoogleRouteSchedule>>> GoogleRoutes =
+            new Lazy<Tuple<List<GoogleRoute>, List<GoogleRouteSchedule>>>(DoTask);
+        
         /// <summary>
         /// Downloads and interprets the ZIP file CTS uploads for Google.  This is primarily to get route colors and route schedules.
         /// </summary>
-        public static Tuple<List<GoogleRoute>, List<GoogleRouteSchedule>> DoTask()
+        private static Tuple<List<GoogleRoute>, List<GoogleRouteSchedule>> DoTask()
         {
             List<GoogleRoute> routes = null;
             List<GoogleRouteSchedule> schedules = null;
@@ -125,28 +128,18 @@ namespace API.Components
                         stop = line.stop,
                         days = line.days
                     })
-                    .Select(grouping => grouping.Aggregate(new
-                    {
-                        route = grouping.Key.route,
-                        days = grouping.Key.days,
-                        stopSchedules = new GoogleStopSchedule
+                    .Select(grouping => grouping.Aggregate(new List<TimeSpan>(),
+                        (times, time) => { times.Add(time.time); return times; },
+                        times => new
                         {
-                            Name = grouping.Key.stop,
-                            Times = new List<TimeSpan>()
-                        }
-                    }, (result, line) => { result.stopSchedules.Times.Add(line.time); return result; }));
-
-                // This is not really functional programming.
-                foreach (var routeDayStopSchedule in routeDayStopSchedules)
-                {
-                    // For whatever reason a simple sort in place doesn't work.
-                    routeDayStopSchedule.stopSchedules.Times =
-                        routeDayStopSchedule.stopSchedules.Times
-                            .Where(t => t != TimeSpan.Zero)
-                            .Distinct()
-                            .OrderBy(time => time)
-                            .ToList();
-                }
+                            route = grouping.Key.route,
+                            days = grouping.Key.days,
+                            stopSchedules = new GoogleStopSchedule
+                            {
+                                Name = grouping.Key.stop,
+                                Times = times.Distinct().OrderBy(time => time).ToList()
+                            }
+                        }));
 
                 var routeDaySchedules = routeDayStopSchedules
                     .GroupBy(line => new { route = line.route, days = line.days })

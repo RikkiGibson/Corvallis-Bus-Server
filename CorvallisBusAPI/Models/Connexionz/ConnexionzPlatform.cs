@@ -14,9 +14,8 @@ namespace API.Models.Connexionz
             Name = platform.Attribute("Name").Value;
 
             XElement position = platform.Element("Position");
-            double output;
-            Lat = double.TryParse(position.Attribute("Lat").Value, out output) ? output : new double?();
-            Long = double.TryParse(position.Attribute("Long").Value, out output) ? output : new double?();
+            Lat = double.Parse(position.Attribute("Lat").Value);
+            Long = double.Parse(position.Attribute("Long").Value);
         }
 
         /// <summary>
@@ -31,9 +30,9 @@ namespace API.Models.Connexionz
 
         public string Name { get; private set; }
 
-        public double? Lat { get; private set; }
+        public double Lat { get; private set; }
 
-        public double? Long { get; private set; }
+        public double Long { get; private set; }
 
     }
 }

@@ -12,12 +12,18 @@ namespace API.Models
         /// </summary>
         public BusStop() { }
 
+        /// <summary>
+        /// This makes it look like there is little purpose to this type,
+        /// but it's good to get the semantics clear. ConnexionzPlatform is
+        /// something you've just pulled from Connexionz,
+        /// while BusStop is fully processed and ready to serve to clients.
+        /// </summary>
         public BusStop(ConnexionzPlatform platform)
         {
             ID = int.Parse(platform.PlatformNo);
             Name = platform.Name;
-            Lat = platform.Lat.HasValue ? platform.Lat.Value : 0.0;
-            Long = platform.Long.HasValue ? platform.Long.Value : 0.0;
+            Lat = platform.Lat;
+            Long = platform.Long;
         }
 
         /// <summary>

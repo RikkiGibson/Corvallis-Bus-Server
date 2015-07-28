@@ -18,8 +18,10 @@
         /// </summary>
         public string Name { get; private set; }
 
-        public string ConnexionzName =>
-            Name.Replace("BB_", "NO")
+        public string ConnexionzName => ToConnexionzName(Name);
+
+        public static string ToConnexionzName(string googleRouteNo) =>
+            googleRouteNo.Replace("BB_", "NO")
                 .Replace("R", string.Empty);
 
         /// <summary>

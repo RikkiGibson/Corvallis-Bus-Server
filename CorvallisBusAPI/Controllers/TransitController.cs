@@ -38,13 +38,22 @@ namespace API.Controllers
         [Route("tasks/google")]
         public string DoGoogleTask()
         {
-            var googleRoutes = GoogleTransitImport.DoTask();
+            var googleRoutes = GoogleTransitImport.GoogleRoutes.Value;
             if (googleRoutes.Item1.Any())
             {
                 StorageManager.UpdateRoutes(googleRoutes.Item1);
             }
 
             return "Google import successful.";
+        }
+
+        [HttpGet]
+        [Route("arrivalstest")]
+        public string ArrivalsTest()
+        {
+            // TODO: return a value
+            TransitClient.CreateArrivals();
+            return "I don't know man.";
         }
 
         /// <summary>
@@ -54,7 +63,7 @@ namespace API.Controllers
         [Route("tasks/init")]
         public string Init()
         {
-            var googleRoutes = TransitClient.GoogleRoutes.Value.Item1.ToDictionary(r => r.ConnexionzName);
+            var googleRoutes = GoogleTransitImport.GoogleRoutes.Value.Item1.ToDictionary(r => r.ConnexionzName);
 
             var stops = ConnexionzClient.Platforms.Value.Select(p => new BusStop(p)).ToList();
             StorageManager.Put(stops);
@@ -64,6 +73,7 @@ namespace API.Controllers
 
             var platformTags = ConnexionzClient.Platforms.Value.ToDictionary(p => p.PlatformNo, p => p.PlatformTag);
             StorageManager.Put(platformTags);
+
 
             CacheManager.ClearCache();
 

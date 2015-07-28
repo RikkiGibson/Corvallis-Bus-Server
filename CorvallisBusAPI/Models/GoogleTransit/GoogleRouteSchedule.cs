@@ -9,6 +9,8 @@ namespace API.Models.GoogleTransit
     {
         public string RouteNo { get; set; }
 
-        public List<GoogleDaySchedule> Days { get; set;}
+        public List<GoogleDaySchedule> Days { get; set; }
+
+        public string ConnexionzName => GoogleRoute.ToConnexionzName(RouteNo);
     }
 }
