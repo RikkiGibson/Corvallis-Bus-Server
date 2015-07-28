@@ -39,9 +39,9 @@ namespace API.Controllers
         public string DoGoogleTask()
         {
             var googleRoutes = GoogleTransitImport.DoTask();
-            if (googleRoutes.Any())
+            if (googleRoutes.Item1.Any())
             {
-                StorageManager.UpdateRoutes(googleRoutes);
+                StorageManager.UpdateRoutes(googleRoutes.Item1);
             }
 
             return "Google import successful.";
@@ -54,7 +54,7 @@ namespace API.Controllers
         [Route("tasks/init")]
         public string Init()
         {
-            var googleRoutes = TransitClient.GoogleRoutes.Value.ToDictionary(r => r.ConnexionzName);
+            var googleRoutes = TransitClient.GoogleRoutes.Value.Item1.ToDictionary(r => r.ConnexionzName);
 
             var stops = ConnexionzClient.Platforms.Value.Select(p => new BusStop(p)).ToList();
             StorageManager.Put(stops);

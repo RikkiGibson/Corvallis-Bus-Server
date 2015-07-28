@@ -1,4 +1,6 @@
-﻿namespace API.Models.Connexionz
+﻿using System.Collections.Generic;
+
+namespace API.Models.Connexionz
 {
     /// <summary>
     /// Represents one of the platforms along the path of a particular Connexionz route.
@@ -26,6 +28,11 @@
         public bool IsScheduleAdherancePoint { get; private set; }
     }
 
+    /// <summary>
+    /// We are going to suppose that when the same platform appears more than once
+    /// in a path, it's the only one that should appear in the path.
+    /// We are hoping that we don't wipe out a redundant platform where the one we eliminated was the schedule adherance point.
+    /// </summary>
     public class ConnexionzRoutePlatformComparer : IEqualityComparer<ConnexionzRoutePlatform>
     {
         public bool Equals(ConnexionzRoutePlatform x, ConnexionzRoutePlatform y) =>
