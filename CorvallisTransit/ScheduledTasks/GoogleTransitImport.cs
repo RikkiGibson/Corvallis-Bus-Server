@@ -19,26 +19,28 @@ namespace CorvallisTransit.Components
         /// <summary>
         /// Downloads and interprets the ZIP file CTS uploads for Google.  This is primarily to get route colors and route schedules.
         /// </summary>
-        public static List<GoogleRoute> DoTask()
+        public static Tuple<List<GoogleRoute>, List<GoogleRouteSchedule>> DoTask()
         {
             List<GoogleRoute> routes = null;
+            List<GoogleRouteSchedule> schedules = null;
 
             using (var archive = new ZipArchive(GetZipFile()))
             {
-                foreach (var entry in archive.Entries)
+                var routesEntry = archive.GetEntry("routes.txt");
+                if (routesEntry == null)
                 {
-                    if (entry.FullName.EndsWith("routes.txt"))
-                    {
-                        routes = ParseRouteCSV(entry);
-                    }
-                    else if (entry.FullName.EndsWith("stop_times.txt"))
-                    {
-                        ParseScheduleCSV(entry);
-                    }
+                    throw new FileNotFoundException("The Google Transit archive did not contain routes.txt.");
                 }
+                var scheduleEntry = archive.GetEntry("stop_times.txt");
+                if (scheduleEntry == null)
+                {
+                    throw new FileNotFoundException("The Google Transit archive did not contain stop_times.txt.");
+                }
+                routes = ParseRouteCSV(routesEntry);
+                schedules = ParseScheduleCSV(scheduleEntry);
             }
 
-            return routes ?? new List<GoogleRoute>();
+            return Tuple.Create(routes, schedules);
         }
 
         private static IEnumerable<string> ReadLines(StreamReader reader)
@@ -99,7 +101,7 @@ namespace CorvallisTransit.Components
                 0);
         }
 
-        private static void ParseScheduleCSV(ZipArchiveEntry entry)
+        private static List<GoogleRouteSchedule> ParseScheduleCSV(ZipArchiveEntry entry)
         {
             using (var reader = new StreamReader(entry.Open()))
             {
@@ -119,11 +121,11 @@ namespace CorvallisTransit.Components
 
                 // Time to turn some totally flat data into totally structured data.
                 var routeDayStopSchedules = flatSchedule.GroupBy(line => new
-                {
-                    route = line.route,
-                    stop = line.stop,
-                    days = line.days
-                })
+                    {
+                        route = line.route,
+                        stop = line.stop,
+                        days = line.days
+                    })
                     .Select(grouping => grouping.Aggregate(new
                     {
                         route = grouping.Key.route,
@@ -167,6 +169,8 @@ namespace CorvallisTransit.Components
                         RouteNo = grouping.Key,
                         Days = new List<GoogleDaySchedule>()
                     }, (result, line) => { result.Days.Add(line.daySchedule); return result; }));
+
+                return routeSchedules.ToList();
             }
         }
 

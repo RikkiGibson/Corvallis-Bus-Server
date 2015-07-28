@@ -30,4 +30,13 @@ namespace CorvallisTransit.Models.Connexionz
         /// </summary>
         public bool IsScheduleAdherancePoint { get; private set; }
     }
+
+    public class ConnexionzRoutePlatformComparer : IEqualityComparer<ConnexionzRoutePlatform>
+    {
+        public bool Equals(ConnexionzRoutePlatform x, ConnexionzRoutePlatform y) =>
+            x.PlatformId == y.PlatformId;
+
+        public int GetHashCode(ConnexionzRoutePlatform obj) =>
+            obj.GetHashCode();
+    }
 }

@@ -23,7 +23,8 @@ namespace CorvallisTransit.Components
     {
         public static List<BusRoute> Routes { get; private set; }
 
-        public static Lazy<List<GoogleRoute>> GoogleRoutes = new Lazy<List<GoogleRoute>>(GoogleTransitImport.DoTask);
+        public static Lazy<Tuple<List<GoogleRoute>, List<GoogleRouteSchedule>>> GoogleRoutes =
+            new Lazy<Tuple<List<GoogleRoute>, List<GoogleRouteSchedule>>>(GoogleTransitImport.DoTask);
 
         /// <summary>
         /// Performs route and stop lookups and builds the static data used in the /static route.

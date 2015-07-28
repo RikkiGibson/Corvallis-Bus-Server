@@ -24,6 +24,7 @@ namespace CorvallisTransit.Models.Connexionz
 
             Path = longestPattern.Platform
                    .Select(p => new ConnexionzRoutePlatform(p))
+                   .Distinct()
                    .ToList();
         }
 
