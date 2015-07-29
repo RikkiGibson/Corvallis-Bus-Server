@@ -78,3 +78,49 @@ Sample Url: http://corvallisbus.azurewebsites.net/transit/eta/14244,13265
   }
 }
 ```
+
+###/transit/schedule/
+
+- Input: One or more stop IDs
+- Output:
+
+A JSON dictionary where the keys are Stop IDs and the values are dictionaries of ``{ Route No : <array_of_scheduled_times> }``.
+
+```
+{
+  "14244": {
+    "1": [
+      
+    ],
+    "2": [
+      "2015-07-29 19:25"
+    ],
+    "4": [
+      
+    ]
+  },
+  "13265": {
+    "1": [
+      
+    ],
+    "2": [
+      "2015-07-29 19:25"
+    ],
+    "3": [
+      
+    ],
+    "5": [
+      "2015-07-29 19:25",
+      "2015-07-29 19:55",
+      "2015-07-29 20:25",
+      "2015-07-29 20:55"
+    ],
+    "7": [
+      "2015-07-29 19:30"
+    ],
+    "8": [
+      
+    ]
+  }
+}
+```
