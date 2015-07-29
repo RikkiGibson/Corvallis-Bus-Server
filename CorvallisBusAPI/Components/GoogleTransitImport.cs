@@ -33,11 +33,13 @@ namespace API.Components
                 {
                     throw new FileNotFoundException("The Google Transit archive did not contain routes.txt.");
                 }
+
                 var scheduleEntry = archive.GetEntry("stop_times.txt");
                 if (scheduleEntry == null)
                 {
                     throw new FileNotFoundException("The Google Transit archive did not contain stop_times.txt.");
                 }
+
                 routes = ParseRouteCSV(routesEntry);
                 schedules = ParseScheduleCSV(scheduleEntry);
             }

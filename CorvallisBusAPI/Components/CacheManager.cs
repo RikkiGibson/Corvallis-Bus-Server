@@ -17,7 +17,7 @@ namespace API.Components
         private const string SCHEDULE_KEY = "schedule";
 
         // Nothing about Configuration is accurate right now, so this is why I'm hard-coding this crap.
-        private const string REDIS_CACHE_CONN_STRING = "corvallisbus.redis.cache.windows.net,ssl=true,password=u7VehCkNYOxtrELm10+sGBtDsKzKFWi+t/OxHGeB4VY=";
+        private const string REDIS_CACHE_CONN_STRING = "corvallisbus.redis.cache.windows.net,ssl=true,password=E2EYXLCi5SKRdlHeQebFXIxT7EJxCGjWWGBW5uNy0Ig=";
 
         private static Lazy<ConnectionMultiplexer> lazyConn = new Lazy<ConnectionMultiplexer>(() =>
         {

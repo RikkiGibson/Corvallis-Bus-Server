@@ -34,10 +34,10 @@ namespace API.Components
             var platforms = ConnexionzClient.Platforms.Value;
             var routes = ConnexionzClient.Routes.Value;
 
-            return platforms.Select(p => new BusStop(p,
-                routes.Where(r => r.Path.Any(rp => rp.PlatformId == int.Parse(p.PlatformNo)))
-                      .Select(r => r.RouteNo)
-                      .ToList()))
+            return platforms.Select(p => 
+                    new BusStop(p, routes.Where(r => r.Path.Any(rp => rp.PlatformId == int.Parse(p.PlatformNo)))
+                                         .Select(r => r.RouteNo)
+                                         .ToList()))
                             .ToList();
         }
 
@@ -48,6 +48,9 @@ namespace API.Components
             return routes.Select(r => new BusRoute(r, googleRoutes)).ToList();
         }
 
+        /// <summary>
+        /// Lazy-loaded association between Platform Numbers (Think Stop ID) and Platform Tags (Connexionz-used value to get ETA).
+        /// </summary>
         public static Dictionary<string, string> CreatePlatformTags() =>
             ConnexionzClient.Platforms.Value.ToDictionary(p => p.PlatformNo, p => p.PlatformTag);
 
@@ -97,8 +100,9 @@ namespace API.Components
             return stopIds.AsParallel()
                           .Select(getEtaIfTagExists)
                           .ToDictionary(eta => eta.Item1, // The Stop ID for this ETA
-                                        eta => eta.Item2?.RouteEstimatedArrivals?.ToDictionary(route => route.RouteNo, // The dictionary of { Route Number, ETA } for the above Stop ID.
-                                                                                               route => route.EstimatedArrivalTime));
+                                        eta => eta.Item2?.RouteEstimatedArrivals
+                                                          ?.ToDictionary(route => route.RouteNo, // The dictionary of { Route Number, ETA } for the above Stop ID.
+                                                                         route => route.EstimatedArrivalTime));
         }
 
         /// <summary>

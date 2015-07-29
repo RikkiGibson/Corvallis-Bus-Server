@@ -19,13 +19,13 @@ namespace API.Models
         /// something you've just pulled from Connexionz,
         /// while BusStop is fully processed and ready to serve to clients.
         /// </summary>
-        public BusStop(ConnexionzPlatform platform, List<string> routes)
+        public BusStop(ConnexionzPlatform platform, List<string> routeNames)
         {
             ID = int.Parse(platform.PlatformNo);
             Name = platform.Name;
             Lat = platform.Lat;
             Long = platform.Long;
-            Routes = routes;
+            RouteNames = routeNames;
         }
 
         /// <summary>
@@ -48,6 +48,9 @@ namespace API.Models
         /// </summary>
         public double Long { get; set; }
 
-        public List<string> Routes { get; set; }
+        /// <summary>
+        /// List of route names which arrive at this stop.
+        /// </summary>
+        public List<string> RouteNames { get; set; }
     }
 }
