@@ -3,20 +3,32 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Newtonsoft.Json;
 using API.Components;
-using API.Models;
+using Microsoft.Framework.OptionsModel;
 
 namespace API.Controllers
 {
     [Route("[controller]")]
     public class TransitController : Controller
     {
+        private CacheManager _cacheManager;
+        private StorageManager _storageManager;
+
+        /// <summary>
+        /// Dependency-injected application settings which are then passed on to other components.
+        /// </summary>
+        public TransitController(IOptions<AppSettings> appSettings)
+        {
+            _storageManager = new StorageManager(appSettings.Options);
+            _cacheManager = new CacheManager(appSettings.Options, _storageManager);
+        }
+
         [HttpGet]
         [Route("static")]
         public async Task<string> GetStaticData()
         {
             // TODO: ideally, there's no construction involved in our static payloads.
             // we have the JSON string in a cache or blob and that string is our response, with no muss or fuss.
-            var staticData = await TransitClient.GetStaticData();
+            var staticData = await TransitClient.GetStaticData(_cacheManager);
             return JsonConvert.SerializeObject(staticData);
         }
 
@@ -29,7 +41,7 @@ namespace API.Controllers
         public async Task<string> GetETAs(string stopIds)
         {
             var splitStopIds = stopIds.Split(',');
-            var etas = await TransitClient.GetEtas(splitStopIds.ToList());
+            var etas = await TransitClient.GetEtas(_cacheManager, splitStopIds.ToList());
             return JsonConvert.SerializeObject(etas);
         }
         
@@ -39,7 +51,7 @@ namespace API.Controllers
         {
             string[] pieces = stopIds.Split(',');
             
-            var todaySchedule = await TransitClient.GetSchedule(pieces);
+            var todaySchedule = await TransitClient.GetSchedule(_cacheManager, pieces);
             return JsonConvert.SerializeObject(todaySchedule);
         }
 
@@ -53,7 +65,7 @@ namespace API.Controllers
             var googleRoutes = GoogleTransitImport.GoogleRoutes.Value;
             if (googleRoutes.Item1.Any())
             {
-                StorageManager.UpdateRoutes(googleRoutes.Item1);
+                _storageManager.UpdateRoutes(googleRoutes.Item1);
             }
 
             return "Google import successful.";
@@ -67,18 +79,18 @@ namespace API.Controllers
         public string Init()
         {
             var stops = TransitClient.CreateStops();
-            StorageManager.Put(stops);
+            _storageManager.Put(stops);
 
             var routes = TransitClient.CreateRoutes();
-            StorageManager.Put(routes);
+            _storageManager.Put(routes);
 
             var platformTags = TransitClient.CreatePlatformTags();
-            StorageManager.Put(platformTags);
+            _storageManager.Put(platformTags);
 
             var schedule = TransitClient.CreateSchedule();
-            StorageManager.Put(schedule);
+            _storageManager.Put(schedule);
 
-            CacheManager.ClearCache();
+            _cacheManager.ClearCache();
 
             return "Init job successful.";
         }

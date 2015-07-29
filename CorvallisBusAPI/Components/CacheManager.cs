@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace API.Components
 {
-    public static class CacheManager
+    public class CacheManager
     {
         // todo: centralize this
         private const string ROUTES_KEY = "routes";
@@ -16,40 +16,62 @@ namespace API.Components
         private const string PLATFORM_TAGS_KEY = "platformTags";
         private const string SCHEDULE_KEY = "schedule";
 
-        // Nothing about Configuration is accurate right now, so this is why I'm hard-coding this crap.
-        private const string REDIS_CACHE_CONN_STRING = "corvallisbus.redis.cache.windows.net,ssl=true,password=E2EYXLCi5SKRdlHeQebFXIxT7EJxCGjWWGBW5uNy0Ig=";
+        private string _connectionString;
+        private string _routeskey;
+        private string _stopsKey;
+        private string _platformsKey;
+        private string _scheduleKey;
 
-        private static Lazy<ConnectionMultiplexer> lazyConn = new Lazy<ConnectionMultiplexer>(() =>
-        {
-            return ConnectionMultiplexer.Connect(REDIS_CACHE_CONN_STRING);
-        });
+        private ConnectionMultiplexer _conn;
+        private StorageManager _storageManager;
 
         /// <summary>
         /// Connection to the Redis cache.
         /// </summary>
-        public static ConnectionMultiplexer Connection => lazyConn.Value;
+        private ConnectionMultiplexer Connection
+        {
+            get
+            {
+                if (_conn == null)
+                {
+                    _conn = ConnectionMultiplexer.Connect(_connectionString);
+                }
 
-        internal static void ClearCache()
+                return _conn;
+            }
+        }
+
+        public CacheManager(AppSettings appSettings, StorageManager storageManager)
+        {
+            _connectionString = appSettings.RedisConnectionString;
+            _routeskey = appSettings.RoutesKey;
+            _stopsKey = appSettings.StopsKey;
+            _platformsKey = appSettings.PlatformsKey;
+            _scheduleKey = appSettings.SchedulesKey;
+            _storageManager = storageManager;
+        }
+
+        internal void ClearCache()
         {
             var cache = Connection.GetDatabase();
 
-            cache.StringSet(ROUTES_KEY, string.Empty);
-            cache.StringSet(STOPS_KEY, string.Empty);
-            cache.StringSet(PLATFORM_TAGS_KEY, string.Empty);
+            cache.StringSet(_routeskey, string.Empty);
+            cache.StringSet(_stopsKey, string.Empty);
+            cache.StringSet(_platformsKey, string.Empty);
         }
 
         /// <summary>
         /// Gets static routes from the cache.  Grabs the blob data if the cache is empty.
         /// </summary>
-        public static async Task<List<BusRoute>> GetStaticRoutesAsync()
+        public async Task<List<BusRoute>> GetStaticRoutesAsync()
         {
             var cache = Connection.GetDatabase();
 
             var json = await cache.StringGetAsync(ROUTES_KEY);
             if (string.IsNullOrEmpty(json))
             {
-                json = await StorageManager.GetStaticRouteDataAsync();
-                cache.StringSet(ROUTES_KEY, json);
+                json = await _storageManager.GetStaticRouteDataAsync();
+                cache.StringSet(_routeskey, json);
             }
 
             return JsonConvert.DeserializeObject<List<BusRoute>>(json);
@@ -59,15 +81,15 @@ namespace API.Components
         /// Gets static stops from the cache.  Grabs the blob data if the cache is empty.
         /// </summary>
         /// <returns></returns>
-        public static async Task<List<BusStop>> GetStaticStopsAsync()
+        public async Task<List<BusStop>> GetStaticStopsAsync()
         {
             var cache = Connection.GetDatabase();
 
             var json = await cache.StringGetAsync(STOPS_KEY);
             if (string.IsNullOrEmpty(json))
             {
-                json = await StorageManager.GetStaticStopDataAsync();
-                cache.StringSet(STOPS_KEY, json);
+                json = await _storageManager.GetStaticStopDataAsync();
+                cache.StringSet(_stopsKey, json);
             }
 
             return JsonConvert.DeserializeObject<List<BusStop>>(json);
@@ -76,29 +98,32 @@ namespace API.Components
         /// <summary>
         /// Gets the platform tag dictionary from the cache.  Grabs the blob data if the cache is empty.
         /// </summary>
-        public static async Task<Dictionary<string, string>> GetPlatformTagsAsync()
+        public async Task<Dictionary<string, string>> GetPlatformTagsAsync()
         {
             var cache = Connection.GetDatabase();
 
             var json = await cache.StringGetAsync(PLATFORM_TAGS_KEY);
             if (string.IsNullOrWhiteSpace(json))
             {
-                json = await StorageManager.GetPlatformTagsAsync();
-                cache.StringSet(PLATFORM_TAGS_KEY, json);
+                json = await _storageManager.GetPlatformTagsAsync();
+                cache.StringSet(_platformsKey, json);
             }
 
             return JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
         }
 
-        public static async Task<Dictionary<string, IEnumerable<BusStopRouteSchedule>>> GetScheduleAsync()
+        /// <summary>
+        /// Gets schedule data from the cache.  Handles entry management.
+        /// </summary>
+        public async Task<Dictionary<string, IEnumerable<BusStopRouteSchedule>>> GetScheduleAsync()
         {
             var cache = Connection.GetDatabase();
 
             var json = await cache.StringGetAsync(SCHEDULE_KEY);
             if (string.IsNullOrWhiteSpace(json))
             {
-                json = await StorageManager.GetScheduleAsync();
-                cache.StringSet(SCHEDULE_KEY, json);
+                json = await _storageManager.GetScheduleAsync();
+                cache.StringSet(_scheduleKey, json);
             }
 
             return JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<BusStopRouteSchedule>>>(json);
@@ -107,7 +132,7 @@ namespace API.Components
         /// <summary>
         /// Extracts a platform ETA from the cache.  Handles entry management.  Note that this is a synchronous call!
         /// </summary>
-        public static ConnexionzPlatformET GetEta(string platformTag)
+        public ConnexionzPlatformET GetEta(string platformTag)
         {
             var cache = Connection.GetDatabase();
 
@@ -121,7 +146,7 @@ namespace API.Components
             else
             {
                 arrival = JsonConvert.DeserializeObject<ConnexionzPlatformET>(json);
-                
+
                 // It's save to assume that a bus will be arriving to a different stop
                 // after one minute, so we update when that is the case.
                 if ((DateTime.Now - arrival.LastUpdated).Minutes >= 1)

@@ -17,10 +17,10 @@ namespace API.Components
         /// <summary>
         /// Performs route and stop lookups and builds the static data used in the /static route.
         /// </summary>
-        public static async Task<object> GetStaticData()
+        public static async Task<object> GetStaticData(CacheManager cacheManager)
         {
-            var routes = await CacheManager.GetStaticRoutesAsync();
-            var stops = await CacheManager.GetStaticStopsAsync();
+            var routes = await cacheManager.GetStaticRoutesAsync();
+            var stops = await cacheManager.GetStaticStopsAsync();
 
             return new
             {
@@ -55,9 +55,9 @@ namespace API.Components
             ConnexionzClient.Platforms.Value.ToDictionary(p => p.PlatformNo, p => p.PlatformTag);
 
         // TODO: merge ETAs with schedule
-        public static async Task<Dictionary<string, Dictionary<string, IEnumerable<string>>>> GetSchedule(IEnumerable<string> stopIds)
+        public static async Task<Dictionary<string, Dictionary<string, IEnumerable<string>>>> GetSchedule(CacheManager cacheManager, IEnumerable<string> stopIds)
         {
-            var schedule = await CacheManager.GetScheduleAsync();
+            var schedule = await cacheManager.GetScheduleAsync();
             var todaySchedule = stopIds.Where(schedule.ContainsKey).ToDictionary(p => p,
                 p => schedule[p].ToDictionary(s => s.RouteNo,
                     s => s.DaySchedules.First(ds => DaysOfWeekUtils.IsToday(ds.Days)).DateStrings));
@@ -69,13 +69,13 @@ namespace API.Components
         /// aggregating the data into a dictionary.
         /// The outer dictionary takes a route number and gives a dictionary that takes a stop ID to an ETA.
         /// </summary>
-        public static async Task<Dictionary<string, Dictionary<string, int>>> GetEtas(List<string> stopIds)
+        public static async Task<Dictionary<string, Dictionary<string, int>>> GetEtas(CacheManager cacheManager, List<string> stopIds)
         {
-            Dictionary<string, string> toPlatformTag = await CacheManager.GetPlatformTagsAsync();
+            Dictionary<string, string> toPlatformTag = await cacheManager.GetPlatformTagsAsync();
 
             Func<string, Tuple<string, ConnexionzPlatformET>> getEtaIfTagExists =
                 id => Tuple.Create(id, toPlatformTag.ContainsKey(id) ?
-                                       CacheManager.GetEta(toPlatformTag[id]) :
+                                       cacheManager.GetEta(toPlatformTag[id]) :
                                        null);
 
             // If there's only one requested, it's waayyy faster to just do this serially.
@@ -88,7 +88,9 @@ namespace API.Components
                 dict.Add(arrival.Item1, // The Stop ID acting as the key for this arrival
                          arrival.Item2?.RouteEstimatedArrivals // The ETAs, transformed into a dictionary of { routeNo, ETA }.
                                         ?.ToDictionary(route => route.RouteNo,
-                                                       route => route.EstimatedArrivalTime));
+                                                       route => route.EstimatedArrivalTime)
+                         ?? new Dictionary<string, int>());
+
                 return dict;
             }
 
@@ -102,7 +104,8 @@ namespace API.Components
                           .ToDictionary(eta => eta.Item1, // The Stop ID for this ETA
                                         eta => eta.Item2?.RouteEstimatedArrivals
                                                           ?.ToDictionary(route => route.RouteNo, // The dictionary of { Route Number, ETA } for the above Stop ID.
-                                                                         route => route.EstimatedArrivalTime));
+                                                                         route => route.EstimatedArrivalTime)
+                                               ?? new Dictionary<string, int>());
         }
 
         /// <summary>
