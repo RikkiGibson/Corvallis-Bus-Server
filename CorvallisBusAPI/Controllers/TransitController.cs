@@ -14,6 +14,8 @@ namespace API.Controllers
         [Route("static")]
         public async Task<string> GetStaticData()
         {
+            // TODO: ideally, there's no construction involved in our static payloads.
+            // we have the JSON string in a cache or blob and that string is our response, with no muss or fuss.
             var staticData = await TransitClient.GetStaticData();
             return JsonConvert.SerializeObject(staticData);
         }
@@ -29,6 +31,16 @@ namespace API.Controllers
             var splitStopIds = stopIds.Split(',');
             var etas = await TransitClient.GetEtas(splitStopIds.ToList());
             return JsonConvert.SerializeObject(etas);
+        }
+        
+        [HttpGet]
+        [Route("schedule/{stopIds}")]
+        public async Task<string> GetSchedule(string stopIds)
+        {
+            string[] pieces = stopIds.Split(',');
+            
+            var todaySchedule = await TransitClient.GetSchedule(pieces);
+            return JsonConvert.SerializeObject(todaySchedule);
         }
 
         /// <summary>
@@ -47,18 +59,6 @@ namespace API.Controllers
             return "Google import successful.";
         }
 
-        [HttpGet]
-        [Route("schedule/{stopIds}")]
-        public async Task<string> GetSchedule(string stopIds)
-        {
-            string[] pieces = stopIds.Split(',');
-            var schedule = await CacheManager.GetScheduleAsync();
-            var todaySchedule = pieces.Where(schedule.ContainsKey).ToDictionary(p => p,
-                p => schedule[p].ToDictionary(s => s.RouteNo,
-                    s => s.DaySchedules.First(ds => DaysOfWeekUtils.IsToday(ds.Days)).DateStrings));
-            return JsonConvert.SerializeObject(todaySchedule);
-        }
-
         /// <summary>
         /// Performs a first-time setup and import of static data.
         /// </summary>
@@ -66,20 +66,17 @@ namespace API.Controllers
         [Route("tasks/init")]
         public string Init()
         {
-            var googleRoutes = GoogleTransitImport.GoogleRoutes.Value.Item1.ToDictionary(r => r.ConnexionzName);
-
-            var stops = ConnexionzClient.Platforms.Value.Select(p => new BusStop(p)).ToList();
+            var stops = TransitClient.CreateStops();
             StorageManager.Put(stops);
 
-            var routes = ConnexionzClient.Routes.Value.Select(r => new BusRoute(r, googleRoutes)).ToList();
+            var routes = TransitClient.CreateRoutes();
             StorageManager.Put(routes);
 
-            var platformTags = ConnexionzClient.Platforms.Value.ToDictionary(p => p.PlatformNo, p => p.PlatformTag);
+            var platformTags = TransitClient.CreatePlatformTags();
             StorageManager.Put(platformTags);
 
             var schedule = TransitClient.CreateSchedule();
             StorageManager.Put(schedule);
-
 
             CacheManager.ClearCache();
 

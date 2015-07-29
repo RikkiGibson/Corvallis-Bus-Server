@@ -9,8 +9,8 @@ using API.Models.GoogleTransit;
 namespace API.Components
 {
     /// <summary>
-    /// Merges data obtained from Connexionz and Google Transit and making
-    /// it ready for delivery for clients.
+    /// Merges data obtained from Connexionz and Google Transit
+    /// and makes it ready for delivery to clients.
     /// </summary>
     public static class TransitClient
     {
@@ -27,6 +27,38 @@ namespace API.Components
                 routes = routes.ToDictionary(r => r.RouteNo),
                 stops = stops.ToDictionary(s => s.ID)
             };
+        }
+
+        public static List<BusStop> CreateStops()
+        {
+            var platforms = ConnexionzClient.Platforms.Value;
+            var routes = ConnexionzClient.Routes.Value;
+
+            return platforms.Select(p => new BusStop(p,
+                routes.Where(r => r.Path.Any(rp => rp.PlatformId == int.Parse(p.PlatformNo)))
+                      .Select(r => r.RouteNo)
+                      .ToList()))
+                            .ToList();
+        }
+
+        public static List<BusRoute> CreateRoutes()
+        {
+            var googleRoutes = GoogleTransitImport.GoogleRoutes.Value.Item1.ToDictionary(gr => gr.ConnexionzName);
+            var routes = ConnexionzClient.Routes.Value;
+            return routes.Select(r => new BusRoute(r, googleRoutes)).ToList();
+        }
+
+        public static Dictionary<string, string> CreatePlatformTags() =>
+            ConnexionzClient.Platforms.Value.ToDictionary(p => p.PlatformNo, p => p.PlatformTag);
+
+        // TODO: merge ETAs with schedule
+        public static async Task<Dictionary<string, Dictionary<string, IEnumerable<string>>>> GetSchedule(IEnumerable<string> stopIds)
+        {
+            var schedule = await CacheManager.GetScheduleAsync();
+            var todaySchedule = stopIds.Where(schedule.ContainsKey).ToDictionary(p => p,
+                p => schedule[p].ToDictionary(s => s.RouteNo,
+                    s => s.DaySchedules.First(ds => DaysOfWeekUtils.IsToday(ds.Days)).DateStrings));
+            return todaySchedule;
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using API.Models.Connexionz;
+using System.Collections.Generic;
 
 namespace API.Models
 {
@@ -18,12 +19,13 @@ namespace API.Models
         /// something you've just pulled from Connexionz,
         /// while BusStop is fully processed and ready to serve to clients.
         /// </summary>
-        public BusStop(ConnexionzPlatform platform)
+        public BusStop(ConnexionzPlatform platform, List<string> routes)
         {
             ID = int.Parse(platform.PlatformNo);
             Name = platform.Name;
             Lat = platform.Lat;
             Long = platform.Long;
+            Routes = routes;
         }
 
         /// <summary>
@@ -45,5 +47,7 @@ namespace API.Models
         /// The longitude value for the stop (between -180 and 180 degrees).
         /// </summary>
         public double Long { get; set; }
+
+        public List<string> Routes { get; set; }
     }
 }
