@@ -24,7 +24,7 @@ namespace API.Models.Connexionz
 
             Path = longestPattern.Platform
                    .Select(p => new ConnexionzRoutePlatform(p))
-                   .Distinct()
+                   .Distinct(ConnexionzRoutePlatformComparer.Instance)
                    .ToList();
         }
 

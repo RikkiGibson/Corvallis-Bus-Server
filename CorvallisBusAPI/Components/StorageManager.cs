@@ -18,6 +18,7 @@ namespace API.Components
         public const string ROUTES_KEY = "routes";
         public const string STOPS_KEY = "stops";
         public const string PLATFORM_TAGS_KEY = "platformTags";
+        public const string SCHEDULE_KEY = "schedule";
 
         // Nothing about Configuration is accurate right now, so this is why I'm hard-coding this crap.
         public const string BLOB_STORAGE_CONN_STRING = "DefaultEndpointsProtocol=https;AccountName=corvallisbus;AccountKey=vogmmb7EQaL7smA1V7jpR6530A/HQrU9PsgGABy0mVBM5fRXSbhphvGm456az7L+mYWwvyJ7suD3sudfM8MCiQ==";
@@ -44,6 +45,12 @@ namespace API.Components
         public static async Task<string> GetPlatformTagsAsync()
         {
             var blob = GetBlockBlob(PLATFORM_TAGS_KEY);
+            return await blob.DownloadTextAsync();
+        }
+
+        public static async Task<string> GetScheduleAsync()
+        {
+            var blob = GetBlockBlob(SCHEDULE_KEY);
             return await blob.DownloadTextAsync();
         }
 
@@ -126,6 +133,20 @@ namespace API.Components
             CloudBlockBlob blob = GetBlockBlob(PLATFORM_TAGS_KEY);
 
             string json = JsonConvert.SerializeObject(platformTags);
+
+            blob.UploadText(json);
+        }
+
+        public static void Put(Dictionary<string, IEnumerable<BusStopRouteSchedule>> schedule)
+        {
+            if (schedule == null || !schedule.Any())
+            {
+                throw new ArgumentNullException(nameof(schedule), "An empty schedule can't be put in the datastore.");
+            }
+
+            CloudBlockBlob blob = GetBlockBlob(SCHEDULE_KEY);
+
+            string json = JsonConvert.SerializeObject(schedule);
 
             blob.UploadText(json);
         }

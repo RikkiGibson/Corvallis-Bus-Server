@@ -117,6 +117,7 @@ namespace API.Components
                     {
                         route = m_routePattern.Match(line[0]).Groups[1].Value,
                         stop = line[3],
+                        order = line[4],
                         days = DaysOfWeekUtils.GetDaysOfWeek(line[0]),
                         time = ToTimeSpan(line[1].Replace("\"", string.Empty))
                     });
@@ -126,6 +127,9 @@ namespace API.Components
                     {
                         route = line.route,
                         stop = line.stop,
+                        // stops can appear more than once in a route (particularly at the very beginning and very end)
+                        // we want to separate each section of the schedule in which the same stop appears.
+                        order = line.order,
                         days = line.days
                     })
                     .Select(grouping => grouping.Aggregate(new List<TimeSpan>(),

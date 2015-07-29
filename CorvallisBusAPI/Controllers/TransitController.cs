@@ -48,12 +48,15 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("arrivalstest")]
-        public string ArrivalsTest()
+        [Route("schedule/{stopIds}")]
+        public async Task<string> GetSchedule(string stopIds)
         {
-            // TODO: return a value
-            TransitClient.CreateArrivals();
-            return "I don't know man.";
+            string[] pieces = stopIds.Split(',');
+            var schedule = await CacheManager.GetScheduleAsync();
+            var todaySchedule = pieces.Where(schedule.ContainsKey).ToDictionary(p => p,
+                p => schedule[p].ToDictionary(s => s.RouteNo,
+                    s => s.DaySchedules.First(ds => DaysOfWeekUtils.IsToday(ds.Days)).DateStrings));
+            return JsonConvert.SerializeObject(todaySchedule);
         }
 
         /// <summary>
@@ -73,6 +76,9 @@ namespace API.Controllers
 
             var platformTags = ConnexionzClient.Platforms.Value.ToDictionary(p => p.PlatformNo, p => p.PlatformTag);
             StorageManager.Put(platformTags);
+
+            var schedule = TransitClient.CreateSchedule();
+            StorageManager.Put(schedule);
 
 
             CacheManager.ClearCache();

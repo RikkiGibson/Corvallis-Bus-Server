@@ -10,9 +10,11 @@ namespace API.Components
 {
     public static class CacheManager
     {
+        // todo: centralize this
         private const string ROUTES_KEY = "routes";
         private const string STOPS_KEY = "stops";
         private const string PLATFORM_TAGS_KEY = "platformTags";
+        private const string SCHEDULE_KEY = "schedule";
 
         // Nothing about Configuration is accurate right now, so this is why I'm hard-coding this crap.
         private const string REDIS_CACHE_CONN_STRING = "corvallisbus.redis.cache.windows.net,ssl=true,password=u7VehCkNYOxtrELm10+sGBtDsKzKFWi+t/OxHGeB4VY=";
@@ -86,6 +88,20 @@ namespace API.Components
             }
 
             return JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+        }
+
+        public static async Task<Dictionary<string, IEnumerable<BusStopRouteSchedule>>> GetScheduleAsync()
+        {
+            var cache = Connection.GetDatabase();
+
+            var json = await cache.StringGetAsync(SCHEDULE_KEY);
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                json = await StorageManager.GetScheduleAsync();
+                cache.StringSet(SCHEDULE_KEY, json);
+            }
+
+            return JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<BusStopRouteSchedule>>>(json);
         }
 
         /// <summary>
