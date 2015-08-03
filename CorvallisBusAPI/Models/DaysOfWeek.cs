@@ -87,6 +87,10 @@ namespace API.Models
                 ? DateTime.Today.AddHours(-4)
                 : DateTime.Today;
 
+            // Running locally probably uses whatever timezone my PC uses,
+            // but running on Azure uses UTC, so we need to convert.
+            time = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(time, "Pacific Standard Time");
+
             return (ToDaysOfWeek(time.DayOfWeek) & days) != DaysOfWeek.None;
         }
     }

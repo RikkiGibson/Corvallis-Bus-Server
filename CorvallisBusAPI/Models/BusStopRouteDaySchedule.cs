@@ -14,9 +14,15 @@ namespace API.Models
 
         public IEnumerable<TimeSpan> Times { get; set; }
 
-        public IEnumerable<string> DateStrings =>
-            Times.Select(t => DateTime.Today.Add(t))
-                 .Where(dt => dt > DateTime.Now)
-                 .Select(dt => dt.ToString("yyyy-MM-dd HH:mm"));
+        public IEnumerable<string> DateStrings
+        {
+            get
+            {
+                var pacificNow = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, "Pacific Standard Time");
+                return Times.Select(t => DateTime.Today.Add(t))
+                    .Where(dt => dt > pacificNow)
+                    .Select(dt => dt.ToString("yyyy-MM-dd HH:mm zzz"));
+            }
+        }
     }
 }
