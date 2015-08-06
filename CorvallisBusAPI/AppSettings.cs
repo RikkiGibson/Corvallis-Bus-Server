@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace API
+﻿namespace API
 {
+    /// <summary>
+    /// Strongly-typed representation of the API's configurable settings.
+    /// 
+    /// This is then injected into the controller.
+    /// </summary>
     public class AppSettings
     {
         public string BlobStorageConnectionString { get; set; }
