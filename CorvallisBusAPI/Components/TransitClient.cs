@@ -53,14 +53,47 @@ namespace API.Components
         /// </summary>
         public static Dictionary<string, string> CreatePlatformTags() =>
             ConnexionzClient.Platforms.Value.ToDictionary(p => p.PlatformNo, p => p.PlatformTag);
-
-        // TODO: merge ETAs with schedule
+        
+        /// <summary>
+        /// Returns the bus schedule for the given stop IDs, incorporating the ETA from Connexionz.
+        /// </summary>
         public static async Task<Dictionary<string, Dictionary<string, IEnumerable<string>>>> GetSchedule(CacheManager cacheManager, IEnumerable<string> stopIds)
         {
+            // This is a good candidate for TDD -- maybe time to actually create the IBusRepository.
             var schedule = await cacheManager.GetScheduleAsync();
-            var todaySchedule = stopIds.Where(schedule.ContainsKey).ToDictionary(p => p,
-                p => schedule[p].ToDictionary(s => s.RouteNo,
-                    s => s.DaySchedules.First(ds => DaysOfWeekUtils.IsToday(ds.Days)).DateStrings));
+            var estimates = await GetEtas(cacheManager, stopIds);
+
+            var todaySchedule = stopIds.Where(schedule.ContainsKey).ToDictionary(platformNo => platformNo,
+                platformNo => schedule[platformNo].ToDictionary(routeSchedule => routeSchedule.RouteNo,
+                    routeSchedule =>
+                    {
+                        var daySchedule = routeSchedule.DaySchedules.First(ds => DaysOfWeekUtils.IsToday(ds.Days));
+
+                        var now = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTimeOffset.Now, "Pacific Standard Time");
+                        var midnight = now.Subtract(now.TimeOfDay);
+
+                        var scheduleCutoff = now.AddMinutes(30);
+
+                        var dateTimesList = new List<DateTimeOffset>();
+
+                        // If an estimate is present, fold it in.
+                        if (estimates.ContainsKey(platformNo))
+                        {
+                            var stopEstimate = estimates[platformNo];
+                            if (stopEstimate.ContainsKey(routeSchedule.RouteNo))
+                            {
+                                var routeEstimate = stopEstimate[routeSchedule.RouteNo];
+                                var estimate = now.AddMinutes(routeEstimate);
+                                dateTimesList.Add(estimate);
+                            }
+                        }
+
+                        dateTimesList.AddRange(
+                            daySchedule.Times.Select(t => midnight.Add(t))
+                                             .Where(dt => dt > scheduleCutoff));
+                        return dateTimesList.Select(dt => dt.ToString("yyyy-MM-dd HH:mm zzz"));
+                    }));
+
             return todaySchedule;
         }
 
@@ -69,7 +102,7 @@ namespace API.Components
         /// aggregating the data into a dictionary.
         /// The outer dictionary takes a route number and gives a dictionary that takes a stop ID to an ETA.
         /// </summary>
-        public static async Task<Dictionary<string, Dictionary<string, int>>> GetEtas(CacheManager cacheManager, List<string> stopIds)
+        public static async Task<Dictionary<string, Dictionary<string, int>>> GetEtas(CacheManager cacheManager, IEnumerable<string> stopIds)
         {
             Dictionary<string, string> toPlatformTag = await cacheManager.GetPlatformTagsAsync();
 
@@ -80,7 +113,7 @@ namespace API.Components
 
             // If there's only one requested, it's waayyy faster to just do this serially.
             // Running the AsParallel() query below incurs significant overhead.
-            if (stopIds.Count == 1)
+            if (stopIds.Count() == 1)
             {
                 var arrival = getEtaIfTagExists(stopIds.First());
                 var dict = new Dictionary<string, Dictionary<string, int>>();
@@ -181,6 +214,7 @@ namespace API.Components
                         Times = ds.stopSchedules.FirstOrDefault(ss => ss.Item1 == int.Parse(p.PlatformNo))?.Item2
                     })
                     .Where(ds => ds.Times != null)
+                    .ToList()
                 })
                 .Where(r => r.DaySchedules.Any())
             );

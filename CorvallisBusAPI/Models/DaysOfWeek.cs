@@ -5,6 +5,7 @@ namespace API.Models
 {
     /// <summary>
     /// Represents the days of the week in during which a schedule is in effect.
+    /// Differs from the built in DayOfWeek because it's intended to be ORed together.
     /// </summary>
     [Flags]
     public enum DaysOfWeek
@@ -78,18 +79,17 @@ namespace API.Models
         }
 
         /// <summary>
-        /// Returns a value indicating whether the provided DaysOfWeek instance is applicable today.
+        /// Returns a value indicating whether the provided DaysOfWeek value is applicable today.
         /// </summary>
         public static bool IsToday(DaysOfWeek days)
         {
-            // special handling for Night Owl so that its schedule is visible after midnight
-            var time = (days == DaysOfWeek.NightOwl)
-                ? DateTime.Today.AddHours(-4)
-                : DateTime.Today;
+            var now = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTimeOffset.Now, "Pacific Standard Time");
 
-            // Running locally probably uses whatever timezone my PC uses,
-            // but running on Azure uses UTC, so we need to convert.
-            time = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(time, "Pacific Standard Time");
+            // special handling for Night Owl so that its schedule is visible after midnight
+            // i.e., if it's 2AM on Sunday, we still consider "today" to be Saturday.
+            var time = (days == DaysOfWeek.NightOwl)
+                ? now.AddHours(-4)
+                : now;
 
             return (ToDaysOfWeek(time.DayOfWeek) & days) != DaysOfWeek.None;
         }
