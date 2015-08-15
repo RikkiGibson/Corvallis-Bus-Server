@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 using System.Xml.Linq;
 using API.Models.Connexionz;
 using API.Models;
+using System.Threading.Tasks;
 
 namespace API.WebClients
 {
@@ -16,8 +17,7 @@ namespace API.WebClients
     public static class ConnexionzClient
     {
         private const string BASE_URL = "http://www.corvallistransit.com/rtt/public/utility/file.aspx?contenttype=SQLXML";
-
-        // TODO: handle expiration
+        
         public static readonly Lazy<IEnumerable<ConnexionzPlatform>> Platforms = new Lazy<IEnumerable<ConnexionzPlatform>>(DownloadPlatforms);
         public static readonly Lazy<IEnumerable<ConnexionzRoute>> Routes = new Lazy<IEnumerable<ConnexionzRoute>>(DownloadRoutes);
 
@@ -31,6 +31,22 @@ namespace API.WebClients
             using (var client = new WebClient())
             {
                 string s = client.DownloadString(url);
+
+                var reader = new StringReader(s);
+
+                return serializer.Deserialize(reader) as T;
+            }
+        }
+        /// <summary>
+        /// Gets and deserializes XML from the specified Connexionz/CTS endpoints.
+        /// </summary>
+        private static async Task<T> GetEntityAsync<T>(string url) where T : class
+        {
+            var serializer = new XmlSerializer(typeof(T));
+
+            using (var client = new WebClient())
+            {
+                string s = await client.DownloadStringTaskAsync(url);
 
                 var reader = new StringReader(s);
 
@@ -70,9 +86,9 @@ namespace API.WebClients
         /// <summary>
         /// Gets the Connexionz-estimated time of arrival for a given stop.
         /// </summary>
-        public static ConnexionzPlatformET GetPlatformEta(string platformTag)
+        public static async Task<ConnexionzPlatformET> GetPlatformEta(string platformTag)
         {
-            RoutePosition position = GetEntity<RoutePosition>(BASE_URL + "&Name=RoutePositionET.xml&PlatformTag=" + platformTag);
+            RoutePosition position = await GetEntityAsync<RoutePosition>(BASE_URL + "&Name=RoutePositionET.xml&PlatformTag=" + platformTag);
 
             var positionPlatform = position.Items.FirstOrDefault(p => p is RoutePositionPlatform) as RoutePositionPlatform;
 

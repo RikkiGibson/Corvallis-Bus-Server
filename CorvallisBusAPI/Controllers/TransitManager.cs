@@ -9,37 +9,20 @@ using System.Threading.Tasks;
 
 namespace API.Controllers
 {
+    // Maps a stop ID to a dictionary that maps a route number to a list of arrival times.
+    // Intended for client consumption.
+    using ClientBusSchedule = Dictionary<string, Dictionary<string, IEnumerable<string>>>;
+
     public static class TransitManager
     {
         /// <summary>
-        /// Performs route and stop lookups and builds the static data used in the /static route.
-        /// </summary>
-        public static async Task<object> GetStaticData(ITransitRepository repository)
-        {
-            // TODO: implement static data dump in repository so we don't needlessly deserialize and reserialize
-            var routesJson = await repository.GetRoutesAsync();
-            var stopsJson = await repository.GetStopsAsync();
-
-            var routes = JsonConvert.DeserializeObject<List<BusRoute>>(routesJson);
-            var stops = JsonConvert.DeserializeObject<List<BusStop>>(stopsJson);
-
-            return new
-            {
-                routes = routes.ToDictionary(r => r.RouteNo),
-                stops = stops.ToDictionary(s => s.ID)
-            };
-        }
-        
-        /// <summary>
         /// Returns the bus schedule for the given stop IDs, incorporating the ETA from Connexionz.
         /// </summary>
-        public static async Task<Dictionary<string, Dictionary<string, IEnumerable<string>>>> GetSchedule(ITransitRepository repository, IEnumerable<string> stopIds)
+        public static async Task<ClientBusSchedule> GetSchedule(ITransitRepository repository, IEnumerable<string> stopIds)
         {
-            // This is a good candidate for TDD -- maybe time to actually create the IBusRepository.
-            var scheduleJson = await repository.GetScheduleAsync();
-            var schedule = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<BusStopRouteSchedule>>>(scheduleJson);
-
-            var estimates = await TransitClient.GetEtas(repository, stopIds);
+            var schedule = await repository.GetScheduleAsync();
+            var toPlatformTag = await repository.GetPlatformTagsAsync();
+            var estimates = await TransitClient.GetEtas(toPlatformTag, stopIds);
 
             var todaySchedule = stopIds.Where(schedule.ContainsKey).ToDictionary(platformNo => platformNo,
                 platformNo => schedule[platformNo].ToDictionary(routeSchedule => routeSchedule.RouteNo,

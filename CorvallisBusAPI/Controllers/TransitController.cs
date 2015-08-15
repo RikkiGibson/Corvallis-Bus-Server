@@ -25,11 +25,8 @@ namespace API.Controllers
         [Route("static")]
         public async Task<string> GetStaticData()
         {
-            // TODO: ideally, there's no construction involved in our static payloads.
-            // we have the JSON string in a cache or blob and that string is our response, with no muss or fuss.
-            
-            var staticData = await TransitManager.GetStaticData(_repository);
-            return JsonConvert.SerializeObject(staticData);
+            var staticData = await _repository.GetStaticDataAsync();
+            return staticData;
         }
 
         /// <summary>
@@ -41,7 +38,9 @@ namespace API.Controllers
         public async Task<string> GetETAs(string stopIds)
         {
             var splitStopIds = stopIds.Split(',');
-            var etas = await TransitClient.GetEtas(_repository, splitStopIds);
+            var toPlatformTag = await _repository.GetPlatformTagsAsync();
+
+            var etas = await TransitClient.GetEtas(toPlatformTag, splitStopIds);
             return JsonConvert.SerializeObject(etas);
         }
         
@@ -62,21 +61,17 @@ namespace API.Controllers
         [Route("tasks/init")]
         public string Init()
         {
-            var stops = TransitClient.CreateStops();
-            var stopsJson = JsonConvert.SerializeObject(stops);
-            _repository.SetStops(stopsJson);
-
-            var routes = TransitClient.CreateRoutes();
-            var routesJson = JsonConvert.SerializeObject(routes);
-            _repository.SetRoutes(routesJson);
+            // perhaps a named type should be declared when setting the static data, but
+            // deserialization/reserialization should be optional when getting it.
+            var staticData = TransitClient.CreateStaticData();
+            var staticDataJson = JsonConvert.SerializeObject(staticData);
+            _repository.SetStaticData(staticDataJson);
 
             var platformTags = TransitClient.CreatePlatformTags();
-            var platformTagsJson = JsonConvert.SerializeObject(platformTags);
-            _repository.SetPlatformTags(platformTagsJson);
+            _repository.SetPlatformTags(platformTags);
 
             var schedule = TransitClient.CreateSchedule();
-            var scheduleJson = JsonConvert.SerializeObject(schedule);
-            _repository.SetSchedule(scheduleJson);
+            _repository.SetSchedule(schedule);
 
             return "Init job successful.";
         }

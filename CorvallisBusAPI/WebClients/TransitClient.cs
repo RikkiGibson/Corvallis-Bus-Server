@@ -10,6 +10,13 @@ using Newtonsoft.Json;
 
 namespace API.WebClients
 {
+    using ServerBusSchedule = Dictionary<string, IEnumerable<BusStopRouteSchedule>>;
+
+    /// <summary>
+    /// Maps a 5-digit stop ID to a dictionary that maps a route number to an arrival estimate in minutes.
+    /// </summary>
+    using BusArrivalEstimates = Dictionary<string, Dictionary<string, int>>;
+
     /// <summary>
     /// Merges data obtained from Connexionz and Google Transit
     /// and makes it ready for delivery to clients.
@@ -35,6 +42,18 @@ namespace API.WebClients
             return routes.Select(r => new BusRoute(r, googleRoutes)).ToList();
         }
 
+        public static object CreateStaticData()
+        {
+            var routes = CreateRoutes();
+            var stops = CreateStops();
+
+            return new
+            {
+                routes = routes.ToDictionary(r => r.RouteNo),
+                stops = stops.ToDictionary(s => s.ID)
+            };
+        }
+
         /// <summary>
         /// Lazy-loaded association between Platform Numbers (Think Stop ID) and Platform Tags (Connexionz-used value to get ETA).
         /// </summary>
@@ -46,14 +65,12 @@ namespace API.WebClients
         /// aggregating the data into a dictionary.
         /// The outer dictionary takes a route number and gives a dictionary that takes a stop ID to an ETA.
         /// </summary>
-        public static async Task<Dictionary<string, Dictionary<string, int>>> GetEtas(ITransitRepository repository, IEnumerable<string> stopIds)
+        public static async Task<BusArrivalEstimates> GetEtas(Dictionary<string, string> toPlatformTag, IEnumerable<string> stopIds)
         {
-            var toPlatformTagJson = await repository.GetPlatformTagsAsync();
-            var toPlatformTag = JsonConvert.DeserializeObject<Dictionary<string, string>>(toPlatformTagJson);
-
+            // TODO: make the transit client get ETAs one at a time, async, and make the manager deal with getting many ETAs.
             Func<string, Tuple<string, ConnexionzPlatformET>> getEtaIfTagExists =
                 id => Tuple.Create(id, toPlatformTag.ContainsKey(id) ?
-                                       ConnexionzClient.GetPlatformEta(toPlatformTag[id]) :
+                                       ConnexionzClient.GetPlatformEta(toPlatformTag[id]).Result :
                                        null);
 
             // If there's only one requested, it's waayyy faster to just do this serially.
@@ -61,7 +78,7 @@ namespace API.WebClients
             if (stopIds.Count() == 1)
             {
                 var arrival = getEtaIfTagExists(stopIds.First());
-                var dict = new Dictionary<string, Dictionary<string, int>>();
+                var dict = new BusArrivalEstimates();
 
                 dict.Add(arrival.Item1, // The Stop ID acting as the key for this arrival
                          arrival.Item2?.RouteEstimatedArrivals // The ETAs, transformed into a dictionary of { routeNo, ETA }.
@@ -128,7 +145,7 @@ namespace API.WebClients
         /// <summary>
         /// Creates a bus schedule based on Google Transit data.
         /// </summary>
-        public static Dictionary<string, IEnumerable<BusStopRouteSchedule>> CreateSchedule()
+        public static ServerBusSchedule CreateSchedule()
         {
             var googleRouteSchedules = GoogleTransitClient.GoogleRoutes.Value.Item2.ToDictionary(schedule => schedule.ConnexionzName);
             var routes = ConnexionzClient.Routes.Value;

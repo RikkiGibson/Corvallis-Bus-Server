@@ -19,6 +19,7 @@ namespace API.DataAccess
         private string _containerName;
         private string _routesKey;
         private string _stopsKey;
+        private string _staticDataKey;
         private string _platformTagsKey;
         private string _scheduleKey;
 
@@ -28,6 +29,7 @@ namespace API.DataAccess
             _containerName = appSettings.BlobContainerName;
             _routesKey = appSettings.RoutesKey;
             _stopsKey = appSettings.StopsKey;
+            _staticDataKey = appSettings.StaticDataKey;
             _platformTagsKey = appSettings.PlatformsKey;
             _scheduleKey = appSettings.SchedulesKey;
         }
@@ -47,6 +49,15 @@ namespace API.DataAccess
         public async Task<string> GetStopsAsync()
         {
             var blob = GetBlockBlob(_stopsKey);
+            return await blob.DownloadTextAsync();
+        }
+
+        /// <summary>
+        /// Gets the JSON-encoded CTS routes from Azure.
+        /// </summary>
+        public async Task<string> GetStaticDataAsync()
+        {
+            var blob = GetBlockBlob(_staticDataKey);
             return await blob.DownloadTextAsync();
         }
 
@@ -88,6 +99,20 @@ namespace API.DataAccess
 
             CloudBlockBlob blob = GetBlockBlob(_stopsKey);
             blob.UploadText(stopsJson);
+        }
+
+        /// <summary>
+        /// Puts a list of CTS Routes into an Azure Blob as JSON.
+        /// </summary>
+        public void SetStaticData(string staticDataJson)
+        {
+            if (string.IsNullOrWhiteSpace(staticDataJson))
+            {
+                throw new ArgumentNullException(nameof(staticDataJson), "A non-empty string is needed to store as CTS static data.");
+            }
+
+            CloudBlockBlob blob = GetBlockBlob(_staticDataKey);
+            blob.UploadText(staticDataJson);
         }
 
         /// <summary>

@@ -13,6 +13,7 @@ namespace API.DataAccess
         private string _connectionString;
         private string _routesKey;
         private string _stopsKey;
+        private string _staticDataKey;
         private string _platformsKey;
         private string _scheduleKey;
 
@@ -39,6 +40,7 @@ namespace API.DataAccess
             _connectionString = appSettings.RedisConnectionString;
             _routesKey = appSettings.RoutesKey;
             _stopsKey = appSettings.StopsKey;
+            _staticDataKey = appSettings.StaticDataKey;
             _platformsKey = appSettings.PlatformsKey;
             _scheduleKey = appSettings.SchedulesKey;
         }
@@ -49,19 +51,23 @@ namespace API.DataAccess
 
             cache.StringSet(_routesKey, string.Empty);
             cache.StringSet(_stopsKey, string.Empty);
+            cache.StringSet(_staticDataKey, string.Empty);
             cache.StringSet(_platformsKey, string.Empty);
+            cache.StringSet(_scheduleKey, string.Empty);
         }
 
         internal void SetRoutes(string routesJson) => Connection.GetDatabase().StringSet(_routesKey, routesJson);
 
         internal void SetStops(string stopsJson) => Connection.GetDatabase().StringSet(_stopsKey, stopsJson);
 
+        internal void SetStaticData(string staticDataJson) => Connection.GetDatabase().StringSet(_staticDataKey, staticDataJson);
+
         internal void SetPlatformTags(string platformTagsJson) => Connection.GetDatabase().StringSet(_platformsKey, platformTagsJson);
 
         internal void SetSchedule(string scheduleJson) => Connection.GetDatabase().StringSet(_scheduleKey, scheduleJson);
 
         /// <summary>
-        /// Gets static routes from the cache.  Grabs the blob data if the cache is empty.
+        /// Gets static routes from the cache. May return an empty string if the cache expires.
         /// </summary>
         public async Task<string> GetRoutesAsync()
         {
@@ -71,9 +77,8 @@ namespace API.DataAccess
         }
 
         /// <summary>
-        /// Gets static stops from the cache.  Grabs the blob data if the cache is empty.
+        /// Gets static bus stop data from the cache. May return an empty string if the cache expires.
         /// </summary>
-        /// <returns></returns>
         public async Task<string> GetStopsAsync()
         {
             var cache = Connection.GetDatabase();
@@ -82,7 +87,17 @@ namespace API.DataAccess
         }
 
         /// <summary>
-        /// Gets the platform tag dictionary from the cache.  Grabs the blob data if the cache is empty.
+        /// Gets static data from the cache. May return an empty string if the cache expires.
+        /// </summary>
+        public async Task<string> GetStaticDataAsync()
+        {
+            var cache = Connection.GetDatabase();
+            var json = await cache.StringGetAsync(_staticDataKey);
+            return json;
+        }
+
+        /// <summary>
+        /// Gets the platform tag dictionary from the cache. May return an empty string if the cache expires.
         /// </summary>
         public async Task<string> GetPlatformTagsAsync()
         {
@@ -94,7 +109,7 @@ namespace API.DataAccess
         }
 
         /// <summary>
-        /// Gets schedule data from the cache.  Handles entry management.
+        /// Gets schedule data from the cache. May return an empty string if the cache expires.
         /// </summary>
         public async Task<string> GetScheduleAsync()
         {
