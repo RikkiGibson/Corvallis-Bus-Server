@@ -8,12 +8,12 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 
-namespace API.Components
+namespace API.WebClients
 {
     /// <summary>
     /// Contains the task for importing Route colors from Google Transit.  This task is run once per year(?).
     /// </summary>
-    public static class GoogleTransitImport
+    public static class GoogleTransitClient
     {
         public static Lazy<Tuple<List<GoogleRoute>, List<GoogleRouteSchedule>>> GoogleRoutes =
             new Lazy<Tuple<List<GoogleRoute>, List<GoogleRouteSchedule>>>(DoTask);

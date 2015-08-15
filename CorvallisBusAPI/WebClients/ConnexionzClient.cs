@@ -8,7 +8,7 @@ using System.Xml.Linq;
 using API.Models.Connexionz;
 using API.Models;
 
-namespace API.Components
+namespace API.WebClients
 {
     /// <summary>
     /// Exposes methods for getting transit data from Connexionz.

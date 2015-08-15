@@ -5,8 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Models.Connexionz;
 using API.Models.GoogleTransit;
+using API.DataAccess;
+using Newtonsoft.Json;
 
-namespace API.Components
+namespace API.WebClients
 {
     /// <summary>
     /// Merges data obtained from Connexionz and Google Transit
@@ -14,21 +16,6 @@ namespace API.Components
     /// </summary>
     public static class TransitClient
     {
-        /// <summary>
-        /// Performs route and stop lookups and builds the static data used in the /static route.
-        /// </summary>
-        public static async Task<object> GetStaticData(CacheManager cacheManager)
-        {
-            var routes = await cacheManager.GetStaticRoutesAsync();
-            var stops = await cacheManager.GetStaticStopsAsync();
-
-            return new
-            {
-                routes = routes.ToDictionary(r => r.RouteNo),
-                stops = stops.ToDictionary(s => s.ID)
-            };
-        }
-
         public static List<BusStop> CreateStops()
         {
             var platforms = ConnexionzClient.Platforms.Value;
@@ -43,7 +30,7 @@ namespace API.Components
 
         public static List<BusRoute> CreateRoutes()
         {
-            var googleRoutes = GoogleTransitImport.GoogleRoutes.Value.Item1.ToDictionary(gr => gr.ConnexionzName);
+            var googleRoutes = GoogleTransitClient.GoogleRoutes.Value.Item1.ToDictionary(gr => gr.ConnexionzName);
             var routes = ConnexionzClient.Routes.Value;
             return routes.Select(r => new BusRoute(r, googleRoutes)).ToList();
         }
@@ -53,62 +40,20 @@ namespace API.Components
         /// </summary>
         public static Dictionary<string, string> CreatePlatformTags() =>
             ConnexionzClient.Platforms.Value.ToDictionary(p => p.PlatformNo, p => p.PlatformTag);
-        
-        /// <summary>
-        /// Returns the bus schedule for the given stop IDs, incorporating the ETA from Connexionz.
-        /// </summary>
-        public static async Task<Dictionary<string, Dictionary<string, IEnumerable<string>>>> GetSchedule(CacheManager cacheManager, IEnumerable<string> stopIds)
-        {
-            // This is a good candidate for TDD -- maybe time to actually create the IBusRepository.
-            var schedule = await cacheManager.GetScheduleAsync();
-            var estimates = await GetEtas(cacheManager, stopIds);
-
-            var todaySchedule = stopIds.Where(schedule.ContainsKey).ToDictionary(platformNo => platformNo,
-                platformNo => schedule[platformNo].ToDictionary(routeSchedule => routeSchedule.RouteNo,
-                    routeSchedule =>
-                    {
-                        var daySchedule = routeSchedule.DaySchedules.First(ds => DaysOfWeekUtils.IsToday(ds.Days));
-
-                        var now = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTimeOffset.Now, "Pacific Standard Time");
-                        var midnight = now.Subtract(now.TimeOfDay);
-
-                        var scheduleCutoff = now.AddMinutes(30);
-
-                        var dateTimesList = new List<DateTimeOffset>();
-
-                        // If an estimate is present, fold it in.
-                        if (estimates.ContainsKey(platformNo))
-                        {
-                            var stopEstimate = estimates[platformNo];
-                            if (stopEstimate.ContainsKey(routeSchedule.RouteNo))
-                            {
-                                var routeEstimate = stopEstimate[routeSchedule.RouteNo];
-                                var estimate = now.AddMinutes(routeEstimate);
-                                dateTimesList.Add(estimate);
-                            }
-                        }
-
-                        dateTimesList.AddRange(
-                            daySchedule.Times.Select(t => midnight.Add(t))
-                                             .Where(dt => dt > scheduleCutoff));
-                        return dateTimesList.Select(dt => dt.ToString("yyyy-MM-dd HH:mm zzz"));
-                    }));
-
-            return todaySchedule;
-        }
 
         /// <summary>
         /// Gets the ETA info for a set of stop IDS.  Performs the calls to get the info in parallel,
         /// aggregating the data into a dictionary.
         /// The outer dictionary takes a route number and gives a dictionary that takes a stop ID to an ETA.
         /// </summary>
-        public static async Task<Dictionary<string, Dictionary<string, int>>> GetEtas(CacheManager cacheManager, IEnumerable<string> stopIds)
+        public static async Task<Dictionary<string, Dictionary<string, int>>> GetEtas(ITransitRepository repository, IEnumerable<string> stopIds)
         {
-            Dictionary<string, string> toPlatformTag = await cacheManager.GetPlatformTagsAsync();
+            var toPlatformTagJson = await repository.GetPlatformTagsAsync();
+            var toPlatformTag = JsonConvert.DeserializeObject<Dictionary<string, string>>(toPlatformTagJson);
 
             Func<string, Tuple<string, ConnexionzPlatformET>> getEtaIfTagExists =
                 id => Tuple.Create(id, toPlatformTag.ContainsKey(id) ?
-                                       cacheManager.GetEta(toPlatformTag[id]) :
+                                       ConnexionzClient.GetPlatformEta(toPlatformTag[id]) :
                                        null);
 
             // If there's only one requested, it's waayyy faster to just do this serially.
@@ -181,12 +126,11 @@ namespace API.Components
         }
         
         /// <summary>
-        /// Loads up the cache for 
+        /// Creates a bus schedule based on Google Transit data.
         /// </summary>
-        /// <returns></returns>
         public static Dictionary<string, IEnumerable<BusStopRouteSchedule>> CreateSchedule()
         {
-            var googleRouteSchedules = GoogleTransitImport.GoogleRoutes.Value.Item2.ToDictionary(schedule => schedule.ConnexionzName);
+            var googleRouteSchedules = GoogleTransitClient.GoogleRoutes.Value.Item2.ToDictionary(schedule => schedule.ConnexionzName);
             var routes = ConnexionzClient.Routes.Value;
 
             // build all the schedule data for intermediate stops
