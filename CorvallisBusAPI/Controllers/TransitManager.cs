@@ -12,11 +12,10 @@ namespace API.Controllers
 {
     // Maps a stop ID to a dictionary that maps a route number to a list of arrival times.
     // Intended for client consumption.
-    using ClientBusSchedule = Dictionary<string, Dictionary<string, IEnumerable<string>>>;
-
-    /// <summary>
-    /// Maps a 5-digit stop ID to a dictionary that maps a route number to an arrival estimate in minutes.
-    /// </summary>
+    using ClientBusSchedule = Dictionary<string, Dictionary<string, List<int>>>;
+    
+    // Maps a 5-digit stop ID to a dictionary that maps a route number to an arrival estimate in minutes.
+    // TODO: these are awfully similar...should this stil exist?
     using BusArrivalEstimates = Dictionary<string, Dictionary<string, List<int>>>;
 
     public static class TransitManager
@@ -34,34 +33,27 @@ namespace API.Controllers
                 platformNo => schedule[platformNo].ToDictionary(routeSchedule => routeSchedule.RouteNo,
                     routeSchedule =>
                     {
-                        var daySchedule = routeSchedule.DaySchedules.First(ds => DaysOfWeekUtils.IsToday(ds.Days));
-
-                        var now = getCurrentTime();
-                        var midnight = now.Subtract(now.TimeOfDay);
-
-                        var scheduleCutoff = now.AddMinutes(30);
-
-                        var dateTimesList = new List<DateTimeOffset>();
-
-                        // If an estimate is present, fold it in.
+                        var result = new List<int>();
+                        
+                        var scheduleCutoff = getCurrentTime().TimeOfDay.Add(TimeSpan.FromMinutes(30));
                         if (estimates.ContainsKey(platformNo))
                         {
                             var stopEstimate = estimates[platformNo];
                             if (stopEstimate.ContainsKey(routeSchedule.RouteNo))
                             {
                                 var routeEstimates = stopEstimate[routeSchedule.RouteNo];
-                                foreach (var routeEstimate in routeEstimates)
-                                {
-                                    var estimate = now.AddMinutes(routeEstimate);
-                                    dateTimesList.Add(estimate);
-                                }
+                                result.AddRange(routeEstimates);
                             }
                         }
 
-                        dateTimesList.AddRange(
-                            daySchedule.Times.Select(t => midnight.Add(t))
-                                             .Where(dt => dt > scheduleCutoff));
-                        return dateTimesList.Select(dt => dt.ToString("yyyy-MM-dd HH:mm zzz"));
+                        var daySchedule = routeSchedule.DaySchedules.FirstOrDefault(ds => DaysOfWeekUtils.IsToday(ds.Days, getCurrentTime));
+                        if (daySchedule != null)
+                        {
+                            result.AddRange(
+                                daySchedule.Times.Where(ts => ts > scheduleCutoff)
+                                                 .Select(ts => (int)ts.TotalMinutes));
+                        }
+                        return result;
                     }));
 
             return todaySchedule;

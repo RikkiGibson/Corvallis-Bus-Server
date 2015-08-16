@@ -81,9 +81,9 @@ namespace API.Models
         /// <summary>
         /// Returns a value indicating whether the provided DaysOfWeek value is applicable today.
         /// </summary>
-        public static bool IsToday(DaysOfWeek days)
+        public static bool IsToday(DaysOfWeek days, Func<DateTimeOffset> getCurrentTime)
         {
-            var now = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTimeOffset.Now, "Pacific Standard Time");
+            var now = getCurrentTime();
 
             // special handling for Night Owl so that its schedule is visible after midnight
             // i.e., if it's 2AM on Sunday, we still consider "today" to be Saturday.
