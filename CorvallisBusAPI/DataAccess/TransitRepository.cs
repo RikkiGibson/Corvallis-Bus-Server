@@ -46,32 +46,6 @@ namespace API.DataAccess
             return JsonConvert.DeserializeObject<ServerBusSchedule>(cacheJson);
         }
 
-        public async Task<List<BusRoute>> GetRoutesAsync()
-        {
-            var cacheJson = await _cacheManager.GetRoutesAsync();
-            if (string.IsNullOrWhiteSpace(cacheJson))
-            {
-                var storageJson = await _storageManager.GetRoutesAsync();
-                _cacheManager.SetRoutes(storageJson);
-                return JsonConvert.DeserializeObject<List<BusRoute>>(storageJson);
-            }
-
-            return JsonConvert.DeserializeObject<List<BusRoute>>(cacheJson);
-        }
-
-        public async Task<List<BusStop>> GetStopsAsync()
-        {
-            var cacheJson = await _cacheManager.GetStopsAsync();
-            if (string.IsNullOrWhiteSpace(cacheJson))
-            {
-                var storageJson = await _storageManager.GetStopsAsync();
-                _cacheManager.SetStops(storageJson);
-                return JsonConvert.DeserializeObject<List<BusStop>>(storageJson);
-            }
-
-            return JsonConvert.DeserializeObject<List<BusStop>>(cacheJson);
-        }
-
         public async Task<string> GetStaticDataAsync()
         {
             var cacheJson = await _cacheManager.GetStaticDataAsync();
@@ -91,23 +65,10 @@ namespace API.DataAccess
             _storageManager.SetPlatformTags(platformTagsJson);
             _cacheManager.SetPlatformTags(platformTagsJson);
         }
-        
-        public void SetRoutes(List<BusRoute> routes)
-        {
-            var routesJson = JsonConvert.SerializeObject(routes);
-            _storageManager.SetRoutes(routesJson);
-            _cacheManager.SetRoutes(routesJson);
-        }
 
-        public void SetStops(List<BusStop> stops)
+        public void SetStaticData(BusStaticData staticData)
         {
-            var stopsJson = JsonConvert.SerializeObject(stops);
-            _storageManager.SetStops(stopsJson);
-            _cacheManager.SetStops(stopsJson);
-        }
-
-        public void SetStaticData(string staticDataJson)
-        {
+            var staticDataJson = JsonConvert.SerializeObject(staticData);
             _storageManager.SetStaticData(staticDataJson);
             _cacheManager.SetStaticData(staticDataJson);
         }

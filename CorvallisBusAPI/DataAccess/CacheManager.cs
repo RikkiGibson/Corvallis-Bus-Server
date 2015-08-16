@@ -11,10 +11,8 @@ namespace API.DataAccess
     public class CacheManager
     {
         private string _connectionString;
-        private string _routesKey;
-        private string _stopsKey;
         private string _staticDataKey;
-        private string _platformsKey;
+        private string _platformTagsKey;
         private string _scheduleKey;
 
         private ConnectionMultiplexer _conn;
@@ -38,53 +36,16 @@ namespace API.DataAccess
         public CacheManager(AppSettings appSettings)
         {
             _connectionString = appSettings.RedisConnectionString;
-            _routesKey = appSettings.RoutesKey;
-            _stopsKey = appSettings.StopsKey;
             _staticDataKey = appSettings.StaticDataKey;
-            _platformsKey = appSettings.PlatformsKey;
+            _platformTagsKey = appSettings.PlatformTagsKey;
             _scheduleKey = appSettings.SchedulesKey;
         }
 
-        internal void ClearCache()
-        {
-            var cache = Connection.GetDatabase();
-
-            cache.StringSet(_routesKey, string.Empty);
-            cache.StringSet(_stopsKey, string.Empty);
-            cache.StringSet(_staticDataKey, string.Empty);
-            cache.StringSet(_platformsKey, string.Empty);
-            cache.StringSet(_scheduleKey, string.Empty);
-        }
-
-        internal void SetRoutes(string routesJson) => Connection.GetDatabase().StringSet(_routesKey, routesJson);
-
-        internal void SetStops(string stopsJson) => Connection.GetDatabase().StringSet(_stopsKey, stopsJson);
-
         internal void SetStaticData(string staticDataJson) => Connection.GetDatabase().StringSet(_staticDataKey, staticDataJson);
 
-        internal void SetPlatformTags(string platformTagsJson) => Connection.GetDatabase().StringSet(_platformsKey, platformTagsJson);
+        internal void SetPlatformTags(string platformTagsJson) => Connection.GetDatabase().StringSet(_platformTagsKey, platformTagsJson);
 
         internal void SetSchedule(string scheduleJson) => Connection.GetDatabase().StringSet(_scheduleKey, scheduleJson);
-
-        /// <summary>
-        /// Gets static routes from the cache. May return an empty string if the cache expires.
-        /// </summary>
-        public async Task<string> GetRoutesAsync()
-        {
-            var cache = Connection.GetDatabase();
-            var json = await cache.StringGetAsync(_routesKey);
-            return json;
-        }
-
-        /// <summary>
-        /// Gets static bus stop data from the cache. May return an empty string if the cache expires.
-        /// </summary>
-        public async Task<string> GetStopsAsync()
-        {
-            var cache = Connection.GetDatabase();
-            var json = await cache.StringGetAsync(_stopsKey);
-            return json;
-        }
 
         /// <summary>
         /// Gets static data from the cache. May return an empty string if the cache expires.
@@ -104,7 +65,7 @@ namespace API.DataAccess
             //Dictionary<string, string>
             var cache = Connection.GetDatabase();
 
-            var json = await cache.StringGetAsync(_platformsKey);
+            var json = await cache.StringGetAsync(_platformTagsKey);
             return json;
         }
 

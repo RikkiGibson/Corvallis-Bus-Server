@@ -6,6 +6,7 @@ using Microsoft.Framework.OptionsModel;
 using API.DataAccess;
 using API.WebClients;
 using System;
+using API.Models;
 
 namespace API.Controllers
 {
@@ -28,8 +29,8 @@ namespace API.Controllers
         [Route("static")]
         public async Task<string> GetStaticData()
         {
-            var staticData = await _repository.GetStaticDataAsync();
-            return staticData;
+            var staticDataJson = await _repository.GetStaticDataAsync();
+            return staticDataJson;
         }
 
         /// <summary>
@@ -65,8 +66,7 @@ namespace API.Controllers
             // perhaps a named type should be declared when setting the static data, but
             // deserialization/reserialization should be optional when getting it.
             var staticData = TransitClient.CreateStaticData();
-            var staticDataJson = JsonConvert.SerializeObject(staticData);
-            _repository.SetStaticData(staticDataJson);
+            _repository.SetStaticData(staticData);
 
             var platformTags = TransitClient.CreatePlatformTags();
             _repository.SetPlatformTags(platformTags);

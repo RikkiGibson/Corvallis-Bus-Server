@@ -17,15 +17,10 @@ namespace API.DataAccess
     /// </summary>
     public interface ITransitRepository
     {
-        // These aren't for direct client consumption but will be needed when
-        // we start puking out pre-digested view models.
-        // Should the static data have a named type instead?
-        // Should there just be an overload for obtaining deserialized static data?
-        Task<List<BusRoute>> GetRoutesAsync();
-        Task<List<BusStop>> GetStopsAsync();
-
         /// <summary>
         /// Returns route and stop information intended for direct client consumption.
+        /// This is specifically left as a string instead of a BusStaticData
+        /// to eliminate the need for deserialization and reserialization.
         /// </summary>
         Task<string> GetStaticDataAsync();
 
@@ -33,17 +28,10 @@ namespace API.DataAccess
 
         Task<ServerBusSchedule> GetScheduleAsync();
 
-        //Task<string> GetEtasAsync(IEnumerable<string> stopIds);
-
-        void SetRoutes(List<BusRoute> routes);
-        void SetStops(List<BusStop> stops);
-
-        void SetStaticData(string staticDataJson);
+        void SetStaticData(BusStaticData staticData);
 
         void SetSchedule(ServerBusSchedule schedule);
 
         void SetPlatformTags(Dictionary<string, string> platformTags);
-
-        //void SetEtas(string etasJson);
     }
 }

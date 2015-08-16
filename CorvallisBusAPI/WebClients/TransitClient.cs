@@ -38,15 +38,15 @@ namespace API.WebClients
             return routes.Select(r => new BusRoute(r, googleRoutes)).ToList();
         }
 
-        public static object CreateStaticData()
+        public static BusStaticData CreateStaticData()
         {
             var routes = CreateRoutes();
             var stops = CreateStops();
 
-            return new
+            return new BusStaticData
             {
-                routes = routes.ToDictionary(r => r.RouteNo),
-                stops = stops.ToDictionary(s => s.ID)
+                Routes = routes.ToDictionary(r => r.RouteNo),
+                Stops = stops.ToDictionary(s => s.ID)
             };
         }
 

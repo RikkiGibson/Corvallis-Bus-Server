@@ -17,8 +17,6 @@ namespace API.DataAccess
     {
         private string _connectionString;
         private string _containerName;
-        private string _routesKey;
-        private string _stopsKey;
         private string _staticDataKey;
         private string _platformTagsKey;
         private string _scheduleKey;
@@ -27,29 +25,9 @@ namespace API.DataAccess
         {
             _connectionString = appSettings.BlobStorageConnectionString;
             _containerName = appSettings.BlobContainerName;
-            _routesKey = appSettings.RoutesKey;
-            _stopsKey = appSettings.StopsKey;
             _staticDataKey = appSettings.StaticDataKey;
-            _platformTagsKey = appSettings.PlatformsKey;
+            _platformTagsKey = appSettings.PlatformTagsKey;
             _scheduleKey = appSettings.SchedulesKey;
-        }
-
-        /// <summary>
-        /// Gets the JSON-encoded CTS routes from Azure.
-        /// </summary>
-        public async Task<string> GetRoutesAsync()
-        {
-            var blob = GetBlockBlob(_routesKey);
-            return await blob.DownloadTextAsync();
-        }
-
-        /// <summary>
-        /// Gets the JSON-encoded CTS stops from Azure.
-        /// </summary>
-        public async Task<string> GetStopsAsync()
-        {
-            var blob = GetBlockBlob(_stopsKey);
-            return await blob.DownloadTextAsync();
         }
 
         /// <summary>
@@ -71,34 +49,6 @@ namespace API.DataAccess
         {
             var blob = GetBlockBlob(_scheduleKey);
             return await blob.DownloadTextAsync();
-        }
-
-        /// <summary>
-        /// Puts a list of CTS Routes into an Azure Blob as JSON.
-        /// </summary>
-        public void SetRoutes(string routesJson)
-        {
-            if (string.IsNullOrWhiteSpace(routesJson))
-            {
-                throw new ArgumentNullException(nameof(routesJson), "CTS routes need some data!");
-            }
-
-            CloudBlockBlob blob = GetBlockBlob(_routesKey);
-            blob.UploadText(routesJson);
-        }
-
-        /// <summary>
-        /// Puts a list of CTS Stops into an Azure Blob as JSON.
-        /// </summary>
-        public void SetStops(string stopsJson)
-        {
-            if (string.IsNullOrWhiteSpace(stopsJson))
-            {
-                throw new ArgumentNullException(nameof(stopsJson), "CTS routes need some data!");
-            }
-
-            CloudBlockBlob blob = GetBlockBlob(_stopsKey);
-            blob.UploadText(stopsJson);
         }
 
         /// <summary>

@@ -2,10 +2,8 @@
   "AppSettings": {
     "RedisConnectionString": "corvallisbus.redis.cache.windows.net,ssl=true,password=E2EYXLCi5SKRdlHeQebFXIxT7EJxCGjWWGBW5uNy0Ig=",
     "BlobStorageConnectionString": "DefaultEndpointsProtocol=https;AccountName=corvallisbus;AccountKey=vogmmb7EQaL7smA1V7jpR6530A/HQrU9PsgGABy0mVBM5fRXSbhphvGm456az7L+mYWwvyJ7suD3sudfM8MCiQ==",
-    "RoutesKey": "routes",
-    "StopsKey": "stops",
     "StaticDataKey": "staticData",
-    "PlatformsKey": "platformTags",
+    "PlatformTagsKey": "platformTags",
     "SchedulesKey": "schedule",
     "BlobContainerName": "blobstore"
   },
