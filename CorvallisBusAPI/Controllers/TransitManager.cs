@@ -13,10 +13,11 @@ namespace API.Controllers
     // Maps a stop ID to a dictionary that maps a route number to a list of arrival times.
     // Intended for client consumption.
     using ClientBusSchedule = Dictionary<string, Dictionary<string, List<int>>>;
-    
+
     // Maps a 5-digit stop ID to a dictionary that maps a route number to an arrival estimate in minutes.
     // TODO: these are awfully similar...should this stil exist?
     using BusArrivalEstimates = Dictionary<string, Dictionary<string, List<int>>>;
+    using System.Device.Location;
 
     public static class TransitManager
     {
@@ -57,6 +58,106 @@ namespace API.Controllers
                     }));
 
             return todaySchedule;
+        }
+
+        private static string ToArrivalsSummary(List<int> arrivalTimes, Func<DateTimeOffset> getCurrentTime)
+        {
+            if (arrivalTimes.Count == 0)
+            {
+                return "No arrivals!";
+            }
+
+            var currentTime = getCurrentTime();
+            var summaries = arrivalTimes.Take(2).Select(t => t > 30 ? currentTime.AddMinutes(t).ToString("h:mm tt") : $"{t} minutes");
+            return string.Join(", ", summaries);
+        }
+
+        public static IEnumerable<T> EnumerateSingle<T>(T item)
+        {
+            yield return item;
+        }
+
+        public static async Task<List<FavoriteStopViewModel>> GetFavoritesViewModel(ITransitRepository repository, Func<DateTimeOffset> getCurrentTime,
+            string[] stopIds, GeoCoordinate optionalUserLocation, bool fallbackToGrayColor)
+        {
+            var staticData = JsonConvert.DeserializeObject<BusStaticData>(await repository.GetStaticDataAsync());
+
+            // TODO: don't create, throw away and recreate GeoCoordinates
+            //var favoriteDistances = stopIds.Select(id => new
+            //{
+
+            //    {
+
+            //    })
+            //}
+
+            var nearestStop = optionalUserLocation != null
+                ? staticData.Stops.Values
+                    .Aggregate((s1, s2) =>
+                        optionalUserLocation.GetDistanceTo(new GeoCoordinate(s1.Lat, s1.Long)) <
+                        optionalUserLocation.GetDistanceTo(new GeoCoordinate(s2.Lat, s2.Long)) ? s1 : s2)
+                : null;
+
+            // If present, include the nearest stop when doing a schedule lookup.
+            var etaStops = nearestStop != null ? stopIds.Concat(EnumerateSingle(nearestStop.ID.ToString())) : stopIds;
+            var schedule = await GetSchedule(repository, getCurrentTime, etaStops.Distinct().ToArray());
+
+            var favoriteStops = stopIds.Select(id =>
+            {
+                var stop = staticData.Stops[int.Parse(id)];
+                return new
+                {
+                    stopId = stop.ID,
+                    stopName = stop.Name,
+                    routes = stop.RouteNames.Select(rn => new
+                    {
+                        route = staticData.Routes[rn],
+                        arrivalTimes = schedule[id][rn]
+                    }).OrderBy(a => a.arrivalTimes.Aggregate(int.MaxValue, Math.Min)).ToList(),
+                    distanceFromUser = optionalUserLocation != null ? optionalUserLocation.GetDistanceTo(new GeoCoordinate(stop.Lat, stop.Long)) : double.NaN,
+                    isFavoriteStop = false
+                };
+            })
+            .OrderBy(b => b.distanceFromUser)
+            .ToList();
+            
+            if (nearestStop != null && !favoriteStops.Any(f => f.stopId == nearestStop.ID))
+            {
+                favoriteStops.Insert(0, new
+                {
+                    stopId = nearestStop.ID,
+                    stopName = nearestStop.Name,
+                    routes = nearestStop.RouteNames.Select(rn => new
+                    {
+                        route = staticData.Routes[rn],
+                        arrivalTimes = schedule[nearestStop.ID.ToString()][rn]
+                    }).OrderBy(a => a.arrivalTimes.Aggregate(int.MaxValue, Math.Min)).ToList(),
+                    distanceFromUser = optionalUserLocation != null ? optionalUserLocation.GetDistanceTo(new GeoCoordinate(nearestStop.Lat, nearestStop.Long)) : double.NaN,
+                    isFavoriteStop = true
+                });
+            }
+
+            var fallbackColor = fallbackToGrayColor ? "AAAAAA" : string.Empty;
+            const double MILES_PER_METER = 0.000621371;
+
+            var viewModel = favoriteStops.Select(a => new FavoriteStopViewModel
+            {
+                StopId = a.stopId,
+                StopName = a.stopName,
+
+                FirstRouteName = a.routes.Count > 0 && a.routes[0].arrivalTimes.Count > 0 ? a.routes[0].route.RouteNo : string.Empty,
+                FirstRouteColor = a.routes.Count > 0 && a.routes[0].arrivalTimes.Count > 0 ? a.routes[0].route.Color : fallbackColor,
+                FirstRouteArrivals = a.routes.Count > 0 ? ToArrivalsSummary(a.routes[0].arrivalTimes, getCurrentTime) : string.Empty,
+
+                SecondRouteName = a.routes.Count > 1 && a.routes[1].arrivalTimes.Count > 0 ? a.routes[1].route.RouteNo : string.Empty,
+                SecondRouteColor = a.routes.Count > 1 && a.routes[1].arrivalTimes.Count > 0 ? a.routes[1].route.Color : string.Empty,
+                SecondRouteArrivals = a.routes.Count > 1 && a.routes[1].arrivalTimes.Count > 0 ? ToArrivalsSummary(a.routes[1].arrivalTimes, getCurrentTime) : string.Empty,
+
+                DistanceFromUser = $"{a.distanceFromUser * MILES_PER_METER:F1} miles",
+                IsNearestStop = false
+            }).ToList();
+
+            return viewModel;
         }
 
         /// <summary>

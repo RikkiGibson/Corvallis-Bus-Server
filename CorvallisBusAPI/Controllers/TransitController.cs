@@ -7,6 +7,7 @@ using API.DataAccess;
 using API.WebClients;
 using System;
 using API.Models;
+using System.Device.Location;
 
 namespace API.Controllers
 {
@@ -46,6 +47,29 @@ namespace API.Controllers
             return JsonConvert.SerializeObject(etas);
         }
         
+        [Route("favorites")]
+        public async Task<string> GetFavoritesViewModel(string location, string stops)
+        {
+            GeoCoordinate userLocation = null;
+
+            var locationPieces = location?.Split(',');
+            double lat, lon;
+            if (locationPieces?.Length == 2 &&
+                double.TryParse(locationPieces[0], out lat) &&
+                double.TryParse(locationPieces[1], out lon))
+            {
+                userLocation = new GeoCoordinate(lat, lon);
+            }
+            
+
+            var stopPieces = stops.Split(',');
+
+            // try this URL: http://localhost:48487/transit/favorites?stops=11776,10308&location=44.5645659,-123.2620435
+            var viewModel = await TransitManager.GetFavoritesViewModel(_repository, _getCurrentTime, stopPieces, userLocation, fallbackToGrayColor: false);
+
+            return JsonConvert.SerializeObject(viewModel);
+        }
+
         [HttpGet]
         [Route("schedule/{stopIds}")]
         public async Task<string> GetSchedule(string stopIds)
@@ -63,8 +87,6 @@ namespace API.Controllers
         [Route("tasks/init")]
         public string Init()
         {
-            // perhaps a named type should be declared when setting the static data, but
-            // deserialization/reserialization should be optional when getting it.
             var staticData = TransitClient.CreateStaticData();
             _repository.SetStaticData(staticData);
 
