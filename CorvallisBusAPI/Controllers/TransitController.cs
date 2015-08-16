@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Microsoft.Framework.OptionsModel;
 using API.DataAccess;
 using API.WebClients;
+using System;
 
 namespace API.Controllers
 {
@@ -12,6 +13,7 @@ namespace API.Controllers
     public class TransitController : Controller
     {
         private ITransitRepository _repository;
+        private Func<DateTimeOffset> _getCurrentTime;
 
         /// <summary>
         /// Dependency-injected application settings which are then passed on to other components.
@@ -19,6 +21,7 @@ namespace API.Controllers
         public TransitController(IOptions<AppSettings> appSettings)
         {
             _repository = new TransitRepository(appSettings.Options);
+            _getCurrentTime = () => TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTimeOffset.Now, "Pacific Standard Time");
         }
 
         [HttpGet]
@@ -38,9 +41,7 @@ namespace API.Controllers
         public async Task<string> GetETAs(string stopIds)
         {
             var splitStopIds = stopIds.Split(',');
-            var toPlatformTag = await _repository.GetPlatformTagsAsync();
-
-            var etas = await TransitClient.GetEtas(toPlatformTag, splitStopIds);
+            var etas = await TransitManager.GetEtas(_repository, splitStopIds);
             return JsonConvert.SerializeObject(etas);
         }
         
@@ -50,7 +51,7 @@ namespace API.Controllers
         {
             string[] pieces = stopIds.Split(',');
             
-            var todaySchedule = await TransitManager.GetSchedule(_repository, pieces);
+            var todaySchedule = await TransitManager.GetSchedule(_repository, _getCurrentTime, pieces);
             return JsonConvert.SerializeObject(todaySchedule);
         }
 

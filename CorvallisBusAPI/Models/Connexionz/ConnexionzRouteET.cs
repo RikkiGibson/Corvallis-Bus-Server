@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace API.Models.Connexionz
 {
@@ -12,10 +13,10 @@ namespace API.Models.Connexionz
         public ConnexionzRouteET(RoutePositionPlatformRoute routePositionPlatformRoute)
         {
             RouteNo = routePositionPlatformRoute.RouteNo;
-            EstimatedArrivalTime = routePositionPlatformRoute.Destination.Trip.Select(t => t.ETA).FirstOrDefault();
+            EstimatedArrivalTime = routePositionPlatformRoute.Destination.Trip.Select(t => t.ETA).ToList();
         }
 
         public string RouteNo { get; set; }
-        public int EstimatedArrivalTime { get; set; }
+        public List<int> EstimatedArrivalTime { get; set; }
     }
 }

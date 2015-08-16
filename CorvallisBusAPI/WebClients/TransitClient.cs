@@ -12,10 +12,6 @@ namespace API.WebClients
 {
     using ServerBusSchedule = Dictionary<string, IEnumerable<BusStopRouteSchedule>>;
 
-    /// <summary>
-    /// Maps a 5-digit stop ID to a dictionary that maps a route number to an arrival estimate in minutes.
-    /// </summary>
-    using BusArrivalEstimates = Dictionary<string, Dictionary<string, int>>;
 
     /// <summary>
     /// Merges data obtained from Connexionz and Google Transit
@@ -55,53 +51,12 @@ namespace API.WebClients
         }
 
         /// <summary>
-        /// Lazy-loaded association between Platform Numbers (Think Stop ID) and Platform Tags (Connexionz-used value to get ETA).
+        /// Maps a platform number (5-digit number shown on real bus stop signs) to a platform tag (3-digit internal Connexionz identifier).
         /// </summary>
         public static Dictionary<string, string> CreatePlatformTags() =>
             ConnexionzClient.Platforms.Value.ToDictionary(p => p.PlatformNo, p => p.PlatformTag);
 
-        /// <summary>
-        /// Gets the ETA info for a set of stop IDS.  Performs the calls to get the info in parallel,
-        /// aggregating the data into a dictionary.
-        /// The outer dictionary takes a route number and gives a dictionary that takes a stop ID to an ETA.
-        /// </summary>
-        public static async Task<BusArrivalEstimates> GetEtas(Dictionary<string, string> toPlatformTag, IEnumerable<string> stopIds)
-        {
-            // TODO: make the transit client get ETAs one at a time, async, and make the manager deal with getting many ETAs.
-            Func<string, Tuple<string, ConnexionzPlatformET>> getEtaIfTagExists =
-                id => Tuple.Create(id, toPlatformTag.ContainsKey(id) ?
-                                       ConnexionzClient.GetPlatformEta(toPlatformTag[id]).Result :
-                                       null);
-
-            // If there's only one requested, it's waayyy faster to just do this serially.
-            // Running the AsParallel() query below incurs significant overhead.
-            if (stopIds.Count() == 1)
-            {
-                var arrival = getEtaIfTagExists(stopIds.First());
-                var dict = new BusArrivalEstimates();
-
-                dict.Add(arrival.Item1, // The Stop ID acting as the key for this arrival
-                         arrival.Item2?.RouteEstimatedArrivals // The ETAs, transformed into a dictionary of { routeNo, ETA }.
-                                        ?.ToDictionary(route => route.RouteNo,
-                                                       route => route.EstimatedArrivalTime)
-                         ?? new Dictionary<string, int>());
-
-                return dict;
-            }
-
-
-            // Extracting the ETA is done as a query run in parallel such that one thread is dedicated to one ETA.
-            // The results are then coalesced into a dictionary where the keys are the requested stop IDs, and the
-            // values are also dictionaries.  These sub-dictionaries are a pair of { route, ETA in minutes}, where
-            // the route name is the key.
-            return stopIds.AsParallel()
-                          .Select(getEtaIfTagExists)
-                          .ToDictionary(eta => eta.Item1, // The Stop ID for this ETA
-                                        eta => eta.Item2?.RouteEstimatedArrivals
-                                                          ?.ToDictionary(route => route.RouteNo, // The dictionary of { Route Number, ETA } for the above Stop ID.
-                                                                         route => route.EstimatedArrivalTime)
-                                               ?? new Dictionary<string, int>());
-        }
+        public static async Task<ConnexionzPlatformET> GetEta(string platformTag) => await ConnexionzClient.GetPlatformEta(platformTag);
 
         /// <summary>
         /// Fabricates a bunch of schedule information for a route on a particular day.
