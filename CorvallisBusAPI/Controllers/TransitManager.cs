@@ -29,13 +29,15 @@ namespace API.Controllers
             var toPlatformTag = await repository.GetPlatformTagsAsync();
             var estimates = await GetEtas(repository, stopIds);
 
+            var currentTime = getCurrentTime();
+
             var todaySchedule = stopIds.Where(schedule.ContainsKey).ToDictionary(platformNo => platformNo,
                 platformNo => schedule[platformNo].ToDictionary(routeSchedule => routeSchedule.RouteNo,
                     routeSchedule =>
                     {
                         var result = new List<int>();
                         
-                        var scheduleCutoff = getCurrentTime().TimeOfDay.Add(TimeSpan.FromMinutes(30));
+                        var scheduleCutoff = currentTime.TimeOfDay.Add(TimeSpan.FromMinutes(30));
                         if (estimates.ContainsKey(platformNo))
                         {
                             var stopEstimate = estimates[platformNo];
@@ -51,7 +53,7 @@ namespace API.Controllers
                         {
                             result.AddRange(
                                 daySchedule.Times.Where(ts => ts > scheduleCutoff)
-                                                 .Select(ts => (int)ts.TotalMinutes));
+                                                 .Select(ts => (int)ts.Subtract(currentTime.TimeOfDay).TotalMinutes));
                         }
                         return result;
                     }));
