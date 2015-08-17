@@ -84,7 +84,9 @@ Sample Url: http://corvallisbus.azurewebsites.net/transit/eta/14244,13265
 - Input: One or more stop IDs
 - Output:
 
-A JSON dictionary where the keys are Stop IDs and the values are dictionaries of ``{ Route No : <array_of_scheduled_times> }``.
+A JSON dictionary where the keys are Stop IDs and the values are dictionaries of ``{ Route No : schedule }``.
+
+Sample Url: http://corvallisbus.azurewebsites.net/transit/schedule/14244,13265
 
 ```
 {
