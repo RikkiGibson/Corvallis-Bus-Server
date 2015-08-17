@@ -10,7 +10,8 @@
         "WindowsAzure.Storage": "4.3.0",
         "StackExchange.Redis": "1.0.481",
         "Microsoft.Framework.Configuration.Json": "1.0.0-beta5",
-        "Microsoft.Framework.Configuration.UserSecrets": "1.0.0-beta5"
+        "Microsoft.Framework.Configuration.UserSecrets": "1.0.0-beta5",
+        "Microsoft.Net.Http": "2.2.22"
     },
 
     "commands": {

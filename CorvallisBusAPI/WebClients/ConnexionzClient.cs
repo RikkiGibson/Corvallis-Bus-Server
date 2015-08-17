@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using API.Models.Connexionz;
 using API.Models;
 using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace API.WebClients
 {
@@ -44,9 +45,9 @@ namespace API.WebClients
         {
             var serializer = new XmlSerializer(typeof(T));
 
-            using (var client = new WebClient())
+            using (var client = new HttpClient())
             {
-                string s = await client.DownloadStringTaskAsync(url);
+                string s = await client.GetStringAsync(url);
 
                 var reader = new StringReader(s);
 
