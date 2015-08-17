@@ -7,7 +7,6 @@ using API.DataAccess;
 using API.WebClients;
 using System;
 using API.Models;
-using System.Device.Location;
 
 namespace API.Controllers
 {
@@ -50,7 +49,7 @@ namespace API.Controllers
         [Route("favorites")]
         public async Task<string> GetFavoritesViewModel(string location, string stops)
         {
-            GeoCoordinate userLocation = null;
+            LatLong? userLocation = null;
 
             var locationPieces = location?.Split(',');
             double lat, lon;
@@ -58,7 +57,7 @@ namespace API.Controllers
                 double.TryParse(locationPieces[0], out lat) &&
                 double.TryParse(locationPieces[1], out lon))
             {
-                userLocation = new GeoCoordinate(lat, lon);
+                userLocation = new LatLong(lat, lon);
             }
             
 
