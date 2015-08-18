@@ -3,7 +3,7 @@
     "IIS Express": {
       "commandName" : "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "transit/static",
+      "launchUrl": "static",
       "environmentVariables" : {
         "ASPNET_ENV": "Development"
       }

@@ -180,7 +180,7 @@ namespace API.Controllers
                     SecondRouteColor = secondRoute != null ? secondRoute.Color : string.Empty,
                     SecondRouteArrivals = routeSchedules.Count > 1 ? ToArrivalsSummary(routeSchedules[1].Value, getCurrentTime) : string.Empty,
 
-                    DistanceFromUser = $"{a.distanceFromUser:F1} miles",
+                    DistanceFromUser = double.IsNaN(a.distanceFromUser) ? "" : $"{a.distanceFromUser:F1} miles",
                     IsNearestStop = a.isNearestStop
                 };
             }).ToList();

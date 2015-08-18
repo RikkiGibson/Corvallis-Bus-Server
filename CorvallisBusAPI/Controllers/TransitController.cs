@@ -10,7 +10,6 @@ using API.Models;
 
 namespace API.Controllers
 {
-    [Route("[controller]")]
     public class TransitController : Controller
     {
         private ITransitRepository _repository;
@@ -27,10 +26,10 @@ namespace API.Controllers
 
         [HttpGet]
         [Route("static")]
-        public async Task<string> GetStaticData()
+        public async Task<ActionResult> GetStaticData()
         {
             var staticDataJson = await _repository.GetStaticDataAsync();
-            return staticDataJson;
+            return Content(staticDataJson, "application/json");
         }
 
         /// <summary>
@@ -39,44 +38,49 @@ namespace API.Controllers
         /// These nested dictionaries have route numbers as the keys and integers (ETA) as the values.
         /// </summary>
         [Route("eta/{stopIds}")]
-        public async Task<string> GetETAs(string stopIds)
+        public async Task<ActionResult> GetETAs(string stopIds)
         {
             var splitStopIds = stopIds.Split(',');
             var etas = await TransitManager.GetEtas(_repository, splitStopIds);
-            return JsonConvert.SerializeObject(etas);
+            return Json(etas);
         }
         
         [Route("favorites")]
-        public async Task<string> GetFavoritesViewModel(string location, string stops)
+        public async Task<ActionResult> GetFavoritesViewModel(string location, string stops)
         {
             LatLong? userLocation = null;
 
             var locationPieces = location?.Split(',');
             double lat, lon;
             if (locationPieces?.Length == 2 &&
-                double.TryParse(locationPieces[0], out lat) &&
-                double.TryParse(locationPieces[1], out lon))
+                double.TryParse(locationPieces?[0], out lat) &&
+                double.TryParse(locationPieces?[1], out lon))
             {
                 userLocation = new LatLong(lat, lon);
             }
             
+            var stopPieces = stops?.Split(',');
 
-            var stopPieces = stops.Split(',');
+            // No point in spinning up all the repository stuff if there's nothing to look up.
+            if (userLocation == null && stopPieces == null)
+            {
+                return Content("[]", "application/json");
+            }
 
             // try this URL: http://localhost:48487/transit/favorites?stops=11776,10308&location=44.5645659,-123.2620435
             var viewModel = await TransitManager.GetFavoritesViewModel(_repository, _getCurrentTime, stopPieces, userLocation, fallbackToGrayColor: false);
 
-            return JsonConvert.SerializeObject(viewModel);
+            return Json(viewModel);
         }
 
         [HttpGet]
         [Route("schedule/{stopIds}")]
-        public async Task<string> GetSchedule(string stopIds)
+        public async Task<ActionResult> GetSchedule(string stopIds)
         {
             string[] pieces = stopIds.Split(',');
             
             var todaySchedule = await TransitManager.GetSchedule(_repository, _getCurrentTime, pieces);
-            return JsonConvert.SerializeObject(todaySchedule);
+            return Json(todaySchedule);
         }
 
         /// <summary>
@@ -84,7 +88,7 @@ namespace API.Controllers
         /// </summary>
         [HttpGet]
         [Route("tasks/init")]
-        public string Init()
+        public ActionResult Init()
         {
             var staticData = TransitClient.CreateStaticData();
             _repository.SetStaticData(staticData);
@@ -95,7 +99,7 @@ namespace API.Controllers
             var schedule = TransitClient.CreateSchedule();
             _repository.SetSchedule(schedule);
 
-            return "Init job successful.";
+            return Content("Init job successful.", "text/plain");
         }
     }
 }
