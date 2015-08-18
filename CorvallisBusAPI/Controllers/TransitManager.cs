@@ -107,7 +107,7 @@ namespace API.Controllers
         {
             var staticData = JsonConvert.DeserializeObject<BusStaticData>(await repository.GetStaticDataAsync());
 
-            var favoriteStops = stopIds.Where(staticData.Stops.ContainsKey).Select(id =>
+            var favoriteStops = stopIds?.Where(staticData.Stops.ContainsKey)?.Select(id =>
             {
                 var stop = staticData.Stops[id];
                 return new
@@ -121,7 +121,7 @@ namespace API.Controllers
                     isNearestStop = false
                 };
             })
-            .ToList();
+            ?.ToList();
 
             var nearestStop = optionalUserLocation != null
                 ? staticData.Stops.Values
@@ -130,7 +130,7 @@ namespace API.Controllers
                         DistanceTo(optionalUserLocation.Value.Lat, optionalUserLocation.Value.Lon, s2.Lat, s2.Long, 'M') ? s1 : s2)
                 : null;
 
-            if (nearestStop != null && !favoriteStops.Any(f => f.stopId == nearestStop.ID))
+            if (nearestStop != null && favoriteStops != null && !favoriteStops.Any(f => f.stopId == nearestStop.ID))
             {
                 favoriteStops.Add(new
                 {
