@@ -1,13 +1,14 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
-using Newtonsoft.Json;
 using Microsoft.Framework.OptionsModel;
 using API.DataAccess;
 using API.WebClients;
 using System;
 using API.Models;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
 
 namespace API.Controllers
 {
@@ -34,17 +35,17 @@ namespace API.Controllers
                 var staticDataJson = await _repository.GetStaticDataAsync();
                 return Content(staticDataJson, "application/json");
             }
-            catch (Exception) // gotta catch 'em all
+            catch
             {
-                return new HttpStatusCodeResult(503);
+                return new HttpStatusCodeResult((int)HttpStatusCode.ServiceUnavailable);
             }
         }
 
         public List<int> ParseStopIds(string stopIds)
         {
-            if (stopIds == null)
+            if (string.IsNullOrWhiteSpace(stopIds))
             {
-                throw new ArgumentNullException(nameof(stopIds));
+                return new List<int>();
             }
 
             // ToList() this to force any parsing exception to happen here,
@@ -67,7 +68,12 @@ namespace API.Controllers
             {
                 parsedStopIds = ParseStopIds(stopIds);
             }
-            catch (Exception e) when (e is ArgumentNullException || e is FormatException)
+            catch (FormatException)
+            {
+                return HttpBadRequest();
+            }
+
+            if (parsedStopIds == null || parsedStopIds.Count == 0)
             {
                 return HttpBadRequest();
             }
@@ -77,10 +83,30 @@ namespace API.Controllers
                 var etas = await TransitManager.GetEtas(_repository, parsedStopIds);
                 return Json(etas);
             }
-            catch (Exception) // gotta catch 'em all
+            catch
             {
-                return new HttpStatusCodeResult(503);
+                return new HttpStatusCodeResult((int)HttpStatusCode.ServiceUnavailable);
             }
+        }
+
+        /// <summary>
+        /// Generates a new LatLong based on input.  Throws an exception if it can't do it.
+        /// </summary>
+        private static LatLong? ParseUserLocation(string location)
+        {
+            if (string.IsNullOrWhiteSpace(location))
+            {
+                return null;
+            }
+
+            var locationPieces = location.Split(',');
+            if (locationPieces.Length != 2)
+            {
+                throw new FormatException("2 comma-separated numbers must be provided in the location string.");
+            }
+
+            return new LatLong(double.Parse(locationPieces[0]),
+                               double.Parse(locationPieces[1]));
         }
 
         /// <summary>
@@ -90,48 +116,32 @@ namespace API.Controllers
         public async Task<ActionResult> GetFavoritesViewModel(string location, string stops)
         {
             LatLong? userLocation;
-            List<int> parsedStops;
+            List<int> parsedStopIds;
 
             try
             {
-                parsedStops = ParseStopIds(stops);
                 userLocation = ParseUserLocation(location);
+                parsedStopIds = ParseStopIds(stops);
             }
-            catch (Exception e) when (e is ArgumentNullException || e is FormatException)
+            catch (FormatException)
             {
                 return HttpBadRequest();
             }
 
-            // If it was somehow able to parse but couldn't get anything, they get an empty array.
-            //
-            // ...
-            //
-            // You know, kinda like how JavaScript works.
-            if (userLocation == null && parsedStops == null)
+            if (userLocation == null && (parsedStopIds == null || parsedStopIds.Count == 0))
             {
-                return Content("[]", "application/json");
+                return HttpBadRequest();
             }
-
+            
             try
             {
-                var viewModel = await TransitManager.GetFavoritesViewModel(_repository, _getCurrentTime, parsedStops, userLocation, fallbackToGrayColor: false);
+                var viewModel = await TransitManager.GetFavoritesViewModel(_repository, _getCurrentTime, parsedStopIds, userLocation, fallbackToGrayColor: false);
                 return Json(viewModel);
             }
-            catch (Exception) // gotta catch 'em all
+            catch
             {
-                return new HttpStatusCodeResult(503);
+                return new HttpStatusCodeResult((int)HttpStatusCode.ServiceUnavailable);
             }
-        }
-
-        /// <summary>
-        /// Generates a new LatLong based on input.  Throws an exception if it can't do it.
-        /// </summary>
-        private static LatLong? ParseUserLocation(string location)
-        {
-            var locationPieces = location?.Split(',');
-
-            return new LatLong(double.Parse(locationPieces[0]),
-                               double.Parse(locationPieces[1]));
         }
 
         /// <summary>
@@ -147,7 +157,12 @@ namespace API.Controllers
             {
                 parsedStopIds = ParseStopIds(stopIds);
             }
-            catch (Exception e) when (e is ArgumentNullException || e is FormatException)
+            catch (FormatException)
+            {
+                return HttpBadRequest();
+            }
+
+            if (parsedStopIds == null || parsedStopIds.Count == 0)
             {
                 return HttpBadRequest();
             }
@@ -157,9 +172,9 @@ namespace API.Controllers
                 var todaySchedule = await TransitManager.GetSchedule(_repository, _getCurrentTime, parsedStopIds);
                 return Json(todaySchedule);
             }
-            catch (Exception) // gotta catch 'em all
+            catch
             {
-                return new HttpStatusCodeResult(503);
+                return new HttpStatusCodeResult((int)HttpStatusCode.ServiceUnavailable);
             }
         }
 
