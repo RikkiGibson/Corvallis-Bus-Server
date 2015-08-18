@@ -24,7 +24,7 @@ Output:
 
    Returns a JSON dictionary containing static route and stop information.  Recommended usage is a one-time download and then local storage on the device.  This will allow for simpler and far less data-intensive calls later.
 
-Url: http://corvallisbus.azurewebsites.net/transit/static
+Url: http://corvallisbus.azurewebsites.net/static
 
 ```
 {
@@ -66,7 +66,7 @@ Output:
 
    Returns a JSON dictionary, where they keys are the supplied Stop IDs, and the values are dictionaries.  These dested dictionaries are such that the keys are route numbers, and the values are integers corresponding to the ETA for that route to that stop.  For example, ``"2":21"`` means that Route 2 is arriving at the given stop in 21 minutes.
 
-Sample Url: http://corvallisbus.azurewebsites.net/transit/eta/14244,13265
+Sample Url: http://corvallisbus.azurewebsites.net/eta/14244,13265
 
 ```
 {
@@ -91,7 +91,7 @@ Output:
 
    A JSON dictionary where the keys are Stop IDs and the values are dictionaries of ``{ Route No : schedule }``.
 
-Sample Url: http://corvallisbus.azurewebsites.net/transit/schedule/14244,13265
+Sample Url: http://corvallisbus.azurewebsites.net/schedule/14244,13265
 
 ```
 {
@@ -141,7 +141,7 @@ Output:
 
    A JSON array of stop information for "favorite stops" features.  See sample for details.
    
-Sample Url: http://corvallisbus.azurewebsites.net/transit/favorites?stops=11776,10308&location=44.5645659,-123.2620435
+Sample Url: http://corvallisbus.azurewebsites.net/favorites?stops=11776,10308&location=44.5645659,-123.2620435
    
 ```
 [
