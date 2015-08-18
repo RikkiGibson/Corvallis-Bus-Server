@@ -102,24 +102,16 @@ namespace API.Controllers
             return string.Join(", ", summaries);
         }
 
-        public static async Task<List<FavoriteStopViewModel>> GetFavoritesViewModel(ITransitRepository repository,
-            Func<DateTimeOffset> getCurrentTime, IEnumerable<int> stopIds, LatLong? optionalUserLocation, bool fallbackToGrayColor)
+        private static List<FavoriteStop> GetFavoriteStops(BusStaticData staticData, IEnumerable<int> stopIds, LatLong? optionalUserLocation)
         {
-            var staticData = JsonConvert.DeserializeObject<BusStaticData>(await repository.GetStaticDataAsync());
-
             var favoriteStops = stopIds.Where(staticData.Stops.ContainsKey).Select(id =>
             {
                 var stop = staticData.Stops[id];
-                return new
-                {
-                    stopId = stop.ID,
-                    stopName = stop.Name,
-                    routes = stop.RouteNames,
-                    distanceFromUser = optionalUserLocation != null
+                var distanceFromUser = optionalUserLocation != null
                         ? DistanceTo(optionalUserLocation.Value.Lat, optionalUserLocation.Value.Lon, stop.Lat, stop.Long, 'M')
-                        : double.NaN,
-                    isNearestStop = false
-                };
+                        : double.NaN;
+
+                return new FavoriteStop(stop.ID, stop.Name, stop.RouteNames, distanceFromUser, isNearestStop: false);
             })
             .ToList();
 
@@ -130,54 +122,64 @@ namespace API.Controllers
                         DistanceTo(optionalUserLocation.Value.Lat, optionalUserLocation.Value.Lon, s2.Lat, s2.Long, 'M') ? s1 : s2)
                 : null;
 
-            if (nearestStop != null && !favoriteStops.Any(f => f.stopId == nearestStop.ID))
+            if (nearestStop != null && !favoriteStops.Any(f => f.Id == nearestStop.ID))
             {
-                favoriteStops.Add(new
-                {
-                    stopId = nearestStop.ID,
-                    stopName = nearestStop.Name,
-                    routes = nearestStop.RouteNames,
-                    distanceFromUser = optionalUserLocation != null
-                        ? DistanceTo(optionalUserLocation.Value.Lat, optionalUserLocation.Value.Lon, nearestStop.Lat, nearestStop.Long, 'M')
-                        : double.NaN,
-                    isNearestStop = true
-                });
+                var distanceFromUser = optionalUserLocation != null
+                    ? DistanceTo(optionalUserLocation.Value.Lat, optionalUserLocation.Value.Lon, nearestStop.Lat, nearestStop.Long, 'M')
+                    : double.NaN;
+
+                favoriteStops.Add(new FavoriteStop(nearestStop.ID, nearestStop.Name, nearestStop.RouteNames,
+                                                   distanceFromUser, isNearestStop: true));
             }
 
-            favoriteStops.Sort((f1, f2) => f1.distanceFromUser.CompareTo(f2.distanceFromUser));
-            
-            var schedule = await GetSchedule(repository, getCurrentTime, favoriteStops.Select(f => f.stopId));
+            favoriteStops.Sort((f1, f2) => f1.DistanceFromUser.CompareTo(f2.DistanceFromUser));
+
+            return favoriteStops;
+        }
+
+        private static FavoriteStopViewModel ToViewModel(FavoriteStop favorite, BusStaticData staticData,
+            ClientBusSchedule schedule, Func<DateTimeOffset> getCurrentTime, string fallbackColor)
+        {
+            var routeSchedules = schedule[favorite.Id]
+                       .Where(rs => rs.Value.Any())
+                       .OrderBy(rs => rs.Value.Aggregate(int.MaxValue, Math.Min))
+                       .Take(2)
+                       .ToList();
+
+            var firstRoute = routeSchedules.Count > 0 ? staticData.Routes[routeSchedules[0].Key] : null;
+            var secondRoute = routeSchedules.Count > 1 ? staticData.Routes[routeSchedules[1].Key] : null;
+
+            return new FavoriteStopViewModel
+            {
+                StopId = favorite.Id,
+                StopName = favorite.Name,
+
+                FirstRouteName = firstRoute != null ? firstRoute.RouteNo : string.Empty,
+                FirstRouteColor = firstRoute != null ? firstRoute.Color : fallbackColor,
+                FirstRouteArrivals = routeSchedules.Count > 0 ? ToArrivalsSummary(routeSchedules[0].Value, getCurrentTime) : string.Empty,
+
+                SecondRouteName = secondRoute != null ? secondRoute.RouteNo : string.Empty,
+                SecondRouteColor = secondRoute != null ? secondRoute.Color : string.Empty,
+                SecondRouteArrivals = routeSchedules.Count > 1 ? ToArrivalsSummary(routeSchedules[1].Value, getCurrentTime) : string.Empty,
+
+                DistanceFromUser = double.IsNaN(favorite.DistanceFromUser) ? "" : $"{favorite.DistanceFromUser:F1} miles",
+                IsNearestStop = favorite.IsNearestStop
+            };
+        }
+
+        public static async Task<List<FavoriteStopViewModel>> GetFavoritesViewModel(ITransitRepository repository,
+            Func<DateTimeOffset> getCurrentTime, IEnumerable<int> stopIds, LatLong? optionalUserLocation, bool fallbackToGrayColor)
+        {
+            var staticData = JsonConvert.DeserializeObject<BusStaticData>(await repository.GetStaticDataAsync());
+
+            var favoriteStops = GetFavoriteStops(staticData, stopIds, optionalUserLocation);
+
+            var schedule = await GetSchedule(repository, getCurrentTime, favoriteStops.Select(f => f.Id));
 
             var fallbackColor = fallbackToGrayColor ? "AAAAAA" : string.Empty;
 
-            var result = favoriteStops.Select(a =>
-            {
-                var routeSchedules = schedule[a.stopId]
-                    .Where(rs => rs.Value.Any())
-                    .OrderBy(rs => rs.Value.Aggregate(int.MaxValue, Math.Min))
-                    .Take(2)
-                    .ToList();
-
-                var firstRoute = routeSchedules.Count > 0 ? staticData.Routes[routeSchedules[0].Key] : null;
-                var secondRoute = routeSchedules.Count > 1 ? staticData.Routes[routeSchedules[1].Key] : null;
-
-                return new FavoriteStopViewModel
-                {
-                    StopId = a.stopId,
-                    StopName = a.stopName,
-
-                    FirstRouteName = firstRoute != null ? firstRoute.RouteNo : string.Empty,
-                    FirstRouteColor = firstRoute != null ? firstRoute.Color : fallbackColor,
-                    FirstRouteArrivals = routeSchedules.Count > 0 ? ToArrivalsSummary(routeSchedules[0].Value, getCurrentTime) : string.Empty,
-
-                    SecondRouteName = secondRoute != null ? secondRoute.RouteNo : string.Empty,
-                    SecondRouteColor = secondRoute != null ? secondRoute.Color : string.Empty,
-                    SecondRouteArrivals = routeSchedules.Count > 1 ? ToArrivalsSummary(routeSchedules[1].Value, getCurrentTime) : string.Empty,
-
-                    DistanceFromUser = double.IsNaN(a.distanceFromUser) ? "" : $"{a.distanceFromUser:F1} miles",
-                    IsNearestStop = a.isNearestStop
-                };
-            }).ToList();
+            var result = favoriteStops.Select(favorite => ToViewModel(favorite, staticData, schedule, getCurrentTime, fallbackColor))
+                                      .ToList();
 
             return result;
         }
