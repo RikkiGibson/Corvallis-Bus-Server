@@ -97,7 +97,7 @@ namespace API.Controllers
                 parsedStops = ParseStopIds(stops);
                 userLocation = ParseUserLocation(location);
             }
-            catch (FormatException)
+            catch (Exception e) when (e is ArgumentNullException || e is FormatException)
             {
                 return HttpBadRequest();
             }
