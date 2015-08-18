@@ -16,7 +16,7 @@ We assume no liability for any missed buses.  Buses may be erratic in their arri
 
 ## API Routes
 
-###/transit/static
+###/static
 
 Input: None
 
@@ -57,7 +57,7 @@ Url: http://corvallisbus.azurewebsites.net/transit/static
     }
 ```
 
-###/transit/eta/
+###/eta/
 
 Input:
    - **Required** one or more Stop IDs
@@ -82,7 +82,7 @@ Sample Url: http://corvallisbus.azurewebsites.net/transit/eta/14244,13265
 }
 ```
 
-###/transit/schedule/
+###/schedule/
 
 Input: 
    - **Required** one or more stop IDs
@@ -131,7 +131,7 @@ Sample Url: http://corvallisbus.azurewebsites.net/transit/schedule/14244,13265
   }
 }
 ```
-### /transit/favorites
+### /favorites
 
 Input:
    - **Required** one or more stop IDs, comma-separated
