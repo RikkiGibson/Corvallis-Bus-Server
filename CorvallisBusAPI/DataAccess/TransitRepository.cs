@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace API.DataAccess
 {
-    using ServerBusSchedule = Dictionary<string, IEnumerable<BusStopRouteSchedule>>;
+    using ServerBusSchedule = Dictionary<int, IEnumerable<BusStopRouteSchedule>>;
 
     public class TransitRepository : ITransitRepository
     {
@@ -20,17 +20,17 @@ namespace API.DataAccess
             _cacheManager = new CacheManager(settings);
         }
 
-        public async Task<Dictionary<string, string>> GetPlatformTagsAsync()
+        public async Task<Dictionary<int, int>> GetPlatformTagsAsync()
         {
             var cacheJson = await _cacheManager.GetPlatformTagsAsync();
             if (string.IsNullOrWhiteSpace(cacheJson))
             {
                 var storageJson = await _storageManager.GetPlatformTagsAsync();
                 _cacheManager.SetPlatformTags(storageJson);
-                return JsonConvert.DeserializeObject<Dictionary<string, string>>(storageJson);
+                return JsonConvert.DeserializeObject<Dictionary<int, int>>(storageJson);
             }
 
-            return JsonConvert.DeserializeObject<Dictionary<string, string>>(cacheJson);
+            return JsonConvert.DeserializeObject<Dictionary<int, int>>(cacheJson);
         }
 
         public async Task<ServerBusSchedule> GetScheduleAsync()
@@ -59,7 +59,7 @@ namespace API.DataAccess
             return cacheJson;
         }
 
-        public void SetPlatformTags(Dictionary<string, string> platformTags)
+        public void SetPlatformTags(Dictionary<int, int> platformTags)
         {
             var platformTagsJson = JsonConvert.SerializeObject(platformTags);
             _storageManager.SetPlatformTags(platformTagsJson);

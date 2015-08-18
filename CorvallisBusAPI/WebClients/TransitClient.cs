@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace API.WebClients
 {
-    using ServerBusSchedule = Dictionary<string, IEnumerable<BusStopRouteSchedule>>;
+    using ServerBusSchedule = Dictionary<int, IEnumerable<BusStopRouteSchedule>>;
 
 
     /// <summary>
@@ -25,7 +25,7 @@ namespace API.WebClients
             var routes = ConnexionzClient.Routes.Value;
 
             return platforms.Select(p => 
-                    new BusStop(p, routes.Where(r => r.Path.Any(rp => rp.PlatformId == int.Parse(p.PlatformNo)))
+                    new BusStop(p, routes.Where(r => r.Path.Any(rp => rp.PlatformId == p.PlatformNo))
                                          .Select(r => r.RouteNo)
                                          .ToList()))
                             .ToList();
@@ -53,10 +53,10 @@ namespace API.WebClients
         /// <summary>
         /// Maps a platform number (5-digit number shown on real bus stop signs) to a platform tag (3-digit internal Connexionz identifier).
         /// </summary>
-        public static Dictionary<string, string> CreatePlatformTags() =>
+        public static Dictionary<int, int> CreatePlatformTags() =>
             ConnexionzClient.Platforms.Value.ToDictionary(p => p.PlatformNo, p => p.PlatformTag);
 
-        public static async Task<ConnexionzPlatformET> GetEta(string platformTag) => await ConnexionzClient.GetPlatformEta(platformTag);
+        public static async Task<ConnexionzPlatformET> GetEta(int platformTag) => await ConnexionzClient.GetPlatformEta(platformTag);
 
         /// <summary>
         /// Fabricates a bunch of schedule information for a route on a particular day.
@@ -127,7 +127,7 @@ namespace API.WebClients
                     DaySchedules = r.daySchedules.Select(ds => new BusStopRouteDaySchedule
                     {
                         Days = ds.days,
-                        Times = ds.stopSchedules.FirstOrDefault(ss => ss.Item1 == int.Parse(p.PlatformNo))?.Item2
+                        Times = ds.stopSchedules.FirstOrDefault(ss => ss.Item1 == p.PlatformNo)?.Item2
                     })
                     .Where(ds => ds.Times != null)
                     .ToList()

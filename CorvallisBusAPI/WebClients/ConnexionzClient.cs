@@ -87,9 +87,9 @@ namespace API.WebClients
         /// <summary>
         /// Gets the Connexionz-estimated time of arrival for a given stop.
         /// </summary>
-        public static async Task<ConnexionzPlatformET> GetPlatformEta(string platformTag)
+        public static async Task<ConnexionzPlatformET> GetPlatformEta(int platformTag)
         {
-            RoutePosition position = await GetEntityAsync<RoutePosition>(BASE_URL + "&Name=RoutePositionET.xml&PlatformTag=" + platformTag);
+            RoutePosition position = await GetEntityAsync<RoutePosition>(BASE_URL + "&Name=RoutePositionET.xml&PlatformTag=" + platformTag.ToString());
 
             var positionPlatform = position.Items.FirstOrDefault(p => p is RoutePositionPlatform) as RoutePositionPlatform;
 

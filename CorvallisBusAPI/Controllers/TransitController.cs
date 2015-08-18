@@ -7,6 +7,7 @@ using API.DataAccess;
 using API.WebClients;
 using System;
 using API.Models;
+using System.Collections.Generic;
 
 namespace API.Controllers
 {
@@ -32,6 +33,25 @@ namespace API.Controllers
             return Content(staticDataJson, "application/json");
         }
 
+        public IEnumerable<int> ParseStopIds(string stopIds)
+        {
+            if (stopIds == null)
+            {
+                yield break;
+            }
+
+            var splitStops = stopIds.Split(',');
+            
+            int parseResult;
+            foreach(var stop in splitStops)
+            {
+                if (int.TryParse(stop, out parseResult))
+                {
+                    yield return parseResult;
+                }
+            }
+        }
+
         /// <summary>
         /// As the name suggests, this gets the ETA information for any number of stop IDs.  The data
         /// is represented as a dictionary, where the keys are the given stop IDs and the values are dictionaries.
@@ -40,8 +60,8 @@ namespace API.Controllers
         [Route("eta/{stopIds}")]
         public async Task<ActionResult> GetETAs(string stopIds)
         {
-            var splitStopIds = stopIds.Split(',');
-            var etas = await TransitManager.GetEtas(_repository, splitStopIds);
+            var parsedStopIds = ParseStopIds(stopIds);
+            var etas = await TransitManager.GetEtas(_repository, parsedStopIds);
             return Json(etas);
         }
         
@@ -58,17 +78,17 @@ namespace API.Controllers
             {
                 userLocation = new LatLong(lat, lon);
             }
-            
-            var stopPieces = stops?.Split(',');
+
+            var parsedStops = ParseStopIds(stops);
 
             // No point in spinning up all the repository stuff if there's nothing to look up.
-            if (userLocation == null && stopPieces == null)
+            if (userLocation == null && parsedStops == null)
             {
                 return Content("[]", "application/json");
             }
 
             // try this URL: http://localhost:48487/transit/favorites?stops=11776,10308&location=44.5645659,-123.2620435
-            var viewModel = await TransitManager.GetFavoritesViewModel(_repository, _getCurrentTime, stopPieces, userLocation, fallbackToGrayColor: false);
+            var viewModel = await TransitManager.GetFavoritesViewModel(_repository, _getCurrentTime, parsedStops, userLocation, fallbackToGrayColor: false);
 
             return Json(viewModel);
         }
@@ -77,9 +97,9 @@ namespace API.Controllers
         [Route("schedule/{stopIds}")]
         public async Task<ActionResult> GetSchedule(string stopIds)
         {
-            string[] pieces = stopIds.Split(',');
-            
-            var todaySchedule = await TransitManager.GetSchedule(_repository, _getCurrentTime, pieces);
+            var parsedStopIds = ParseStopIds(stopIds);
+            var todaySchedule = await TransitManager.GetSchedule(_repository, _getCurrentTime, parsedStopIds);
+
             return Json(todaySchedule);
         }
 

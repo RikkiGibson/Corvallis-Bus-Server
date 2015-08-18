@@ -9,8 +9,8 @@ namespace API.Models.Connexionz
     {
         public ConnexionzPlatform(XElement platform)
         {
-            PlatformTag = platform.Attribute("PlatformTag").Value;
-            PlatformNo = platform.Attribute("PlatformNo").Value;
+            PlatformTag = int.Parse(platform.Attribute("PlatformTag").Value);
+            PlatformNo = int.Parse(platform.Attribute("PlatformNo").Value);
             Name = platform.Attribute("Name").Value;
 
             XElement position = platform.Element("Position");
@@ -21,12 +21,12 @@ namespace API.Models.Connexionz
         /// <summary>
         /// The 3 digit number which is used in the Connexionz API to get arrival estimates.
         /// </summary>
-        public string PlatformTag { get; private set; }
+        public int PlatformTag { get; private set; }
 
         /// <summary>
         /// The 5 digit number which is printed on bus stop signs in Corvallis.
         /// </summary>
-        public string PlatformNo { get; private set; }
+        public int PlatformNo { get; private set; }
 
         public string Name { get; private set; }
 

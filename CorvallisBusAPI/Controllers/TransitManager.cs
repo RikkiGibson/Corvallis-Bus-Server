@@ -12,18 +12,18 @@ namespace API.Controllers
 {
     // Maps a stop ID to a dictionary that maps a route number to a list of arrival times.
     // Intended for client consumption.
-    using ClientBusSchedule = Dictionary<string, Dictionary<string, List<int>>>;
+    using ClientBusSchedule = Dictionary<int, Dictionary<string, List<int>>>;
 
     // Maps a 5-digit stop ID to a dictionary that maps a route number to an arrival estimate in minutes.
     // TODO: these are awfully similar...should this stil exist?
-    using BusArrivalEstimates = Dictionary<string, Dictionary<string, List<int>>>;
+    using BusArrivalEstimates = Dictionary<int, Dictionary<string, List<int>>>;
 
     public static class TransitManager
     {
         /// <summary>
         /// Returns the bus schedule for the given stop IDs, incorporating the ETA from Connexionz.
         /// </summary>
-        public static async Task<ClientBusSchedule> GetSchedule(ITransitRepository repository, Func<DateTimeOffset> getCurrentTime, string[] stopIds)
+        public static async Task<ClientBusSchedule> GetSchedule(ITransitRepository repository, Func<DateTimeOffset> getCurrentTime, IEnumerable<int> stopIds)
         {
             var schedule = await repository.GetScheduleAsync();
             var toPlatformTag = await repository.GetPlatformTagsAsync();
@@ -103,16 +103,11 @@ namespace API.Controllers
         }
 
         public static async Task<List<FavoriteStopViewModel>> GetFavoritesViewModel(ITransitRepository repository,
-            Func<DateTimeOffset> getCurrentTime, string[] stopIds, LatLong? optionalUserLocation, bool fallbackToGrayColor)
+            Func<DateTimeOffset> getCurrentTime, IEnumerable<int> stopIds, LatLong? optionalUserLocation, bool fallbackToGrayColor)
         {
             var staticData = JsonConvert.DeserializeObject<BusStaticData>(await repository.GetStaticDataAsync());
 
-            // TODO: controllers should handle integer parsing *once* and
-            // spurious conversions between strings and integers shouldn't be necessary.
-            int parseResult;
-            var intIds = stopIds.Select(id => int.TryParse(id, out parseResult) ? parseResult : 0);
-
-            var favoriteStops = intIds.Where(staticData.Stops.ContainsKey).Select(id =>
+            var favoriteStops = stopIds.Where(staticData.Stops.ContainsKey).Select(id =>
             {
                 var stop = staticData.Stops[id];
                 return new
@@ -151,14 +146,13 @@ namespace API.Controllers
 
             favoriteStops.Sort((f1, f2) => f1.distanceFromUser.CompareTo(f2.distanceFromUser));
             
-            var etaStops = favoriteStops.Select(f => f.stopId.ToString()).ToArray();
-            var schedule = await GetSchedule(repository, getCurrentTime, etaStops);
+            var schedule = await GetSchedule(repository, getCurrentTime, favoriteStops.Select(f => f.stopId));
 
             var fallbackColor = fallbackToGrayColor ? "AAAAAA" : string.Empty;
 
             var result = favoriteStops.Select(a =>
             {
-                var routeSchedules = schedule[a.stopId.ToString()]
+                var routeSchedules = schedule[a.stopId]
                     .Where(rs => rs.Value.Any())
                     .OrderBy(rs => rs.Value.Aggregate(int.MaxValue, Math.Min))
                     .Take(2)
@@ -193,12 +187,12 @@ namespace API.Controllers
         /// aggregating the data into a dictionary.
         /// The outer dictionary takes a route number and gives a dictionary that takes a stop ID to an ETA.
         /// </summary>
-        public static async Task<BusArrivalEstimates> GetEtas(ITransitRepository repository, string[] stopIds)
+        public static async Task<BusArrivalEstimates> GetEtas(ITransitRepository repository, IEnumerable<int> stopIds)
         {
             var toPlatformTag = await repository.GetPlatformTagsAsync();
             
             // TODO: fetch ETAs from cache. How will that data be structured?
-            Func<string, Task<Tuple<string, ConnexionzPlatformET>>> getEtaIfTagExists =
+            Func<int, Task<Tuple<int, ConnexionzPlatformET>>> getEtaIfTagExists =
                 async id => Tuple.Create(id, toPlatformTag.ContainsKey(id) ? await TransitClient.GetEta(toPlatformTag[id]) : null);
 
             var tasks = stopIds.Select(getEtaIfTagExists);

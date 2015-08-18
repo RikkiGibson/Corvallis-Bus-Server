@@ -9,7 +9,7 @@ namespace API.DataAccess
     /// <summary>
     /// Maps a 5-digit stop ID to a list of route schedules.
     /// </summary>
-    using ServerBusSchedule = Dictionary<string, IEnumerable<BusStopRouteSchedule>>;
+    using ServerBusSchedule = Dictionary<int, IEnumerable<BusStopRouteSchedule>>;
 
     /// <summary>
     /// This interface abstracts over persistent and cache storage.
@@ -24,7 +24,7 @@ namespace API.DataAccess
         /// </summary>
         Task<string> GetStaticDataAsync();
 
-        Task<Dictionary<string, string>> GetPlatformTagsAsync();
+        Task<Dictionary<int, int>> GetPlatformTagsAsync();
 
         Task<ServerBusSchedule> GetScheduleAsync();
 
@@ -32,6 +32,6 @@ namespace API.DataAccess
 
         void SetSchedule(ServerBusSchedule schedule);
 
-        void SetPlatformTags(Dictionary<string, string> platformTags);
+        void SetPlatformTags(Dictionary<int, int> platformTags);
     }
 }

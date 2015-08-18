@@ -21,7 +21,7 @@ namespace API.Models
         /// </summary>
         public BusStop(ConnexionzPlatform platform, List<string> routeNames)
         {
-            ID = int.Parse(platform.PlatformNo);
+            ID = platform.PlatformNo;
             Name = platform.Name;
             Lat = platform.Lat;
             Long = platform.Long;
