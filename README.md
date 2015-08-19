@@ -134,8 +134,9 @@ Sample Url: http://corvallisbus.azurewebsites.net/schedule/14244,13265
 ### /favorites
 
 Input:
-   - **Required** one or more stop IDs, comma-separated
-   - **Optional** latitude and longitude, comma-separated
+One or more of the following is required.
+   - one or more stop IDs, comma-separated
+   - latitude and longitude, comma-separated
 
 Output:
 
