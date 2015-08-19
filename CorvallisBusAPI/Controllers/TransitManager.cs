@@ -15,7 +15,7 @@ namespace API.Controllers
     using ClientBusSchedule = Dictionary<int, Dictionary<string, List<int>>>;
 
     // Maps a 5-digit stop ID to a dictionary that maps a route number to an arrival estimate in minutes.
-    // TODO: these are awfully similar...should this stil exist?
+    // Exists to provide some compile-time semantics to differ between schedules and estimates.
     using BusArrivalEstimates = Dictionary<int, Dictionary<string, List<int>>>;
 
     public static class TransitManager
@@ -25,38 +25,44 @@ namespace API.Controllers
         /// </summary>
         public static async Task<ClientBusSchedule> GetSchedule(ITransitRepository repository, Func<DateTimeOffset> getCurrentTime, IEnumerable<int> stopIds)
         {
-            var schedule = await repository.GetScheduleAsync();
-            var toPlatformTag = await repository.GetPlatformTagsAsync();
-            var estimates = await GetEtas(repository, stopIds);
+            var schedulesTask = repository.GetScheduleAsync();
+            var estimatesTask = GetEtas(repository, stopIds);
 
             var currentTime = getCurrentTime();
 
-            var todaySchedule = stopIds.Where(schedule.ContainsKey).ToDictionary(platformNo => platformNo,
-                platformNo => schedule[platformNo].ToDictionary(routeSchedule => routeSchedule.RouteNo,
-                    routeSchedule =>
-                    {
-                        var result = new List<int>();
-                        
-                        var scheduleCutoff = currentTime.TimeOfDay.Add(TimeSpan.FromMinutes(30));
-                        if (estimates.ContainsKey(platformNo))
-                        {
-                            var stopEstimate = estimates[platformNo];
-                            if (stopEstimate.ContainsKey(routeSchedule.RouteNo))
-                            {
-                                var routeEstimates = stopEstimate[routeSchedule.RouteNo];
-                                result.AddRange(routeEstimates);
-                            }
-                        }
+            var schedule = await schedulesTask;
+            var estimates = await estimatesTask;
 
-                        var daySchedule = routeSchedule.DaySchedules.FirstOrDefault(ds => DaysOfWeekUtils.IsToday(ds.Days, getCurrentTime));
-                        if (daySchedule != null)
-                        {
-                            result.AddRange(
-                                daySchedule.Times.Where(ts => ts > scheduleCutoff)
-                                                 .Select(ts => (int)ts.Subtract(currentTime.TimeOfDay).TotalMinutes));
-                        }
-                        return result;
-                    }));
+            // Holy nested dictionaries batman
+            var todaySchedule = stopIds.Where(schedule.ContainsKey)
+                                       .ToDictionary(platformNo => platformNo,
+                                                     platformNo => schedule[platformNo]
+                .ToDictionary(routeSchedule => routeSchedule.RouteNo,
+                              routeSchedule =>
+                              {
+                                  var result = new List<int>();
+                              
+                                  var scheduleCutoff = currentTime.TimeOfDay.Add(TimeSpan.FromMinutes(30));
+                                  if (estimates.ContainsKey(platformNo))
+                                  {
+                                      var stopEstimate = estimates[platformNo];
+                                      if (stopEstimate.ContainsKey(routeSchedule.RouteNo))
+                                      {
+                                          var routeEstimates = stopEstimate[routeSchedule.RouteNo];
+                                          result.AddRange(routeEstimates);
+                                      }
+                                  }
+                              
+                                  var daySchedule = routeSchedule.DaySchedules.FirstOrDefault(ds => DaysOfWeekUtils.IsToday(ds.Days, getCurrentTime));
+                                  if (daySchedule != null)
+                                  {
+                                      result.AddRange(
+                                          daySchedule.Times.Where(ts => ts > scheduleCutoff)
+                                                              .Select(ts => (int)ts.Subtract(currentTime.TimeOfDay).TotalMinutes));
+                                  }
+                              
+                                  return result;
+                              }));
 
             return todaySchedule;
         }
@@ -174,9 +180,11 @@ namespace API.Controllers
 
             var favoriteStops = GetFavoriteStops(staticData, stopIds, optionalUserLocation);
 
-            var schedule = await GetSchedule(repository, getCurrentTime, favoriteStops.Select(f => f.Id));
+            var scheduleTask = GetSchedule(repository, getCurrentTime, favoriteStops.Select(f => f.Id));
 
             var fallbackColor = fallbackToGrayColor ? "AAAAAA" : string.Empty;
+
+            var schedule = await scheduleTask;
 
             var result = favoriteStops.Select(favorite => ToViewModel(favorite, staticData, schedule, getCurrentTime, fallbackColor))
                                       .ToList();
@@ -185,15 +193,13 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Gets the ETA info for a set of stop IDS.  Performs the calls to get the info in parallel,
-        /// aggregating the data into a dictionary.
+        /// Gets the ETA info for a set of stop IDS.
         /// The outer dictionary takes a route number and gives a dictionary that takes a stop ID to an ETA.
         /// </summary>
         public static async Task<BusArrivalEstimates> GetEtas(ITransitRepository repository, IEnumerable<int> stopIds)
         {
             var toPlatformTag = await repository.GetPlatformTagsAsync();
             
-            // TODO: fetch ETAs from cache. How will that data be structured?
             Func<int, Task<Tuple<int, ConnexionzPlatformET>>> getEtaIfTagExists =
                 async id => Tuple.Create(id, toPlatformTag.ContainsKey(id) ? await TransitClient.GetEta(toPlatformTag[id]) : null);
 

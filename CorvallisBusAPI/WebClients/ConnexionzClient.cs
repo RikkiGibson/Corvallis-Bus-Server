@@ -18,9 +18,13 @@ namespace API.WebClients
     public static class ConnexionzClient
     {
         private const string BASE_URL = "http://www.corvallistransit.com/rtt/public/utility/file.aspx?contenttype=SQLXML";
-        
+
         public static readonly Lazy<IEnumerable<ConnexionzPlatform>> Platforms = new Lazy<IEnumerable<ConnexionzPlatform>>(DownloadPlatforms);
         public static readonly Lazy<IEnumerable<ConnexionzRoute>> Routes = new Lazy<IEnumerable<ConnexionzRoute>>(DownloadRoutes);
+
+        // Yes this is IDisposable, but it makes sense to have this object "live"
+        // for the entire duration of the service, hence make it just a static object.
+        private static Lazy<HttpClient> _httpClient = new Lazy<HttpClient>();
 
         /// <summary>
         /// Gets and deserializes XML from the specified Connexionz/CTS endpoints.
@@ -45,14 +49,11 @@ namespace API.WebClients
         {
             var serializer = new XmlSerializer(typeof(T));
 
-            using (var client = new HttpClient())
-            {
-                string s = await client.GetStringAsync(url);
+            string s = await _httpClient.Value.GetStringAsync(url);
 
-                var reader = new StringReader(s);
+            var reader = new StringReader(s);
 
-                return serializer.Deserialize(reader) as T;
-            }
+            return serializer.Deserialize(reader) as T;
         }
 
         /// <summary>

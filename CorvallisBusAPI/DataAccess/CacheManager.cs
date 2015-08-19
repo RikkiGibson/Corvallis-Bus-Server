@@ -62,9 +62,7 @@ namespace API.DataAccess
         /// </summary>
         public async Task<string> GetPlatformTagsAsync()
         {
-            //Dictionary<string, string>
             var cache = Connection.GetDatabase();
-
             var json = await cache.StringGetAsync(_platformTagsKey);
             return json;
         }
