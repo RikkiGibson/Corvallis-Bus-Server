@@ -144,7 +144,7 @@ namespace API.Controllers
         }
 
         private static FavoriteStopViewModel ToViewModel(FavoriteStop favorite, BusStaticData staticData,
-            ClientBusSchedule schedule, Func<DateTimeOffset> getCurrentTime, string fallbackColor)
+            ClientBusSchedule schedule, Func<DateTimeOffset> getCurrentTime)
         {
             var routeSchedules = schedule[favorite.Id]
                        .Where(rs => rs.Value.Any())
@@ -161,7 +161,7 @@ namespace API.Controllers
                 StopName = favorite.Name,
 
                 FirstRouteName = firstRoute != null ? firstRoute.RouteNo : string.Empty,
-                FirstRouteColor = firstRoute != null ? firstRoute.Color : fallbackColor,
+                FirstRouteColor = firstRoute != null ? firstRoute.Color : string.Empty,
                 FirstRouteArrivals = routeSchedules.Count > 0 ? ToArrivalsSummary(routeSchedules[0].Value, getCurrentTime) : string.Empty,
 
                 SecondRouteName = secondRoute != null ? secondRoute.RouteNo : string.Empty,
@@ -174,7 +174,7 @@ namespace API.Controllers
         }
 
         public static async Task<List<FavoriteStopViewModel>> GetFavoritesViewModel(ITransitRepository repository,
-            Func<DateTimeOffset> getCurrentTime, IEnumerable<int> stopIds, LatLong? optionalUserLocation, bool fallbackToGrayColor)
+            Func<DateTimeOffset> getCurrentTime, IEnumerable<int> stopIds, LatLong? optionalUserLocation)
         {
             var staticData = JsonConvert.DeserializeObject<BusStaticData>(await repository.GetStaticDataAsync());
 
@@ -182,11 +182,9 @@ namespace API.Controllers
 
             var scheduleTask = GetSchedule(repository, getCurrentTime, favoriteStops.Select(f => f.Id));
 
-            var fallbackColor = fallbackToGrayColor ? "AAAAAA" : string.Empty;
-
             var schedule = await scheduleTask;
 
-            var result = favoriteStops.Select(favorite => ToViewModel(favorite, staticData, schedule, getCurrentTime, fallbackColor))
+            var result = favoriteStops.Select(favorite => ToViewModel(favorite, staticData, schedule, getCurrentTime))
                                       .ToList();
 
             return result;

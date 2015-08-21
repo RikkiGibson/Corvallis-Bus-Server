@@ -135,7 +135,7 @@ namespace API.Controllers
             
             try
             {
-                var viewModel = await TransitManager.GetFavoritesViewModel(_repository, _getCurrentTime, parsedStopIds, userLocation, fallbackToGrayColor: false);
+                var viewModel = await TransitManager.GetFavoritesViewModel(_repository, _getCurrentTime, parsedStopIds, userLocation);
                 return Json(viewModel);
             }
             catch
