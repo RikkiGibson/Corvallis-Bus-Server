@@ -81,15 +81,13 @@ namespace API.Models
         /// <summary>
         /// Returns a value indicating whether the provided DaysOfWeek value is applicable today.
         /// </summary>
-        public static bool IsToday(DaysOfWeek days, Func<DateTimeOffset> getCurrentTime)
+        public static bool IsToday(DaysOfWeek days, DateTimeOffset currentTime)
         {
-            var now = getCurrentTime();
-
             // special handling for Night Owl so that its schedule is visible after midnight
             // i.e., if it's 2AM on Sunday, we still consider "today" to be Saturday.
             var time = (days == DaysOfWeek.NightOwl)
-                ? now.AddHours(-4)
-                : now;
+                ? currentTime.AddHours(-4)
+                : currentTime;
 
             return (ToDaysOfWeek(time.DayOfWeek) & days) != DaysOfWeek.None;
         }

@@ -23,12 +23,10 @@ namespace API.Controllers
         /// <summary>
         /// Returns the bus schedule for the given stop IDs, incorporating the ETA from Connexionz.
         /// </summary>
-        public static async Task<ClientBusSchedule> GetSchedule(ITransitRepository repository, Func<DateTimeOffset> getCurrentTime, IEnumerable<int> stopIds)
+        public static async Task<ClientBusSchedule> GetSchedule(ITransitRepository repository, DateTimeOffset currentTime, IEnumerable<int> stopIds)
         {
             var schedulesTask = repository.GetScheduleAsync();
             var estimatesTask = GetEtas(repository, stopIds);
-
-            var currentTime = getCurrentTime();
 
             var schedule = await schedulesTask;
             var estimates = await estimatesTask;
@@ -53,7 +51,7 @@ namespace API.Controllers
                                       }
                                   }
                               
-                                  var daySchedule = routeSchedule.DaySchedules.FirstOrDefault(ds => DaysOfWeekUtils.IsToday(ds.Days, getCurrentTime));
+                                  var daySchedule = routeSchedule.DaySchedules.FirstOrDefault(ds => DaysOfWeekUtils.IsToday(ds.Days, currentTime));
                                   if (daySchedule != null)
                                   {
                                       result.AddRange(
@@ -96,14 +94,13 @@ namespace API.Controllers
             return dist;
         }
 
-        private static string ToArrivalsSummary(List<int> arrivalTimes, Func<DateTimeOffset> getCurrentTime)
+        private static string ToArrivalsSummary(List<int> arrivalTimes, DateTimeOffset currentTime)
         {
             if (arrivalTimes.Count == 0)
             {
                 return "No arrivals!";
             }
-
-            var currentTime = getCurrentTime();
+            
             var summaries = arrivalTimes.Take(2).Select(t => t > 30 ? currentTime.AddMinutes(t).ToString("h:mm tt") : $"{t} minutes");
             return string.Join(", ", summaries);
         }
@@ -144,7 +141,7 @@ namespace API.Controllers
         }
 
         private static FavoriteStopViewModel ToViewModel(FavoriteStop favorite, BusStaticData staticData,
-            ClientBusSchedule schedule, Func<DateTimeOffset> getCurrentTime)
+            ClientBusSchedule schedule, DateTimeOffset currentTime)
         {
             var routeSchedules = schedule[favorite.Id]
                        .Where(rs => rs.Value.Any())
@@ -162,11 +159,11 @@ namespace API.Controllers
 
                 FirstRouteName = firstRoute != null ? firstRoute.RouteNo : string.Empty,
                 FirstRouteColor = firstRoute != null ? firstRoute.Color : string.Empty,
-                FirstRouteArrivals = routeSchedules.Count > 0 ? ToArrivalsSummary(routeSchedules[0].Value, getCurrentTime) : string.Empty,
+                FirstRouteArrivals = routeSchedules.Count > 0 ? ToArrivalsSummary(routeSchedules[0].Value, currentTime) : string.Empty,
 
                 SecondRouteName = secondRoute != null ? secondRoute.RouteNo : string.Empty,
                 SecondRouteColor = secondRoute != null ? secondRoute.Color : string.Empty,
-                SecondRouteArrivals = routeSchedules.Count > 1 ? ToArrivalsSummary(routeSchedules[1].Value, getCurrentTime) : string.Empty,
+                SecondRouteArrivals = routeSchedules.Count > 1 ? ToArrivalsSummary(routeSchedules[1].Value, currentTime) : string.Empty,
 
                 DistanceFromUser = double.IsNaN(favorite.DistanceFromUser) ? "" : $"{favorite.DistanceFromUser:F1} miles",
                 IsNearestStop = favorite.IsNearestStop
@@ -174,17 +171,17 @@ namespace API.Controllers
         }
 
         public static async Task<List<FavoriteStopViewModel>> GetFavoritesViewModel(ITransitRepository repository,
-            Func<DateTimeOffset> getCurrentTime, IEnumerable<int> stopIds, LatLong? optionalUserLocation)
+            DateTimeOffset currentTime, IEnumerable<int> stopIds, LatLong? optionalUserLocation)
         {
             var staticData = JsonConvert.DeserializeObject<BusStaticData>(await repository.GetStaticDataAsync());
 
             var favoriteStops = GetFavoriteStops(staticData, stopIds, optionalUserLocation);
 
-            var scheduleTask = GetSchedule(repository, getCurrentTime, favoriteStops.Select(f => f.Id));
+            var scheduleTask = GetSchedule(repository, currentTime, favoriteStops.Select(f => f.Id));
 
             var schedule = await scheduleTask;
 
-            var result = favoriteStops.Select(favorite => ToViewModel(favorite, staticData, schedule, getCurrentTime))
+            var result = favoriteStops.Select(favorite => ToViewModel(favorite, staticData, schedule, currentTime))
                                       .ToList();
 
             return result;

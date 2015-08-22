@@ -135,7 +135,7 @@ namespace API.Controllers
             
             try
             {
-                var viewModel = await TransitManager.GetFavoritesViewModel(_repository, _getCurrentTime, parsedStopIds, userLocation);
+                var viewModel = await TransitManager.GetFavoritesViewModel(_repository, _getCurrentTime(), parsedStopIds, userLocation);
                 return Json(viewModel);
             }
             catch
@@ -169,7 +169,7 @@ namespace API.Controllers
 
             try
             {
-                var todaySchedule = await TransitManager.GetSchedule(_repository, _getCurrentTime, parsedStopIds);
+                var todaySchedule = await TransitManager.GetSchedule(_repository, _getCurrentTime(), parsedStopIds);
                 return Json(todaySchedule);
             }
             catch
