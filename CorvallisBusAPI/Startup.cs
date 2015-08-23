@@ -21,6 +21,8 @@ namespace API
 
             builder.AddEnvironmentVariables();
 
+            builder.AddApplicationInsightsSettings();
+
             Configuration = builder.Build();
         }
 
