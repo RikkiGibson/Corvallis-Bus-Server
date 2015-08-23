@@ -14,6 +14,7 @@
   <PropertyGroup>
     <SchemaVersion>2.0</SchemaVersion>
     <DevelopmentServerPort>48487</DevelopmentServerPort>
+    <ApplicationInsightsResourceId>/subscriptions/75d89d44-c3a0-44da-958a-b63d4132ca8e/resourcegroups/Default-ApplicationInsights-CentralUS/providers/microsoft.insights/components/CorvallisBusAPI</ApplicationInsightsResourceId>
   </PropertyGroup>
   <Import Project="$(VSToolsPath)\DNX\Microsoft.DNX.targets" Condition="'$(VSToolsPath)' != ''" />
 </Project>

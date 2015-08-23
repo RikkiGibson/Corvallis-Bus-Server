@@ -24,7 +24,7 @@ namespace API.WebClients
 
         // Yes this is IDisposable, but it makes sense to have this object "live"
         // for the entire duration of the service, hence make it just a static object.
-        private static Lazy<HttpClient> _httpClient = new Lazy<HttpClient>();
+        //private static Lazy<HttpClient> _httpClient = new Lazy<HttpClient>();
 
         /// <summary>
         /// Gets and deserializes XML from the specified Connexionz/CTS endpoints.
@@ -49,7 +49,12 @@ namespace API.WebClients
         {
             var serializer = new XmlSerializer(typeof(T));
 
-            string s = await _httpClient.Value.GetStringAsync(url);
+            string s = string.Empty;
+
+            using (var client = new WebClient())
+            {
+                s = await client.DownloadStringTaskAsync(new Uri(url));
+            }
 
             var reader = new StringReader(s);
 
