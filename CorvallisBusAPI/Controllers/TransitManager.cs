@@ -96,11 +96,6 @@ namespace API.Controllers
 
         private static string ToArrivalsSummary(List<int> arrivalTimes, DateTimeOffset currentTime)
         {
-            if (arrivalTimes.Count == 0)
-            {
-                return "No arrivals!";
-            }
-            
             var summaries = arrivalTimes.Take(2).Select(t => t > 30 ? currentTime.AddMinutes(t).ToString("h:mm tt") : $"{t} minutes");
             return string.Join(", ", summaries);
         }
@@ -159,7 +154,7 @@ namespace API.Controllers
 
                 FirstRouteName = firstRoute != null ? firstRoute.RouteNo : string.Empty,
                 FirstRouteColor = firstRoute != null ? firstRoute.Color : string.Empty,
-                FirstRouteArrivals = routeSchedules.Count > 0 ? ToArrivalsSummary(routeSchedules[0].Value, currentTime) : string.Empty,
+                FirstRouteArrivals = routeSchedules.Count > 0 ? ToArrivalsSummary(routeSchedules[0].Value, currentTime) : "No arrivals!",
 
                 SecondRouteName = secondRoute != null ? secondRoute.RouteNo : string.Empty,
                 SecondRouteColor = secondRoute != null ? secondRoute.Color : string.Empty,
