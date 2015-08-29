@@ -32,6 +32,7 @@ namespace API
         {
             services.AddMvc();
             services.Configure<AppSettings>(Configuration.GetConfigurationSection("AppSettings"), "");
+            services.AddApplicationInsightsTelemetry(Configuration);
         }
 
         // Configure is called after ConfigureServices is called.
@@ -42,6 +43,9 @@ namespace API
 
             // Add MVC to the request pipeline.
             app.UseMvc();
+
+            app.UseApplicationInsightsRequestTelemetry();
+            app.UseApplicationInsightsExceptionTelemetry();
         }
     }
 }
