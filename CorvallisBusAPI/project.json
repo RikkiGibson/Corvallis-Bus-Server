@@ -1,34 +1,44 @@
 {
-  "webroot": "wwwroot",
-  "version": "1.0.0-*",
+    "webroot": "wwwroot",
+    "version": "1.0.0-*",
 
-  "commands": {
-    "web": "Microsoft.AspNet.Hosting --config hosting.ini"
-  },
+    "dependencies": {
+        "Microsoft.AspNet.Mvc": "6.0.0-beta5",
+        "Microsoft.AspNet.Server.IIS": "1.0.0-beta5",
+        "Microsoft.AspNet.Server.WebListener": "1.0.0-beta5",
+        "Microsoft.AspNet.StaticFiles": "1.0.0-beta5",
+        "WindowsAzure.Storage": "4.3.0",
+        "StackExchange.Redis": "1.0.481",
+        "Microsoft.Framework.Configuration.Json": "1.0.0-beta5",
+        "Microsoft.Framework.Configuration.UserSecrets": "1.0.0-beta5",
+        "Microsoft.Net.Http": "2.2.22",
+        "Microsoft.ApplicationInsights.AspNet": "1.0.0-beta5"
+    },
 
-  "exclude": [
-    "wwwroot",
-    "node_modules",
-    "bower_components"
-  ],
-  "publishExclude": [
-    "node_modules",
-    "bower_components",
-    "**.xproj",
-    "**.user",
-    "**.vspscc"
-  ],
-  "dependencies": {
-    "Microsoft.AspNet.Mvc": "6.0.0-beta7",
-    "Microsoft.AspNet.Server.IIS": "1.0.0-beta7",
-    "Microsoft.AspNet.Server.WebListener": "1.0.0-beta7",
-    "Microsoft.AspNet.StaticFiles": "1.0.0-beta7",
-    "WindowsAzure.Storage": "5.0.2",
-    "StackExchange.Redis": "1.0.481",
-    "Microsoft.Framework.Configuration.Json": "1.0.0-beta7",
-    "Microsoft.Framework.Configuration.UserSecrets": "1.0.0-beta7",
-    "Microsoft.Net.Http": "2.2.29",
-    "Microsoft.ApplicationInsights.AspNet": "1.0.0-beta7",
-    "System.IO.Compression": "4.0.0"
-  }
+    "commands": {
+        "web": "Microsoft.AspNet.Hosting --config hosting.ini"
+    },
+
+    "frameworks": {
+        "dnx451": {
+            "dependencies": {
+                "System.IO.Compression": "4.0.0-beta-23019"
+            },
+            "frameworkAssemblies": {
+            }
+        }
+    },
+
+    "exclude": [
+        "wwwroot",
+        "node_modules",
+        "bower_components"
+    ],
+    "publishExclude": [
+        "node_modules",
+        "bower_components",
+        "**.xproj",
+        "**.user",
+        "**.vspscc"
+    ]
 }
