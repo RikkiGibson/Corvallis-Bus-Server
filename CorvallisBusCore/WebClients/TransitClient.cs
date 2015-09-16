@@ -58,6 +58,17 @@ namespace API.WebClients
 
         public static async Task<ConnexionzPlatformET> GetEta(int platformTag) => await ConnexionzClient.GetPlatformEta(platformTag);
 
+        private static TimeSpan RoundToNearestMinute(TimeSpan source)
+        {
+            // there are 10,000 ticks per millisecond, and 1000 milliseconds per second, and 60 seconds per minute
+            const int TICKS_PER_MINUTE = 10000 * 1000 * 60;
+            var subMinutesComponent = source.Ticks % TICKS_PER_MINUTE;
+
+            return subMinutesComponent < TICKS_PER_MINUTE / 2
+                ? source.Subtract(TimeSpan.FromTicks(subMinutesComponent))
+                : source.Add(TimeSpan.FromTicks(TICKS_PER_MINUTE - subMinutesComponent));
+        }
+
         /// <summary>
         /// Fabricates a bunch of schedule information for a route on a particular day.
         /// </summary>
@@ -90,7 +101,7 @@ namespace API.WebClients
                 results.AddRange(stopsInBetween.Select(
                     (val, idx) => Tuple.Create(
                         val.PlatformId,
-                        schedule[i].Times.Zip(stepSizes, (time, step) => time.Add(TimeSpan.FromTicks(step * idx)))
+                        schedule[i].Times.Zip(stepSizes, (time, step) => RoundToNearestMinute(time.Add(TimeSpan.FromTicks(step * idx))))
                                          .ToList())));
             }
 
