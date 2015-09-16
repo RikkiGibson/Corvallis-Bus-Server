@@ -15,6 +15,7 @@ namespace API.Controllers
 {
     using System.Configuration;
     using System.Text;
+    using System.Web.Hosting;
     using ClientBusSchedule = Dictionary<int, Dictionary<string, List<int>>>;
 
     public class TransitController : ApiController
@@ -27,8 +28,17 @@ namespace API.Controllers
         /// </summary>
         public TransitController()
         {
-            var appSettings = new AppSettings(ConfigurationManager.AppSettings);
-            _repository = new TransitRepository(appSettings);
+            if (bool.Parse(ConfigurationManager.AppSettings["UseAzureStorage"]))
+            {
+                var appSettings = new AppSettings(ConfigurationManager.AppSettings);
+                _repository = new AzureTransitRepository(appSettings);
+            }
+            else
+            {
+                var filePath = HostingEnvironment.MapPath("~");
+                _repository = new MemoryTransitRepository(filePath);
+            }
+
             _getCurrentTime = () => TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTimeOffset.Now, "Pacific Standard Time");
         }
 

@@ -13,7 +13,6 @@ namespace API.DataAccess
 
     /// <summary>
     /// This interface abstracts over persistent and cache storage.
-    /// It strictly produces and consumes JSON for efficiency.
     /// </summary>
     public interface ITransitRepository
     {

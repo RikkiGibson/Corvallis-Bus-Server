@@ -9,7 +9,6 @@ using API.Models.Connexionz;
 using API.Models;
 using System.Threading.Tasks;
 using System.Net.Http;
-using CorvallisBusCore.Models.Connexionz.GeneratedModels;
 
 namespace API.WebClients
 {

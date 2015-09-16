@@ -76,8 +76,9 @@
     <Compile Include="AppSettings.cs" />
     <Compile Include="DataAccess\CacheManager.cs" />
     <Compile Include="DataAccess\ITransitRepository.cs" />
+    <Compile Include="DataAccess\MemoryTransitRepository.cs" />
     <Compile Include="DataAccess\StorageManager.cs" />
-    <Compile Include="DataAccess\TransitRepository.cs" />
+    <Compile Include="DataAccess\AzureTransitRepository.cs" />
     <Compile Include="Models\BusRoute.cs" />
     <Compile Include="Models\BusStaticData.cs" />
     <Compile Include="Models\BusStop.cs" />

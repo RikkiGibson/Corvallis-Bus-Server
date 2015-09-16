@@ -72,8 +72,7 @@ namespace API.WebClients
                     var parts = reader.ReadLine().Split(',');
 
                     // Ignore all routes which aren't part of CTS and thus don't have any real-time data.
-                    if (parts[0].Contains("ATS") || parts[0].Contains("PC") ||
-                        parts[0].Contains("LBL") || parts[0].Contains("CVA"))
+                    if (parts[0].Contains("ATS") || parts[0].Contains("PC") || parts[0].Contains("LBL"))
                     {
                         continue;
                     }
@@ -85,7 +84,7 @@ namespace API.WebClients
             return routes;
         }
 
-        private static Regex m_routePattern = new Regex("^\"((BB_)?[^_]+)_");
+        private static Regex s_routePattern = new Regex("^\"((BB_)?[^_]+)_");
 
         /// <summary>
         /// This gives a time span even if it's over 24 hours-- requires HH:MM or HH:MM:00 format.
@@ -117,7 +116,7 @@ namespace API.WebClients
                     .Where(line => !string.IsNullOrWhiteSpace(line[1]))
                     .Select(line => new
                     {
-                        route = m_routePattern.Match(line[0]).Groups[1].Value,
+                        route = s_routePattern.Match(line[0]).Groups[1].Value,
                         stop = line[3],
                         order = line[4],
                         days = DaysOfWeekUtils.GetDaysOfWeek(line[0]),

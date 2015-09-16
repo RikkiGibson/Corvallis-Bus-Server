@@ -9,12 +9,12 @@ namespace API.DataAccess
 {
     using ServerBusSchedule = Dictionary<int, IEnumerable<BusStopRouteSchedule>>;
 
-    public class TransitRepository : ITransitRepository
+    public class AzureTransitRepository : ITransitRepository
     {
         private StorageManager _storageManager;
         private CacheManager _cacheManager;
 
-        public TransitRepository(AppSettings settings)
+        public AzureTransitRepository(AppSettings settings)
         {
             _storageManager = new StorageManager(settings);
             _cacheManager = new CacheManager(settings);
