@@ -21,6 +21,7 @@ namespace API.Controllers
     public class TransitController : ApiController
     {
         private ITransitRepository _repository;
+        private ITransitClient _client;
         private Func<DateTimeOffset> _getCurrentTime;
 
         /// <summary>
@@ -38,6 +39,7 @@ namespace API.Controllers
                 var filePath = HostingEnvironment.MapPath("~");
                 _repository = new MemoryTransitRepository(filePath);
             }
+            _client = new TransitClient();
 
             _getCurrentTime = () => TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTimeOffset.Now, "Pacific Standard Time");
         }
@@ -98,7 +100,7 @@ namespace API.Controllers
 
             try
             {
-                var etas = await TransitManager.GetEtas(_repository, parsedStopIds);
+                var etas = await TransitManager.GetEtas(_repository, _client, parsedStopIds);
                 return etas;
             }
             catch
@@ -153,7 +155,7 @@ namespace API.Controllers
 
             try
             {
-                var viewModel = await TransitManager.GetFavoritesViewModel(_repository, _getCurrentTime(), parsedStopIds, userLocation);
+                var viewModel = await TransitManager.GetFavoritesViewModel(_repository, _client, _getCurrentTime(), parsedStopIds, userLocation);
                 return viewModel;
             }
             catch
@@ -187,7 +189,7 @@ namespace API.Controllers
 
             try
             {
-                var todaySchedule = await TransitManager.GetSchedule(_repository, _getCurrentTime(), parsedStopIds);
+                var todaySchedule = await TransitManager.GetSchedule(_repository, _client, _getCurrentTime(), parsedStopIds);
                 return todaySchedule;
             }
             catch
@@ -203,13 +205,13 @@ namespace API.Controllers
         [Route("tasks/init")]
         public string Init()
         {
-            var staticData = TransitClient.CreateStaticData();
+            var staticData = _client.CreateStaticData();
             _repository.SetStaticData(staticData);
 
-            var platformTags = TransitClient.CreatePlatformTags();
+            var platformTags = _client.CreatePlatformTags();
             _repository.SetPlatformTags(platformTags);
 
-            var schedule = TransitClient.CreateSchedule();
+            var schedule = _client.CreateSchedule();
             _repository.SetSchedule(schedule);
 
             return "Init job successful.";

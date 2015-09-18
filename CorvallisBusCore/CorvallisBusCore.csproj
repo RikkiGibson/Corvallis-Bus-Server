@@ -134,6 +134,7 @@
     <Compile Include="TransitManager.cs" />
     <Compile Include="WebClients\ConnexionzClient.cs" />
     <Compile Include="WebClients\GoogleTransitClient.cs" />
+    <Compile Include="WebClients\ITransitClient.cs" />
     <Compile Include="WebClients\TransitClient.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -17,9 +17,9 @@ namespace API.WebClients
     /// Merges data obtained from Connexionz and Google Transit
     /// and makes it ready for delivery to clients.
     /// </summary>
-    public static class TransitClient
+    public class TransitClient : ITransitClient
     {
-        public static List<BusStop> CreateStops()
+        public List<BusStop> CreateStops()
         {
             var platforms = ConnexionzClient.Platforms.Value;
             var routes = ConnexionzClient.Routes.Value;
@@ -31,14 +31,14 @@ namespace API.WebClients
                             .ToList();
         }
 
-        public static List<BusRoute> CreateRoutes()
+        public List<BusRoute> CreateRoutes()
         {
             var googleRoutes = GoogleTransitClient.GoogleRoutes.Value.Item1.ToDictionary(gr => gr.ConnexionzName);
-            var routes = ConnexionzClient.Routes.Value;
+            var routes = ConnexionzClient.Routes.Value.Where(r => googleRoutes.ContainsKey(r.RouteNo));
             return routes.Select(r => new BusRoute(r, googleRoutes)).ToList();
         }
 
-        public static BusStaticData CreateStaticData()
+        public BusStaticData CreateStaticData()
         {
             var routes = CreateRoutes();
             var stops = CreateStops();
@@ -53,10 +53,10 @@ namespace API.WebClients
         /// <summary>
         /// Maps a platform number (5-digit number shown on real bus stop signs) to a platform tag (3-digit internal Connexionz identifier).
         /// </summary>
-        public static Dictionary<int, int> CreatePlatformTags() =>
+        public Dictionary<int, int> CreatePlatformTags() =>
             ConnexionzClient.Platforms.Value.ToDictionary(p => p.PlatformNo, p => p.PlatformTag);
 
-        public static async Task<ConnexionzPlatformET> GetEta(int platformTag) => await ConnexionzClient.GetPlatformEta(platformTag);
+        public async Task<ConnexionzPlatformET> GetEta(int platformTag) => await ConnexionzClient.GetPlatformEta(platformTag);
 
         private static TimeSpan RoundToNearestMinute(TimeSpan source)
         {
@@ -111,10 +111,10 @@ namespace API.WebClients
         /// <summary>
         /// Creates a bus schedule based on Google Transit data.
         /// </summary>
-        public static ServerBusSchedule CreateSchedule()
+        public ServerBusSchedule CreateSchedule()
         {
             var googleRouteSchedules = GoogleTransitClient.GoogleRoutes.Value.Item2.ToDictionary(schedule => schedule.ConnexionzName);
-            var routes = ConnexionzClient.Routes.Value;
+            var routes = ConnexionzClient.Routes.Value.Where(r => googleRouteSchedules.ContainsKey(r.RouteNo));
 
             // build all the schedule data for intermediate stops
             var routeSchedules = routes.Select(r => new

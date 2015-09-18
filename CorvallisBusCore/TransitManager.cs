@@ -23,46 +23,56 @@ namespace API
         /// <summary>
         /// Returns the bus schedule for the given stop IDs, incorporating the ETA from Connexionz.
         /// </summary>
-        public static async Task<ClientBusSchedule> GetSchedule(ITransitRepository repository, DateTimeOffset currentTime, IEnumerable<int> stopIds)
+        public static async Task<ClientBusSchedule> GetSchedule(ITransitRepository repository, ITransitClient client, DateTimeOffset currentTime, IEnumerable<int> stopIds)
         {
             var schedulesTask = repository.GetScheduleAsync();
-            var estimatesTask = GetEtas(repository, stopIds);
+            var estimatesTask = GetEtas(repository, client, stopIds);
 
             var schedule = await schedulesTask;
             var estimates = await estimatesTask;
-
+            
             // Holy nested dictionaries batman
             var todaySchedule = stopIds.Where(schedule.ContainsKey)
                                        .ToDictionary(platformNo => platformNo,
                                                      platformNo => schedule[platformNo]
                 .ToDictionary(routeSchedule => routeSchedule.RouteNo,
-                              routeSchedule =>
-                              {
-                                  var result = new List<int>();
-                              
-                                  var scheduleCutoff = currentTime.TimeOfDay.Add(TimeSpan.FromMinutes(30));
-                                  if (estimates.ContainsKey(platformNo))
-                                  {
-                                      var stopEstimate = estimates[platformNo];
-                                      if (stopEstimate.ContainsKey(routeSchedule.RouteNo))
-                                      {
-                                          var routeEstimates = stopEstimate[routeSchedule.RouteNo];
-                                          result.AddRange(routeEstimates);
-                                      }
-                                  }
-                              
-                                  var daySchedule = routeSchedule.DaySchedules.FirstOrDefault(ds => DaysOfWeekUtils.IsToday(ds.Days, currentTime));
-                                  if (daySchedule != null)
-                                  {
-                                      result.AddRange(
-                                          daySchedule.Times.Where(ts => ts > scheduleCutoff)
-                                                              .Select(ts => (int)ts.Subtract(currentTime.TimeOfDay).TotalMinutes));
-                                  }
-                              
-                                  return result;
-                              }));
+                              routeSchedule => InterleaveRouteScheduleAndEstimates(routeSchedule, estimates.ContainsKey(platformNo) ? estimates[platformNo] : new Dictionary<string, List<int>>(), currentTime)));
 
             return todaySchedule;
+        }
+
+        private static List<int> InterleaveRouteScheduleAndEstimates(BusStopRouteSchedule routeSchedule,
+            Dictionary<string, List<int>> stopEstimates, DateTimeOffset currentTime)
+        {
+            var result = new List<int>();
+
+            var daySchedule = routeSchedule.DaySchedules.FirstOrDefault(ds => DaysOfWeekUtils.IsToday(ds.Days, currentTime));
+            if (daySchedule != null)
+            {
+                var scheduleCutoff = currentTime.TimeOfDay.Add(TimeSpan.FromMinutes(20));
+                result.AddRange(daySchedule.Times.Where(ts => ts > scheduleCutoff)
+                                                 .Select(ts => (int)ts.Subtract(currentTime.TimeOfDay).TotalMinutes));
+            }
+            
+            if (stopEstimates.ContainsKey(routeSchedule.RouteNo))
+            {
+                var routeEstimates = stopEstimates[routeSchedule.RouteNo];
+                foreach(int estimate in routeEstimates)
+                {
+                    // When an estimate time is close to a scheduled time, overwrite the schedule with the estimate.
+                    var scheduleIndex = result.FindIndex(i => Math.Abs(i - estimate) <= 10);
+                    if (scheduleIndex != -1)
+                    {
+                        result[scheduleIndex] = estimate;
+                    }
+                    else
+                    {
+                        result.Insert(0, estimate);
+                    }
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -166,13 +176,13 @@ namespace API
         }
 
         public static async Task<List<FavoriteStopViewModel>> GetFavoritesViewModel(ITransitRepository repository,
-            DateTimeOffset currentTime, IEnumerable<int> stopIds, LatLong? optionalUserLocation)
+            ITransitClient client, DateTimeOffset currentTime, IEnumerable<int> stopIds, LatLong? optionalUserLocation)
         {
             var staticData = JsonConvert.DeserializeObject<BusStaticData>(await repository.GetStaticDataAsync());
 
             var favoriteStops = GetFavoriteStops(staticData, stopIds, optionalUserLocation);
 
-            var scheduleTask = GetSchedule(repository, currentTime, favoriteStops.Select(f => f.Id));
+            var scheduleTask = GetSchedule(repository, client, currentTime, favoriteStops.Select(f => f.Id));
 
             var schedule = await scheduleTask;
 
@@ -186,12 +196,12 @@ namespace API
         /// Gets the ETA info for a set of stop IDS.
         /// The outer dictionary takes a route number and gives a dictionary that takes a stop ID to an ETA.
         /// </summary>
-        public static async Task<BusArrivalEstimates> GetEtas(ITransitRepository repository, IEnumerable<int> stopIds)
+        public static async Task<BusArrivalEstimates> GetEtas(ITransitRepository repository, ITransitClient client, IEnumerable<int> stopIds)
         {
             var toPlatformTag = await repository.GetPlatformTagsAsync();
             
             Func<int, Task<Tuple<int, ConnexionzPlatformET>>> getEtaIfTagExists =
-                async id => Tuple.Create(id, toPlatformTag.ContainsKey(id) ? await TransitClient.GetEta(toPlatformTag[id]) : null);
+                async id => Tuple.Create(id, toPlatformTag.ContainsKey(id) ? await client.GetEta(toPlatformTag[id]) : null);
 
             var tasks = stopIds.Select(getEtaIfTagExists);
             var results = await Task.WhenAll(tasks);
