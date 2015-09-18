@@ -104,9 +104,22 @@ namespace API
             return dist;
         }
 
+        private static string RenderArrivalTime(DateTimeOffset currentTime, int minutesFromNow)
+        {
+            if (minutesFromNow > 30)
+            {
+                return currentTime.AddMinutes(minutesFromNow).ToString("h:mm tt");
+            }
+            if (minutesFromNow == 1)
+            {
+                return $"{minutesFromNow} minute";
+            }
+            return $"{minutesFromNow} minutes";
+        }
+
         private static string ToArrivalsSummary(List<int> arrivalTimes, DateTimeOffset currentTime)
         {
-            var summaries = arrivalTimes.Take(2).Select(t => t > 30 ? currentTime.AddMinutes(t).ToString("h:mm tt") : $"{t} minutes");
+            var summaries = arrivalTimes.Take(2).Select(t => RenderArrivalTime(currentTime, t));
             return string.Join(", ", summaries);
         }
 
