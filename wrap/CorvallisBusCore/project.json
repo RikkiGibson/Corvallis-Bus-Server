@@ -1,0 +1,23 @@
+{
+  "version": "1.0.0-*",
+  "frameworks": {
+    "net452": {
+      "wrappedProject": "../../CorvallisBusCore/CorvallisBusCore.csproj",
+      "bin": {
+        "assembly": "../../CorvallisBusCore/obj/{configuration}/CorvallisBusCore.dll",
+        "pdb": "../../CorvallisBusCore/obj/{configuration}/CorvallisBusCore.pdb"
+      },
+      "dependencies": {
+        "Microsoft.Azure.KeyVault.Core": "1.0.0",
+        "Microsoft.Data.Edm": "5.6.4",
+        "Microsoft.Data.OData": "5.6.4",
+        "Microsoft.Data.Services.Client": "5.6.4",
+        "Newtonsoft.Json": "7.0.1",
+        "StackExchange.Redis": "1.0.481",
+        "System.IO.Compression": "4.0.0",
+        "System.Spatial": "5.6.4",
+        "WindowsAzure.Storage": "5.0.2"
+      }
+    }
+  }
+}

@@ -17,18 +17,25 @@ namespace API.DataAccess
         private static Dictionary<int, int> s_platformTags;
         private static Dictionary<int, IEnumerable<BusStopRouteSchedule>> s_schedule;
         private static string s_staticData;
-
-        private string filePath;
+        
+        private readonly string _platformTagsPath;
+        private readonly string _schedulePath;
+        private readonly string _staticDataPath;
         public MemoryTransitRepository(string filePath)
         {
-            this.filePath = filePath;
+            var folder = filePath + "/cache";
+            Directory.CreateDirectory(folder);
+
+            _platformTagsPath = folder + "/platformTags.json";
+            _schedulePath = folder + "/schedule.json";
+            _staticDataPath = folder + "/staticData.json";
         }
 
         public Task<Dictionary<int, int>> GetPlatformTagsAsync()
         {
             if (s_platformTags == null)
             {
-                s_platformTags = JsonConvert.DeserializeObject<Dictionary<int, int>>(File.ReadAllText(filePath + "/platformTags.json"));
+                s_platformTags = JsonConvert.DeserializeObject<Dictionary<int, int>>(File.ReadAllText(_platformTagsPath));
             }
             return Task.FromResult(s_platformTags);
         }
@@ -37,7 +44,7 @@ namespace API.DataAccess
         {
             if (s_schedule == null)
             {
-                s_schedule = JsonConvert.DeserializeObject<Dictionary<int, IEnumerable<BusStopRouteSchedule>>>(File.ReadAllText(filePath + "/schedule.json"));
+                s_schedule = JsonConvert.DeserializeObject<Dictionary<int, IEnumerable<BusStopRouteSchedule>>>(File.ReadAllText(_schedulePath));
             }
             return Task.FromResult(s_schedule);
         }
@@ -46,7 +53,7 @@ namespace API.DataAccess
         {
             if (s_staticData == null)
             {
-                s_staticData = File.ReadAllText(filePath + "/staticData.json");
+                s_staticData = File.ReadAllText(_staticDataPath);
             }
             return Task.FromResult(s_staticData);
         }
@@ -54,19 +61,19 @@ namespace API.DataAccess
         public void SetPlatformTags(Dictionary<int, int> platformTags)
         {
             s_platformTags = platformTags;
-            File.WriteAllText(filePath + "/platformTags.json", JsonConvert.SerializeObject(platformTags));
+            File.WriteAllText(_platformTagsPath, JsonConvert.SerializeObject(platformTags));
         }
 
         public void SetSchedule(Dictionary<int, IEnumerable<BusStopRouteSchedule>> schedule)
         {
             s_schedule = schedule;
-            File.WriteAllText(filePath + "/schedule.json", JsonConvert.SerializeObject(schedule));
+            File.WriteAllText(_schedulePath, JsonConvert.SerializeObject(schedule));
         }
 
         public void SetStaticData(BusStaticData staticData)
         {
             s_staticData = JsonConvert.SerializeObject(staticData);
-            File.WriteAllText(filePath + "/staticData.json", JsonConvert.SerializeObject(staticData));
+            File.WriteAllText(_staticDataPath, JsonConvert.SerializeObject(staticData));
         }
     }
 }
