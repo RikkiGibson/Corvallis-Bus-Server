@@ -72,6 +72,8 @@ namespace API
                 }
             }
 
+            result.Sort();
+
             return result;
         }
 
