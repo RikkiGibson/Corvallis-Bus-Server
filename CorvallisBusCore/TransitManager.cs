@@ -49,9 +49,7 @@ namespace API
             var daySchedule = routeSchedule.DaySchedules.FirstOrDefault(ds => DaysOfWeekUtils.IsToday(ds.Days, currentTime));
             if (daySchedule != null)
             {
-                var scheduleCutoff = currentTime.TimeOfDay.Add(TimeSpan.FromMinutes(20));
-                result.AddRange(daySchedule.Times.Where(ts => ts > scheduleCutoff)
-                                                 .Select(ts => (int)ts.Subtract(currentTime.TimeOfDay).TotalMinutes));
+                result.AddRange(ToMinutesFromNow(daySchedule, currentTime));
             }
             
             if (stopEstimates.ContainsKey(routeSchedule.RouteNo))
@@ -75,6 +73,20 @@ namespace API
             result.Sort();
 
             return result;
+        }
+
+        private static IEnumerable<int> ToMinutesFromNow(BusStopRouteDaySchedule daySchedule, DateTimeOffset currentTime)
+        {
+            // Is there a better condition for this, i.e. involving a check whether there are 24hr+ time spans in the schedule?
+            var timeOfDay = daySchedule.Days == DaysOfWeek.NightOwl &&
+                currentTime.TimeOfDay.Hours > 4
+                ? currentTime.TimeOfDay
+                : currentTime.TimeOfDay.Add(TimeSpan.FromDays(1));
+
+            var scheduleCutoff = timeOfDay.Add(TimeSpan.FromMinutes(20));
+
+            return daySchedule.Times.Where(ts => ts > scheduleCutoff)
+                .Select(ts => (int)ts.Subtract(timeOfDay).TotalMinutes);
         }
 
         /// <summary>
