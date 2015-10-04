@@ -8,7 +8,7 @@ The backend that powers the best apps for the Corvallis Transit System.
 
 ## Purpose
 
-To have a more convenient way to get real-time information about the free buses in Corvallis.  Data from CTS is mapped into some more easily-digestable JSON for different use cases.
+To have a more convenient way to get real-time information about the free buses in Corvallis.  Data from CTS is merged with data from Google Transit, with some convenient projections applied, and mapped into some easily-digestable JSON for different use cases.
 
 ## Disclaimer
 
@@ -28,30 +28,34 @@ Url: http://corvallisbus.azurewebsites.net/static
 
 ```
 {
-   "routes":
+   "Routes":
    {
       "1":
       {
-        "path": [
+        "RouteNo": "1",
+        "Path": [
           14244,
           13265,
           ...
-        ]
+        ],
+        "Color": "00ADEE",
+        "Url": "http://www.corvallisoregon.gov/index.aspx?page=822",
+        "Polyline": "[a long string encoded with the Google polyline format]"
       }
       "2":
       {
         ...
       }
     }
-    "stops":
+    "Stops":
     {
       "10019": 
       {
-        "id": 10019,
-        "name": "Benton Oaks RV Park",
-        "routes": [
-          "C3"
-        ]
+        "ID": 10019,
+        "Name": "Benton Oaks RV Park",
+        "Lat": 44.5701824,
+        "Long": -123.3122203,
+        "RouteNames": ["C3"]},
       },
       ...
     }
@@ -59,12 +63,14 @@ Url: http://corvallisbus.azurewebsites.net/static
 
 ###/eta/
 
+Queries the city API for arrival estimates, which are encoded as integers.
+
 Input:
    - **Required** one or more Stop IDs
 
 Output:
 
-   Returns a JSON dictionary, where they keys are the supplied Stop IDs, and the values are dictionaries.  These dested dictionaries are such that the keys are route numbers, and the values are integers corresponding to the ETA for that route to that stop.  For example, ``"2":21"`` means that Route 2 is arriving at the given stop in 21 minutes.
+Returns a JSON dictionary, where they keys are the supplied Stop IDs, and the values are dictionaries.  These nested dictionaries are such that the keys are route numbers, and the values are lists of integers corresponding to the ETAs for that route to that stop. For example, ``"6":[1, 21]"`` means that Route 6 is arriving at the given stop in 1 minute, and again in 21 minutes. ETAs are limited to 30 minutes in the future.
 
 Sample Url: http://corvallisbus.azurewebsites.net/eta/14244,13265
 
@@ -74,15 +80,20 @@ Sample Url: http://corvallisbus.azurewebsites.net/eta/14244,13265
     
   },
   "13265": {
-    "1": 6,
-    "2":21,
-    "5":22,
-    "8":22
+    "1": [6],
+    "2": [21],
+    "5": [22],
+    "8": [22]
   }
 }
 ```
 
 ###/schedule/
+
+Returns an interleaved list of arrival times for each route for each stop ID provided.
+Most of the stops in the Corvallis Transit System don't have a schedule. This app fabricates schedules for them by interpolating between those stops that have a schedule. The time between two officially scheduled stops is divided by the number of unscheduled stops between them. This turns out to be a reasonably accurate method.
+
+Since buses can run behind by 15 minutes or more, or have runs cancelled outright, some interpretation is necessary to communicate the schedule and the estimates in the most informative way possible for users. Check out the source for TransitClient if you want to know the details on what is done for this.
 
 Input: 
    - **Required** one or more stop IDs
@@ -90,6 +101,7 @@ Input:
 Output:
 
    A JSON dictionary where the keys are Stop IDs and the values are dictionaries of ``{ Route No : schedule }``.
+   The schedule is a list of integers where each integer is "minutes from now." Integers are used because ETAs are interleaved with scheduled arrival times. This avoids a problem where an ETA appears to go up by a minute at the same time the minute on the system clock increments. It introduces a problem where the scheduled times vary by a minute if the server has a different minute value at the time it creates the payload than the client has at the time it consumes the payload. This is a case of settling for "good enough."
 
 Sample Url: http://corvallisbus.azurewebsites.net/schedule/14244,13265
 
@@ -100,7 +112,7 @@ Sample Url: http://corvallisbus.azurewebsites.net/schedule/14244,13265
       
     ],
     "2": [
-      "2015-07-29 19:25"
+      40
     ],
     "4": [
       
@@ -111,19 +123,19 @@ Sample Url: http://corvallisbus.azurewebsites.net/schedule/14244,13265
       
     ],
     "2": [
-      "2015-07-29 19:25"
+      37
     ],
     "3": [
       
     ],
     "5": [
-      "2015-07-29 19:25",
-      "2015-07-29 19:55",
-      "2015-07-29 20:25",
-      "2015-07-29 20:55"
+      35,
+      65,
+      95,
+      125
     ],
     "7": [
-      "2015-07-29 19:30"
+      12
     ],
     "8": [
       
