@@ -79,9 +79,9 @@ namespace API
         {
             // Is there a better condition for this, i.e. involving a check whether there are 24hr+ time spans in the schedule?
             var timeOfDay = daySchedule.Days == DaysOfWeek.NightOwl &&
-                currentTime.TimeOfDay.Hours > 4
-                ? currentTime.TimeOfDay
-                : currentTime.TimeOfDay.Add(TimeSpan.FromDays(1));
+                currentTime.TimeOfDay.Hours < 4
+                ? currentTime.TimeOfDay.Add(TimeSpan.FromDays(1))
+                : currentTime.TimeOfDay;
 
             var scheduleCutoff = timeOfDay.Add(TimeSpan.FromMinutes(20));
 
