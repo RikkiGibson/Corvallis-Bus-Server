@@ -10,6 +10,7 @@ using System.Web.Http;
 using System.Web.Http.Results;
 using System.Net.Http.Formatting;
 using System.Net.Http;
+using System.Web.Http.Cors;
 
 namespace API.Controllers
 {
@@ -18,6 +19,7 @@ namespace API.Controllers
     using System.Web.Hosting;
     using ClientBusSchedule = Dictionary<int, Dictionary<string, List<int>>>;
 
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class TransitController : ApiController
     {
         private ITransitRepository _repository;
