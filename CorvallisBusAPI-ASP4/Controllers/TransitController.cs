@@ -47,6 +47,18 @@ namespace API.Controllers
             _getCurrentTime = () => TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTimeOffset.Now, "Pacific Standard Time");
         }
 
+        /// <summary>
+        /// Redirects the user to the GitHub repo where this API is documented.
+        /// </summary>
+        [HttpGet]
+        [Route("")]
+        public HttpResponseMessage Index()
+        {
+            var response = Request.CreateResponse(HttpStatusCode.Found);
+            response.Headers.Location = new Uri("http://github.com/RikkiGibson/Corvallis-Bus-Server");
+            return response;
+        }
+
         [HttpGet]
         [Route("static")]
         public async Task<HttpResponseMessage> GetStaticData()
