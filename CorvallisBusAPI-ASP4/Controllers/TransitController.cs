@@ -19,6 +19,7 @@ namespace API.Controllers
     using System.Web.Hosting;
     using ClientBusSchedule = Dictionary<int, Dictionary<string, List<int>>>;
 
+    [RoutePrefix("api")]
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class TransitController : ApiController
     {

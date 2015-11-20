@@ -120,7 +120,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
@@ -132,6 +134,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+    <None Include="Properties\PublishProfiles\corvallisbus - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\corvallisbus - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\gearhost.pubxml" />
     <None Include="Properties\PublishProfiles\rikkibus - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\rikkibus - Web Deploy.pubxml" />
