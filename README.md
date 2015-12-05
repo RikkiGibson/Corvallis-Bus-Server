@@ -205,7 +205,7 @@ Input:
 Output:
    A dictionary where the keys are stop IDs and the values are a list of nice, sorted view models with user-friendly descriptions of the arrival times for each route at that stop.
    
-Sample URL: https://corvallisb.us/api/arrivalsSummary/10308,14237
+Sample URL: https://corvallisb.us/api/arrivals-summary/10308,14237
 
 ```
 {  
