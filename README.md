@@ -197,7 +197,7 @@ Sample Url: https://corvallisb.us/api/favorites?stops=11776,10308&location=44.56
 ]
 ```
 
-###/arrivalsSummary/
+###/arrivals-summary/
 
 Input:
    - **Required** one or more stop IDs
