@@ -143,7 +143,7 @@ Sample Url: https://corvallisb.us/api/schedule/14244,13265
   }
 }
 ```
-### /favorites
+###/favorites
 
 Input:
 One or more of the following is required.
@@ -195,4 +195,72 @@ Sample Url: https://corvallisb.us/api/favorites?stops=11776,10308&location=44.56
     "SecondRouteArrivals": "3:19 PM, 5:34 PM"
   }
 ]
+```
+
+###/arrivalsSummary/
+
+Input:
+   - **Required** one or more stop IDs
+
+Output:
+   A dictionary where the keys are stop IDs and the values are a list of nice, sorted view models with user-friendly descriptions of the arrival times for each route at that stop.
+   
+Sample URL: https://corvallisb.us/api/arrivalsSummary/10308,14237
+
+```
+{  
+  "10308":[  
+    {  
+      "RouteName":"2",
+      "RouteColor":"882790",
+      "ArrivalsSummary":"1 minute, 07:48 PM",
+      "ScheduleSummary":""
+    },
+    {  
+      "RouteName":"1",
+      "RouteColor":"00ADEE",
+      "ArrivalsSummary":"10 minutes",
+      "ScheduleSummary":""
+    },
+    {  
+      "RouteName":"5",
+      "RouteColor":"BD559F",
+      "ArrivalsSummary":"11 minutes, 07:48 PM",
+      "ScheduleSummary":"Last arrival at 09:18 PM"
+    },
+    ...,
+    {  
+      "RouteName":"8",
+      "RouteColor":"008540",
+      "ArrivalsSummary":"No arrivals!",
+      "ScheduleSummary":""
+    },
+    {  
+      "RouteName":"C1",
+      "RouteColor":"614630",
+      "ArrivalsSummary":"No arrivals!",
+      "ScheduleSummary":""
+    },
+    {  
+      "RouteName":"C3",
+      "RouteColor":"EC0C6D",
+      "ArrivalsSummary":"No arrivals!",
+      "ScheduleSummary":""
+    },
+    {  
+      "RouteName":"CVA",
+      "RouteColor":"3F2885",
+      "ArrivalsSummary":"No arrivals!",
+      "ScheduleSummary":""
+    }
+  ],
+  "14237":[  
+    {  
+      "RouteName":"6",
+      "RouteColor":"034DA1",
+      "ArrivalsSummary":"17 minutes, 07:54 PM",
+      "ScheduleSummary":"Last arrival at 08:24 PM"
+    }
+  ]
+}
 ```

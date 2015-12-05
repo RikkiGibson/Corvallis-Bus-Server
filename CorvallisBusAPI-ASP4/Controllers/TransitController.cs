@@ -214,7 +214,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("arrivalsSummary/{stopIds}")]
+        [Route("arrivals-summary/{stopIds}")]
         public async Task<Dictionary<int, List<RouteArrivalsSummary>>> GetArrivalsSummary(string stopIds)
         {
             List<int> parsedStopIds;
