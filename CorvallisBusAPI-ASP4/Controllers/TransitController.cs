@@ -65,7 +65,7 @@ namespace API.Controllers
         {
             try
             {
-                var staticDataJson = await _repository.GetStaticDataAsync();
+                var staticDataJson = await _repository.GetSerializedStaticDataAsync();
                 var response = Request.CreateResponse(HttpStatusCode.OK);
                 response.Content = new StringContent(staticDataJson, Encoding.UTF8, "application/json");
                 return response;
@@ -206,6 +206,37 @@ namespace API.Controllers
             {
                 var todaySchedule = await TransitManager.GetSchedule(_repository, _client, _getCurrentTime(), parsedStopIds);
                 return todaySchedule;
+            }
+            catch
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError);
+            }
+        }
+
+        [HttpGet]
+        [Route("arrivalsSummary/{stopIds}")]
+        public async Task<Dictionary<int, List<RouteArrivalsSummary>>> GetArrivalsSummary(string stopIds)
+        {
+            List<int> parsedStopIds;
+
+            try
+            {
+                parsedStopIds = ParseStopIds(stopIds);
+            }
+            catch (FormatException)
+            {
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
+            }
+
+            if (parsedStopIds == null || parsedStopIds.Count == 0)
+            {
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
+            }
+
+            try
+            {
+                var arrivalsSummary = await TransitManager.GetArrivalsSummary(_repository, _client, _getCurrentTime(), parsedStopIds);
+                return arrivalsSummary;
             }
             catch
             {

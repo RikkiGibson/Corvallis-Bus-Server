@@ -130,6 +130,7 @@
     <Compile Include="Models\GoogleTransit\GoogleRouteSchedule.cs" />
     <Compile Include="Models\GoogleTransit\GoogleStopSchedule.cs" />
     <Compile Include="Models\LatLong.cs" />
+    <Compile Include="Models\RouteArrivalsSummary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TransitManager.cs" />
     <Compile Include="WebClients\ConnexionzClient.cs" />

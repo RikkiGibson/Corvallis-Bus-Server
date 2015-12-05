@@ -21,7 +21,9 @@ namespace API.DataAccess
         /// This is specifically left as a string instead of a BusStaticData
         /// to eliminate the need for deserialization and reserialization.
         /// </summary>
-        Task<string> GetStaticDataAsync();
+        Task<string> GetSerializedStaticDataAsync();
+
+        Task<BusStaticData> GetStaticDataAsync();
 
         Task<Dictionary<int, int>> GetPlatformTagsAsync();
 

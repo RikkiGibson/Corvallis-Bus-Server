@@ -46,7 +46,7 @@ namespace API.DataAccess
             return JsonConvert.DeserializeObject<ServerBusSchedule>(cacheJson);
         }
 
-        public async Task<string> GetStaticDataAsync()
+        public async Task<string> GetSerializedStaticDataAsync()
         {
             var cacheJson = await _cacheManager.GetStaticDataAsync();
             if (string.IsNullOrWhiteSpace(cacheJson))
@@ -57,6 +57,11 @@ namespace API.DataAccess
             }
 
             return cacheJson;
+        }
+
+        public async Task<BusStaticData> GetStaticDataAsync()
+        {
+            return JsonConvert.DeserializeObject<BusStaticData>(await GetSerializedStaticDataAsync());
         }
 
         public void SetPlatformTags(Dictionary<int, int> platformTags)

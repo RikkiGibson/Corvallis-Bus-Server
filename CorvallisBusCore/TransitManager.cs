@@ -205,7 +205,7 @@ namespace API
         public static async Task<List<FavoriteStopViewModel>> GetFavoritesViewModel(ITransitRepository repository,
             ITransitClient client, DateTimeOffset currentTime, IEnumerable<int> stopIds, LatLong? optionalUserLocation)
         {
-            var staticData = JsonConvert.DeserializeObject<BusStaticData>(await repository.GetStaticDataAsync());
+            var staticData = JsonConvert.DeserializeObject<BusStaticData>(await repository.GetSerializedStaticDataAsync());
 
             var favoriteStops = GetFavoriteStops(staticData, stopIds, optionalUserLocation);
 
@@ -238,6 +238,28 @@ namespace API
                                 ?.ToDictionary(routeEta => routeEta.RouteNo,
                                                routeEta => routeEta.EstimatedArrivalTime)
                        ?? new Dictionary<string, List<int>>());
+        }
+
+        /// <summary>
+        /// Gets a user friendly arrivals summary for the requested stops.
+        /// Returns a dictionary which takes a stop ID and returns the list of route arrival summaries (used to populate a table).
+        /// </summary>
+        public static async Task<Dictionary<int, List<RouteArrivalsSummary>>> GetArrivalsSummary(ITransitRepository repository, ITransitClient client, DateTimeOffset currentTime, IEnumerable<int> stopIds)
+        {
+            var schedule = await GetSchedule(repository, client, currentTime, stopIds);
+            var staticData = await repository.GetStaticDataAsync();
+
+            return schedule.ToDictionary(stopSchedule => stopSchedule.Key,
+                stopSchedule => ToRouteArrivalsSummaries(stopSchedule.Value, staticData, currentTime));
+        }
+
+        private static List<RouteArrivalsSummary> ToRouteArrivalsSummaries(Dictionary<string, List<int>> stopArrivals,
+            BusStaticData staticData, DateTimeOffset currentTime)
+        {
+            return stopArrivals.OrderBy(stopSchedule => stopSchedule.Value.DefaultIfEmpty(int.MaxValue).Min())
+                               .Select(kvp =>
+                new RouteArrivalsSummary(routeName: kvp.Key, routeColor: staticData.Routes[kvp.Key].Color,
+                    routeArrivalTimes: kvp.Value, currentTime: currentTime)).ToList();
         }
     }
 }

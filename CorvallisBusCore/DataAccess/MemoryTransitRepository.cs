@@ -16,7 +16,8 @@ namespace API.DataAccess
     {
         private static Dictionary<int, int> s_platformTags;
         private static Dictionary<int, IEnumerable<BusStopRouteSchedule>> s_schedule;
-        private static string s_staticData;
+        private static string s_serializedStaticData;
+        private static BusStaticData s_staticData;
         
         private readonly string _platformTagsPath;
         private readonly string _schedulePath;
@@ -49,13 +50,22 @@ namespace API.DataAccess
             return Task.FromResult(s_schedule);
         }
 
-        public Task<string> GetStaticDataAsync()
+        public Task<string> GetSerializedStaticDataAsync()
+        {
+            if (s_serializedStaticData == null)
+            {
+                s_serializedStaticData = File.ReadAllText(_staticDataPath);
+            }
+            return Task.FromResult(s_serializedStaticData);
+        }
+
+        public async Task<BusStaticData> GetStaticDataAsync()
         {
             if (s_staticData == null)
             {
-                s_staticData = File.ReadAllText(_staticDataPath);
+                s_staticData = JsonConvert.DeserializeObject<BusStaticData>(await GetSerializedStaticDataAsync());
             }
-            return Task.FromResult(s_staticData);
+            return s_staticData;
         }
 
         public void SetPlatformTags(Dictionary<int, int> platformTags)
@@ -72,7 +82,8 @@ namespace API.DataAccess
 
         public void SetStaticData(BusStaticData staticData)
         {
-            s_staticData = JsonConvert.SerializeObject(staticData);
+            s_staticData = staticData;
+            s_serializedStaticData = JsonConvert.SerializeObject(staticData);
             File.WriteAllText(_staticDataPath, JsonConvert.SerializeObject(staticData));
         }
     }
