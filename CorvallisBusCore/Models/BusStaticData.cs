@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,7 +12,10 @@ namespace API.Models
     /// </summary>
     public class BusStaticData
     {
+        [JsonProperty("routes")]
         public Dictionary<string, BusRoute> Routes { get; set; }
+
+        [JsonProperty("stops")]
         public Dictionary<int, BusStop> Stops { get; set; }
     }
 }

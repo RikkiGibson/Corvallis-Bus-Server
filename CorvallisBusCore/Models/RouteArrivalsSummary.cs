@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +9,16 @@ namespace API.Models
 {
     public class RouteArrivalsSummary
     {
+        [JsonProperty("routeName")]
         public string RouteName { get; set; }
+
+        [JsonProperty("routeColor")]
         public string RouteColor { get; set; }
+
+        [JsonProperty("arrivalsSummary")]
         public string ArrivalsSummary { get; set; }
+
+        [JsonProperty("scheduleSummary")]
         public string ScheduleSummary { get; set; }
 
         public RouteArrivalsSummary(string routeName, string routeColor, List<int> routeArrivalTimes, DateTimeOffset currentTime)
@@ -70,8 +78,8 @@ namespace API.Models
             for (int i = 1; i < arrivals.Count - 1 && (isHourly || isHalfHourly); i++)
             {
                 int difference = arrivals[i + 1] - arrivals[i];
-                isHourly = difference >= 50 && difference <= 70;
-                isHalfHourly = difference >= 20 && difference >= 40; 
+                isHourly = isHourly && difference >= 50 && difference <= 70;
+                isHalfHourly = isHalfHourly && difference >= 20 && difference >= 40; 
             }
 
             if (isHourly)

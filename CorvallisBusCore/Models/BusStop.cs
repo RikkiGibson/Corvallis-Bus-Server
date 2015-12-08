@@ -1,4 +1,5 @@
 ﻿using API.Models.Connexionz;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace API.Models
@@ -31,26 +32,31 @@ namespace API.Models
         /// <summary>
         /// This stop tag is used to get ETAs for the stop from Connexionz.
         /// </summary>
+        [JsonProperty("id")]
         public int ID { get; set; }
 
         /// <summary>
         /// The name of the stop, for example: "NW Monroe Ave & NW 7th St".
         /// </summary>
+        [JsonProperty("name")]
         public string Name { get; set; }
 
         /// <summary>
         /// The latitude value for the stop (between -90 and 90 degrees).
         /// </summary>
+        [JsonProperty("lat")]
         public double Lat { get; set; }
 
         /// <summary>
         /// The longitude value for the stop (between -180 and 180 degrees).
         /// </summary>
+        [JsonProperty("lng")]
         public double Long { get; set; }
 
         /// <summary>
         /// List of route names which arrive at this stop.
         /// </summary>
+        [JsonProperty("routeNames")]
         public List<string> RouteNames { get; set; }
     }
 }
