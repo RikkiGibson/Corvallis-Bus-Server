@@ -79,7 +79,7 @@ namespace API.Models
             {
                 int difference = arrivals[i + 1] - arrivals[i];
                 isHourly = isHourly && difference >= 50 && difference <= 70;
-                isHalfHourly = isHalfHourly && difference >= 20 && difference >= 40; 
+                isHalfHourly = isHalfHourly && difference >= 20 && difference <= 40; 
             }
 
             if (isHourly)
