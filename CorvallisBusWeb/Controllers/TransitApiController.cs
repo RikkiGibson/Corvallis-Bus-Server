@@ -6,22 +6,14 @@ using System;
 using API.Models;
 using System.Collections.Generic;
 using System.Net;
-using System.Web.Http;
-using System.Web.Http.Results;
-using System.Net.Http.Formatting;
-using System.Net.Http;
-using System.Web.Http.Cors;
+using System.Configuration;
+using System.Web.Hosting;
+using System.Web.Mvc;
 
 namespace API.Controllers
 {
-    using System.Configuration;
-    using System.Text;
-    using System.Web.Hosting;
-    using ClientBusSchedule = Dictionary<int, Dictionary<string, List<int>>>;
-
     [RoutePrefix("api")]
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
-    public class TransitController : ApiController
+    public class TransitApiController : Controller
     {
         private ITransitRepository _repository;
         private ITransitClient _client;
@@ -30,7 +22,7 @@ namespace API.Controllers
         /// <summary>
         /// Dependency-injected application settings which are then passed on to other components.
         /// </summary>
-        public TransitController()
+        public TransitApiController()
         {
             if (bool.Parse(ConfigurationManager.AppSettings["UseAzureStorage"]))
             {
@@ -52,27 +44,23 @@ namespace API.Controllers
         /// </summary>
         [HttpGet]
         [Route("")]
-        public HttpResponseMessage Index()
+        public ActionResult Index()
         {
-            var response = Request.CreateResponse(HttpStatusCode.Found);
-            response.Headers.Location = new Uri("http://github.com/RikkiGibson/Corvallis-Bus-Server");
-            return response;
+            return RedirectPermanent("http://github.com/RikkiGibson/Corvallis-Bus-Server");
         }
 
         [HttpGet]
         [Route("static")]
-        public async Task<HttpResponseMessage> GetStaticData()
+        public async Task<ActionResult> GetStaticData()
         {
             try
             {
                 var staticDataJson = await _repository.GetSerializedStaticDataAsync();
-                var response = Request.CreateResponse(HttpStatusCode.OK);
-                response.Content = new StringContent(staticDataJson, Encoding.UTF8, "application/json");
-                return response;
+                return Content(staticDataJson, "application/json");
             }
             catch
             {
-                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
             }
         }
 
@@ -95,32 +83,31 @@ namespace API.Controllers
         /// These nested dictionaries have route numbers as the keys and integers (ETA) as the values.
         /// </summary>
         [Route("eta/{stopIds}")]
-        public async Task<ClientBusSchedule> GetETAs(string stopIds)
+        public async Task<ActionResult> GetETAs(string stopIds)
         {
             List<int> parsedStopIds;
-
             try
             {
                 parsedStopIds = ParseStopIds(stopIds);
             }
             catch (FormatException)
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             if (parsedStopIds == null || parsedStopIds.Count == 0)
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             try
             {
                 var etas = await TransitManager.GetEtas(_repository, _client, parsedStopIds);
-                return etas;
+                return Json(etas);
             }
             catch
             {
-                throw new HttpResponseException(HttpStatusCode.InternalServerError);
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
             }
         }
 
@@ -148,7 +135,7 @@ namespace API.Controllers
         /// Endpoint for the Corvallis Bus iOS app's favorites extension.
         /// </summary>
         [Route("favorites")]
-        public async Task<List<FavoriteStopViewModel>> GetFavoritesViewModel(string location, string stops)
+        public async Task<ActionResult> GetFavoritesViewModel(string location, string stops)
         {
             LatLong? userLocation;
             List<int> parsedStopIds;
@@ -160,22 +147,22 @@ namespace API.Controllers
             }
             catch (FormatException)
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             if (userLocation == null && (parsedStopIds == null || parsedStopIds.Count == 0))
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             try
             {
                 var viewModel = await TransitManager.GetFavoritesViewModel(_repository, _client, _getCurrentTime(), parsedStopIds, userLocation);
-                return viewModel;
+                return Json(viewModel);
             }
             catch
             {
-                throw new HttpResponseException(HttpStatusCode.InternalServerError);
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
             }
         }
 
@@ -184,7 +171,7 @@ namespace API.Controllers
         /// </summary>
         [HttpGet]
         [Route("schedule/{stopIds}")]
-        public async Task<ClientBusSchedule> GetSchedule(string stopIds)
+        public async Task<ActionResult> GetSchedule(string stopIds)
         {
             List<int> parsedStopIds;
 
@@ -194,28 +181,28 @@ namespace API.Controllers
             }
             catch (FormatException)
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             if (parsedStopIds == null || parsedStopIds.Count == 0)
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             try
             {
                 var todaySchedule = await TransitManager.GetSchedule(_repository, _client, _getCurrentTime(), parsedStopIds);
-                return todaySchedule;
+                return Json(todaySchedule);
             }
             catch
             {
-                throw new HttpResponseException(HttpStatusCode.InternalServerError);
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
             }
         }
 
         [HttpGet]
         [Route("arrivals-summary/{stopIds}")]
-        public async Task<Dictionary<int, List<RouteArrivalsSummary>>> GetArrivalsSummary(string stopIds)
+        public async Task<ActionResult> GetArrivalsSummary(string stopIds)
         {
             List<int> parsedStopIds;
 
@@ -225,22 +212,22 @@ namespace API.Controllers
             }
             catch (FormatException)
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             if (parsedStopIds == null || parsedStopIds.Count == 0)
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             try
             {
                 var arrivalsSummary = await TransitManager.GetArrivalsSummary(_repository, _client, _getCurrentTime(), parsedStopIds);
-                return arrivalsSummary;
+                return Json(arrivalsSummary);
             }
             catch
             {
-                throw new HttpResponseException(HttpStatusCode.InternalServerError);
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
             }
         }
 

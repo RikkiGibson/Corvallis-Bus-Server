@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CorvallisBusAPI", "CorvallisBusAPI\CorvallisBusAPI.xproj", "{5FEF5422-CA48-414C-93C3-F809015491E8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorvallisBusAPI-ASP4", "CorvallisBusAPI-ASP4\CorvallisBusAPI-ASP4.csproj", "{B0D333A9-5C4B-4A9D-98CA-ECEE4C42645A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorvallisBusCore", "CorvallisBusCore\CorvallisBusCore.csproj", "{55C1B947-1556-4E9E-B052-146538F1D407}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorvallisBusTests", "CorvallisBusTests\CorvallisBusTests.csproj", "{F1E593F9-8B44-4A1F-8C4E-9D4C9EAC56D0}"
@@ -16,20 +12,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorvallisBusWeb", "CorvallisBusWeb\CorvallisBusWeb.csproj", "{67DD4183-8E77-45FE-9477-92EF9E665E3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5FEF5422-CA48-414C-93C3-F809015491E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5FEF5422-CA48-414C-93C3-F809015491E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5FEF5422-CA48-414C-93C3-F809015491E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5FEF5422-CA48-414C-93C3-F809015491E8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B0D333A9-5C4B-4A9D-98CA-ECEE4C42645A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B0D333A9-5C4B-4A9D-98CA-ECEE4C42645A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B0D333A9-5C4B-4A9D-98CA-ECEE4C42645A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B0D333A9-5C4B-4A9D-98CA-ECEE4C42645A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{55C1B947-1556-4E9E-B052-146538F1D407}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{55C1B947-1556-4E9E-B052-146538F1D407}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55C1B947-1556-4E9E-B052-146538F1D407}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -38,6 +28,10 @@ Global
 		{F1E593F9-8B44-4A1F-8C4E-9D4C9EAC56D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1E593F9-8B44-4A1F-8C4E-9D4C9EAC56D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1E593F9-8B44-4A1F-8C4E-9D4C9EAC56D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67DD4183-8E77-45FE-9477-92EF9E665E3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67DD4183-8E77-45FE-9477-92EF9E665E3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67DD4183-8E77-45FE-9477-92EF9E665E3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67DD4183-8E77-45FE-9477-92EF9E665E3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
