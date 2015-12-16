@@ -1,19 +1,19 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using API.DataAccess;
-using API.WebClients;
+using CorvallisBusDNX.DataAccess;
 using System;
-using API.Models;
 using System.Collections.Generic;
 using System.Net;
-using System.Configuration;
-using System.Web.Hosting;
-using System.Web.Mvc;
+using CorvallisBusDNX.WebClients;
+using Microsoft.AspNet.Mvc;
+using CorvallisBusDNX.Models;
+using CorvallisBusCoreDNX;
+using Microsoft.AspNet.Hosting;
 
-namespace API.Controllers
+namespace CorvallisBusWebDNX.Controllers
 {
-    [RoutePrefix("api")]
-    public class TransitApiController : Controller
+    [Route("api")]
+    public class TransitCorvallisBusDNXController : Controller
     {
         private ITransitRepository _repository;
         private ITransitClient _client;
@@ -22,35 +22,27 @@ namespace API.Controllers
         /// <summary>
         /// Dependency-injected application settings which are then passed on to other components.
         /// </summary>
-        public TransitApiController()
+        public TransitCorvallisBusDNXController()
         {
-            if (bool.Parse(ConfigurationManager.AppSettings["UseAzureStorage"]))
-            {
-                var appSettings = new AppSettings(ConfigurationManager.AppSettings);
-                _repository = new AzureTransitRepository(appSettings);
-            }
-            else
-            {
-                var filePath = HostingEnvironment.MapPath("~");
-                _repository = new MemoryTransitRepository(filePath);
-            }
+            var filePath = new HostingEnvironment().WebRootPath;
+            _repository = new MemoryTransitRepository(filePath);
             _client = new TransitClient();
 
-            _getCurrentTime = () => TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTimeOffset.Now, "Pacific Standard Time");
+            _getCurrentTime = () => TimeZoneInfo.ConvertTime(DateTimeOffset.Now, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"));
         }
 
         /// <summary>
-        /// Redirects the user to the GitHub repo where this API is documented.
+        /// Redirects the user to the GitHub repo where this CorvallisBusDNX is documented.
         /// </summary>
         [HttpGet]
-        [Route("api")]
+        [Route("")]
         public ActionResult Index()
         {
             return RedirectPermanent("http://github.com/RikkiGibson/Corvallis-Bus-Server");
         }
 
         [HttpGet]
-        [Route("api/static")]
+        [Route("static")]
         public async Task<ActionResult> GetStaticData()
         {
             try
@@ -60,7 +52,7 @@ namespace API.Controllers
             }
             catch
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
+                return new HttpStatusCodeResult((int)HttpStatusCode.InternalServerError);
             }
         }
 
@@ -82,7 +74,7 @@ namespace API.Controllers
         /// is represented as a dictionary, where the keys are the given stop IDs and the values are dictionaries.
         /// These nested dictionaries have route numbers as the keys and integers (ETA) as the values.
         /// </summary>
-        [Route("api/eta/{stopIds}")]
+        [Route("eta/{stopIds}")]
         public async Task<ActionResult> GetETAs(string stopIds)
         {
             List<int> parsedStopIds;
@@ -92,12 +84,12 @@ namespace API.Controllers
             }
             catch (FormatException)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return new HttpStatusCodeResult((int)HttpStatusCode.BadRequest);
             }
 
             if (parsedStopIds == null || parsedStopIds.Count == 0)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return new HttpStatusCodeResult((int)HttpStatusCode.BadRequest);
             }
 
             try
@@ -107,7 +99,7 @@ namespace API.Controllers
             }
             catch
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
+                return new HttpStatusCodeResult((int)HttpStatusCode.InternalServerError);
             }
         }
 
@@ -134,7 +126,7 @@ namespace API.Controllers
         /// <summary>
         /// Endpoint for the Corvallis Bus iOS app's favorites extension.
         /// </summary>
-        [Route("api/favorites")]
+        [Route("favorites")]
         public async Task<ActionResult> GetFavoritesViewModel(string location, string stops)
         {
             LatLong? userLocation;
@@ -147,12 +139,12 @@ namespace API.Controllers
             }
             catch (FormatException)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return new HttpStatusCodeResult((int)HttpStatusCode.BadRequest);
             }
 
             if (userLocation == null && (parsedStopIds == null || parsedStopIds.Count == 0))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return new HttpStatusCodeResult((int)HttpStatusCode.BadRequest);
             }
 
             try
@@ -162,7 +154,7 @@ namespace API.Controllers
             }
             catch
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
+                return new HttpStatusCodeResult((int)HttpStatusCode.InternalServerError);
             }
         }
 
@@ -170,7 +162,7 @@ namespace API.Controllers
         /// Exposes the schedule that CTS routes adhere to for a set of stops.
         /// </summary>
         [HttpGet]
-        [Route("api/schedule/{stopIds}")]
+        [Route("schedule/{stopIds}")]
         public async Task<ActionResult> GetSchedule(string stopIds)
         {
             List<int> parsedStopIds;
@@ -181,12 +173,12 @@ namespace API.Controllers
             }
             catch (FormatException)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return new HttpStatusCodeResult((int)HttpStatusCode.BadRequest);
             }
 
             if (parsedStopIds == null || parsedStopIds.Count == 0)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return new HttpStatusCodeResult((int)HttpStatusCode.BadRequest);
             }
 
             try
@@ -196,12 +188,12 @@ namespace API.Controllers
             }
             catch
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
+                return new HttpStatusCodeResult((int)HttpStatusCode.InternalServerError);
             }
         }
 
         [HttpGet]
-        [Route("api/arrivals-summary/{stopIds}")]
+        [Route("arrivals-summary/{stopIds}")]
         public async Task<ActionResult> GetArrivalsSummary(string stopIds)
         {
             List<int> parsedStopIds;
@@ -212,12 +204,12 @@ namespace API.Controllers
             }
             catch (FormatException)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return new HttpStatusCodeResult((int)HttpStatusCode.BadRequest);
             }
 
             if (parsedStopIds == null || parsedStopIds.Count == 0)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return new HttpStatusCodeResult((int)HttpStatusCode.BadRequest);
             }
 
             try
@@ -227,7 +219,7 @@ namespace API.Controllers
             }
             catch
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
+                return new HttpStatusCodeResult((int)HttpStatusCode.InternalServerError);
             }
         }
 
@@ -235,16 +227,20 @@ namespace API.Controllers
         /// Performs a first-time setup and import of static data.
         /// </summary>
         [HttpGet]
-        [Route("api/tasks/init")]
-        public string Init()
+        [Route("tasks/init")]
+        public async Task<string> Init()
         {
-            var staticData = _client.CreateStaticData();
+            var staticDataTask = _client.CreateStaticDataAsync();
+            var platformsTask = _client.CreatePlatformTagsAsync();
+            var scheduleTask = _client.CreateScheduleAsync();
+
+            var staticData = await staticDataTask;
             _repository.SetStaticData(staticData);
 
-            var platformTags = _client.CreatePlatformTags();
+            var platformTags = await platformsTask;
             _repository.SetPlatformTags(platformTags);
 
-            var schedule = _client.CreateSchedule();
+            var schedule = await scheduleTask;
             _repository.SetSchedule(schedule);
 
             return "Init job successful.";

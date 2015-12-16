@@ -1,0 +1,25 @@
+{
+  "version": "1.0.0-*",
+  "description": "CorvallisBusDNX Class Library",
+  "authors": [ "phcart" ],
+  "tags": [ "" ],
+  "projectUrl": "",
+  "licenseUrl": "",
+  "frameworks": {
+    "dotnet5.4": {
+      "dependencies": {
+        "Microsoft.CSharp": "4.0.1-beta-23516",
+        "Newtonsoft.Json": "7.0.1",
+        "System.Collections": "4.0.11-beta-23516",
+        "System.IO.Compression": "4.0.0-beta-22819",
+        "System.Linq": "4.0.1-beta-23516",
+        "System.Net.Http": "4.0.1-beta-23516",
+        "System.Runtime": "4.0.21-beta-23516",
+        "System.Threading": "4.0.11-beta-23516",
+        "System.Xml.XDocument": "4.0.11-beta-23516",
+        "System.Xml.XmlDocument": "4.0.1-beta-23516",
+        "System.Xml.XmlSerializer": "4.0.11-beta-23516"
+      }
+    }
+  }
+}

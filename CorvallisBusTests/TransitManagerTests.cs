@@ -1,13 +1,13 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using API;
+using CorvallisBusDNX;
 using Moq;
-using API.DataAccess;
+using CorvallisBusDNX.DataAccess;
 using System.Collections.Generic;
-using API.Models;
+using CorvallisBusDNX.Models;
 using System.Threading.Tasks;
-using API.WebClients;
-using API.Models.Connexionz;
+using CorvallisBusDNX.WebClients;
+using CorvallisBusDNX.Models.Connexionz;
 using System.Linq;
 
 namespace CorvallisBusTests
@@ -242,7 +242,7 @@ namespace CorvallisBusTests
 
         /// <summary>
         /// At the peak time of day for route 6, I've noticed the schedule coming in out of order sometimes.
-        /// I haven't been able to get on the city API to figure out what data is causing the issue.
+        /// I haven't been able to get on the city CorvallisBusDNX to figure out what data is causing the issue.
         /// Once I'm able to create a test case, this is where it should live.
         /// For now I'm gonna try to get by just adding a sort call in the schedule endpoint.
         /// </summary>
