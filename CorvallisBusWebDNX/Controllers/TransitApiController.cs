@@ -13,7 +13,7 @@ using Microsoft.AspNet.Hosting;
 namespace CorvallisBusWebDNX.Controllers
 {
     [Route("api")]
-    public class TransitCorvallisBusDNXController : Controller
+    public class TransitApiController : Controller
     {
         private ITransitRepository _repository;
         private ITransitClient _client;
@@ -22,7 +22,7 @@ namespace CorvallisBusWebDNX.Controllers
         /// <summary>
         /// Dependency-injected application settings which are then passed on to other components.
         /// </summary>
-        public TransitCorvallisBusDNXController()
+        public TransitApiController()
         {
             var filePath = new HostingEnvironment().WebRootPath;
             _repository = new MemoryTransitRepository(filePath);

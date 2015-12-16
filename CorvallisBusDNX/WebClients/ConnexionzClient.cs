@@ -31,7 +31,7 @@ namespace CorvallisBusDNX.WebClients
         /// </summary>
         private static async Task<T> GetEntityAsync<T>(string url) where T : class
         {
-            string xml = await _client.GetStringAsync(url);
+            var xml = await _client.GetStringAsync(url);
 
             var reader = new StringReader(xml);
 
