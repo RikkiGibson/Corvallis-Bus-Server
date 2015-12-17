@@ -1,13 +1,10 @@
 ﻿using CorvallisBusDNX.Models.Connexionz;
 using CorvallisBusDNX.Util;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using System.Xml.Serialization;
 
 namespace CorvallisBusDNX.WebClients
 {
@@ -20,24 +17,15 @@ namespace CorvallisBusDNX.WebClients
 
         private static readonly HttpClient _client = new HttpClient();
 
+        /// <summary>
+        /// Lazy-loaded platform data.
+        /// </summary>
         public static readonly AsyncLazy<IEnumerable<ConnexionzPlatform>> Platforms = new AsyncLazy<IEnumerable<ConnexionzPlatform>>(() => GetPlatformsAsync());
-        public static readonly AsyncLazy<IEnumerable<ConnexionzRoute>> Routes = new AsyncLazy<IEnumerable<ConnexionzRoute>>(() => GetRoutesAsync());
-
-        // Yes this is IDisposable, but it makes sense to have this object "live"
-        // for the entire duration of the service, hence make it just a static object.
-        //private static Lazy<HttpClient> _httpClient = new Lazy<HttpClient>();
 
         /// <summary>
-        /// Gets and deserializes XML from the specified Connexionz/CTS endpoints.
+        /// lazy-loaded Route data.
         /// </summary>
-        private static async Task<T> GetEntityAsync<T>(string url) where T : class
-        {
-            var xml = await _client.GetStringAsync(url);
-
-            var reader = new StringReader(xml);
-
-            return new XmlSerializer(typeof(T)).Deserialize(reader) as T;
-        }
+        public static readonly AsyncLazy<IEnumerable<ConnexionzRoute>> Routes = new AsyncLazy<IEnumerable<ConnexionzRoute>>(() => GetRoutesAsync());
 
         /// <summary>
         /// Downloads static Connexionz Platforms (Stops) info.
@@ -67,13 +55,8 @@ namespace CorvallisBusDNX.WebClients
         /// </summary>
         public static async Task<ConnexionzPlatformET> GetPlatformEtaAsync(int platformTag)
         {
-            RoutePosition position = await GetEntityAsync<RoutePosition>(BASE_URL + "&Name=RoutePositionET.xml&PlatformTag=" + platformTag.ToString());
-
-            var positionPlatform = position.Items.FirstOrDefault(p => p is RoutePositionPlatform) as RoutePositionPlatform;
-
-            return positionPlatform != null ?
-                new ConnexionzPlatformET(positionPlatform) :
-                null;
+            var xmlStream = await _client.GetStreamAsync($"{BASE_URL}&Name=RoutePositionET.xml&PlatformTag={platformTag}");
+            return ConnexionzXmlParser.ParseConnextionzPlatforms(xmlStream);
         }
     }
 }

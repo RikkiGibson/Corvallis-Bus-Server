@@ -3,7 +3,10 @@ using System.Linq;
 
 namespace CorvallisBusDNX.Models.Connexionz
 {
-    public class Route
+    /// <summary>
+    /// Intermediate type for the CTS route XML data.
+    /// </summary>
+    public struct Route
     {
         public Route(string routeNo, IEnumerable<RouteDestination> destinations)
         {
@@ -15,8 +18,8 @@ namespace CorvallisBusDNX.Models.Connexionz
 
         public string RouteNo { get; private set; }
     }
-
-    public class RouteDestination
+    
+    public struct RouteDestination
     {
         public RouteDestination(string name, RoutePattern pattern)
         {
@@ -29,7 +32,7 @@ namespace CorvallisBusDNX.Models.Connexionz
         public string Name { get; private set; }
     }
 
-    public class RoutePattern
+    public struct RoutePattern
     {
         public RoutePattern(string mif, IEnumerable<RoutePlatform> platforms)
         {
@@ -42,7 +45,7 @@ namespace CorvallisBusDNX.Models.Connexionz
         public List<RoutePlatform> Platforms { get; private set; }
     }
     
-    public class RoutePlatform
+    public struct RoutePlatform
     {
         public RoutePlatform(string name, string scheduleAdherenceTimePointText, string platformNo, string platformTag)
         {

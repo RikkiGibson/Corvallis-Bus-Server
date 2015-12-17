@@ -1,5 +1,4 @@
 ﻿using CorvallisBusDNX.Models.Connexionz;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -33,10 +32,42 @@ namespace CorvallisBusDNX.Util
             });
         }
 
-        public static IEnumerable<ConnexionzPlatform> ParseConnextionzPlatforms(Stream xmlStream)
+        public static ConnexionzPlatformET ParseConnextionzPlatforms(Stream xmlStream)
         {
-            throw new NotImplementedException();
+            var xdoc = XDocument.Load(xmlStream);
+
+            // This gets us to the set of platform XML nodes.
+            var platformsXml = xdoc.Root.Elements().Skip(1);
+
+            return ParsePlatformET(platformsXml);
         }
+
+        private static ConnexionzPlatformET ParsePlatformET(IEnumerable<XElement> platformsXml)
+        {
+            // There's only ever one ... the XML just happens to indicate there's a list.
+            var platformXml = platformsXml.First();
+
+            string platformTag = platformXml.Attribute("PlatformTag")?.Value ?? "";
+
+            var routesXml = platformXml.Elements();
+
+            var routeET = ParseRouteET(routesXml).ToList();
+
+            return new ConnexionzPlatformET(platformTag, routeET);
+        }
+
+        private static IEnumerable<ConnexionzRouteET> ParseRouteET(IEnumerable<XElement> routesXml) =>
+            routesXml.Select(routeXml =>
+            {
+                string routeNo = routeXml.Attribute("RouteNo")?.Value ?? "";
+
+                var etas = routeXml.Elements().Elements()          // Need to get the children's children
+                           .Where(e => e.Name.LocalName == "Trip") // The namespace here screws up Element("Trip")
+                           .Select(e => e.Attribute("ETA").Value)
+                           .Select(etaString => int.Parse(etaString)).ToList();
+
+                return new ConnexionzRouteET(routeNo, etas);
+            });
 
         /// <summary>
         /// This converts the XML nodes corresponding to a Corvallis Bus Route Destination into Platform objects.
@@ -49,6 +80,10 @@ namespace CorvallisBusDNX.Util
                 // Only one pattern exists per platform.
                 var patternXml = destinationXml.Elements().SingleOrDefault();
 
+                // The "mif" is the big string that's really a space-separated CSV
+                // of the Lat/Longs the route travels.
+                //
+                // No idea why it's called "mif", but whatever.
                 string mif = patternXml.Elements().Skip(1).First().Value;
 
                 // This gets us to the tag where we can get actual platform data
@@ -67,18 +102,10 @@ namespace CorvallisBusDNX.Util
         private static IEnumerable<RoutePlatform> ParsePlatformsForRoutes(IEnumerable<XElement> platformsXml) =>
             platformsXml.Select(platformXml =>
             {
-                string name = platformXml
-                              .Attributes()
-                              .SingleOrDefault(a => a.Name.LocalName == "Name")?.Value ?? "";
-                string scheduleAdherenceTimePointText = platformXml
-                                                        .Attributes()
-                                                        .SingleOrDefault(a => a.Name.LocalName == "ScheduleAdheranceTimepoint")?.Value ?? "";
-                string platformNo = platformXml
-                                    .Attributes()
-                                    .SingleOrDefault(a => a.Name.LocalName == "PlatformNo")?.Value ?? "";
-                string platformTag = platformXml
-                                     .Attributes()
-                                     .SingleOrDefault(a => a.Name.LocalName == "PlatformTag")?.Value ?? "";
+                string name = platformXml.Attribute("Name")?.Value ?? "";
+                string scheduleAdherenceTimePointText = platformXml.Attribute("ScheduleAdheranceTimepoint")?.Value ?? "";
+                string platformNo = platformXml.Attribute("PlatformNo")?.Value ?? "";
+                string platformTag = platformXml.Attribute("PlatformTag")?.Value ?? "";
 
                 return new RoutePlatform(name, scheduleAdherenceTimePointText, platformNo, platformTag);
             });

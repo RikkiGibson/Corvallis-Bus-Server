@@ -1,5 +1,4 @@
-﻿using CorvallisBusDNX.Models.Connexionz;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,32 +11,12 @@ namespace CorvallisBusDNX.Models.Connexionz
     /// </summary>
     public class ConnexionzRoute
     {
-        public ConnexionzRoute(string routeNo, 
-            IEnumerable<RouteDestination> destinations, 
-            string mif, 
-            IEnumerable<RoutePattern> platforms)
+        public ConnexionzRoute(Route route)
         {
-            RouteNo = routeNo;
+            RouteNo = route.RouteNo;
 
             // Some routes have multiple paths. Let's just take whichever path is longest.
-            var longestPattern = destinations
-                                 .Select(d => d.Pattern)
-                                 .Aggregate((p1, p2) => p1.Platforms.Count > p2.Platforms.Count ? p1 : p2);
-
-            Polyline = EncodePolyline(GetPoints(longestPattern.Mif));
-
-            Path = longestPattern.Platforms
-                   .Select(p => new ConnexionzRoutePlatform(p.PlatformNo, p.ScheduleAdherenceTimePointText))
-                   .Distinct(ConnexionzRoutePlatformComparer.Instance)
-                   .ToList();
-        }
-
-        public ConnexionzRoute(Route routePatternProjectRoute)
-        {
-            RouteNo = routePatternProjectRoute.RouteNo;
-
-            // Some routes have multiple paths. Let's just take whichever path is longest.
-            var longestPattern = routePatternProjectRoute.Destinations
+            var longestPattern = route.Destinations
                                  .Select(d => d.Pattern)
                                  .Aggregate((p1, p2) => p1.Platforms.Count > p2.Platforms.Count ? p1 : p2);
 

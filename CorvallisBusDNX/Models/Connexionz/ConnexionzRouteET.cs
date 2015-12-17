@@ -1,6 +1,4 @@
-﻿using CorvallisBusDNX.Models.Connexionz;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace CorvallisBusDNX.Models.Connexionz
 {
@@ -11,13 +9,13 @@ namespace CorvallisBusDNX.Models.Connexionz
         /// </summary>
         public ConnexionzRouteET() { }
 
-        public ConnexionzRouteET(RoutePositionPlatformRoute routePositionPlatformRoute)
+        public ConnexionzRouteET(string routeNo, List<int> etas)
         {
-            RouteNo = routePositionPlatformRoute.RouteNo;
-            EstimatedArrivalTime = routePositionPlatformRoute.Destination.Trip.Select(t => t.ETA).ToList();
+            RouteNo = routeNo;
+            EstimatedArrivalTime = etas;
         }
 
-        public string RouteNo { get; set; }
-        public List<int> EstimatedArrivalTime { get; set; }
+        public string RouteNo { get; private set; }
+        public List<int> EstimatedArrivalTime { get; private set; }
     }
 }
