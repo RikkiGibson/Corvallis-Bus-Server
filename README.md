@@ -14,7 +14,7 @@ To have a more convenient way to get real-time information about the free buses 
 
 We assume no liability for any missed buses.  Buses may be erratic in their arrival behavior, and we cannot control that.
 
-## CorvallisBusDNX Routes
+## API Routes
 
 ###/static
 
@@ -24,7 +24,7 @@ Output:
 
    Returns a JSON dictionary containing static route and stop information.  Recommended usage is a one-time download and then local storage on the device.  This will allow for simpler and far less data-intensive calls later.
 
-Url: https://corvallisb.us/CorvallisBusDNX/static
+Url: https://corvallisb.us/api/static
 
 ```
 {
@@ -63,7 +63,7 @@ Url: https://corvallisb.us/CorvallisBusDNX/static
 
 ###/eta/
 
-Queries the city CorvallisBusDNX for arrival estimates, which are encoded as integers.
+Queries the city api for arrival estimates, which are encoded as integers.
 
 Input:
    - **Required** one or more Stop IDs
@@ -72,7 +72,7 @@ Output:
 
 Returns a JSON dictionary, where they keys are the supplied Stop IDs, and the values are dictionaries.  These nested dictionaries are such that the keys are route numbers, and the values are lists of integers corresponding to the ETAs for that route to that stop. For example, ``"6":[1, 21]"`` means that Route 6 is arriving at the given stop in 1 minute, and again in 21 minutes. ETAs are limited to 30 minutes in the future.
 
-Sample Url: https://corvallisb.us/CorvallisBusDNX/eta/14244,13265
+Sample Url: https://corvallisb.us/api/eta/14244,13265
 
 ```
 {
@@ -103,7 +103,7 @@ Output:
    A JSON dictionary where the keys are Stop IDs and the values are dictionaries of ``{ Route No : schedule }``.
    The schedule is a list of integers where each integer is "minutes from now." Integers are used because ETAs are interleaved with scheduled arrival times. This avoids a problem where an ETA appears to go up by a minute at the same time the minute on the system clock increments. It introduces a problem where the scheduled times vary by a minute if the server has a different minute value at the time it creates the payload than the client has at the time it consumes the payload. This is a case of settling for "good enough."
 
-Sample Url: https://corvallisb.us/CorvallisBusDNX/schedule/14244,13265
+Sample Url: https://corvallisb.us/api/schedule/14244,13265
 
 ```
 {
@@ -154,7 +154,7 @@ Output:
 
    A JSON array of stop information for "favorite stops" features.  See sample for details.
    
-Sample Url: https://corvallisb.us/CorvallisBusDNX/favorites?stops=11776,10308&location=44.5645659,-123.2620435
+Sample Url: https://corvallisb.us/api/favorites?stops=11776,10308&location=44.5645659,-123.2620435
    
 ```
 [
@@ -205,7 +205,7 @@ Input:
 Output:
    A dictionary where the keys are stop IDs and the values are a list of nice, sorted view models with user-friendly descriptions of the arrival times for each route at that stop.
    
-Sample URL: https://corvallisb.us/CorvallisBusDNX/arrivals-summary/10308,14237
+Sample URL: https://corvallisb.us/api/arrivals-summary/10308,14237
 
 ```
 {  
