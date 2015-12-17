@@ -1,101 +1,63 @@
-﻿using System.Xml.Schema;
-using System.Xml.Serialization;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace CorvallisBusDNX.Models.Connexionz
 {
-    [XmlType(AnonymousType = true)]
-    [XmlRoot(Namespace = "", IsNullable = false)]
+    public class Route
+    {
+        public Route(string routeNo, IEnumerable<RouteDestination> destinations)
+        {
+            RouteNo = routeNo;
+            Destinations = destinations.ToList();
+        }
+
+        public List<RouteDestination> Destinations { get; private set; }
+
+        public string RouteNo { get; private set; }
+    }
+
+    public class RouteDestination
+    {
+        public RouteDestination(string name, RoutePattern pattern)
+        {
+            Name = name;
+            Pattern = pattern;
+        }
+        
+        public RoutePattern Pattern { get; private set; }
+
+        public string Name { get; private set; }
+    }
+
     public class RoutePattern
     {
-        [XmlElement("Content", Type = typeof(RoutePatternContent), Form = XmlSchemaForm.Unqualified)]
-        [XmlElement("Project", Type = typeof(RoutePatternProject), Form = XmlSchemaForm.Unqualified)]
-        public object[] Items { get; set; }
-    }
+        public RoutePattern(string mif, IEnumerable<RoutePlatform> platforms)
+        {
+            Mif = mif;
+            Platforms = platforms.ToList();
+        }
 
-    [XmlType(AnonymousType = true)]
-    public class RoutePatternContent
-    {
-        [XmlAttribute]
-        public string Expires { get; set; }
-    }
-
-    [XmlType(AnonymousType = true)]
-    public class RoutePatternProject
-    {
-        [XmlElement("Route", Form = XmlSchemaForm.Unqualified)]
-        public RoutePatternProjectRoute[] Route { get; set; }
-
-        [XmlAttribute]
-        public string ProjectID { get; set; }
-
-        [XmlAttribute]
-        public string Name { get; set; }
-    }
-
-    [XmlType(AnonymousType = true)]
-    public class RoutePatternProjectRoute
-    {
-        [XmlElement("Destination", Form = XmlSchemaForm.Unqualified)]
-        public RoutePatternProjectRouteDestination[] Destination { get; set; }
-
-        [XmlAttribute]
-        public string RouteNo { get; set; }
-
-        [XmlAttribute]
-        public string Name { get; set; }
-    }
-
-    [XmlType(AnonymousType = true)]
-    public class RoutePatternProjectRouteDestination
-    {
-        [XmlElement(Form = XmlSchemaForm.Unqualified)]
-        public RoutePatternProjectRouteDestinationPattern[] Pattern { get; set; }
-
-        [XmlAttribute]
-        public string Name { get; set; }
-    }
-
-    [XmlType(AnonymousType = true)]
-    public class RoutePatternProjectRouteDestinationPattern
-    {
-        [XmlElement(Form = XmlSchemaForm.Unqualified)]
-        public string Mid { get; set; }
-
-        [XmlElement(Form = XmlSchemaForm.Unqualified)]
-        public string Mif { get; set; }
-
-        [XmlElement("Platform", Form = XmlSchemaForm.Unqualified)]
-        public Platform[] Platform { get; set; }
-
-        [XmlAttribute]
-        public string RouteTag { get; set; }
-
-        [XmlAttribute]
-        public string Name { get; set; }
-
-        [XmlAttribute]
-        public string Direction { get; set; }
-
-        [XmlAttribute]
-        public string Length { get; set; }
-
-        [XmlAttribute]
-        public string Schedule { get; set; }
+        public string Mif { get; private set; }
+        
+        public List<RoutePlatform> Platforms { get; private set; }
     }
     
-    [XmlType(AnonymousType = true)]
-    public class Platform
+    public class RoutePlatform
     {
-        [XmlAttribute]
-        public string PlatformTag { get; set; }
+        public RoutePlatform(string name, string scheduleAdherenceTimePointText, string platformNo, string platformTag)
+        {
+            Name = name;
+            ScheduleAdherenceTimePointText = scheduleAdherenceTimePointText;
+            PlatformNo = platformNo;
+            PlatformTag = platformTag;
+        }
 
-        [XmlAttribute]
-        public string Name { get; set; }
-
-        [XmlAttribute]
-        public string ScheduleAdherenceTimepoint { get; set; }
-
-        [XmlAttribute]
-        public string PlatformNo { get; set; }
+        public string PlatformTag { get; private set; }
+        
+        public string Name { get; private set; }
+        
+        public string ScheduleAdherenceTimePointText { get; private set; }
+        
+        public string PlatformNo { get; private set; }
     }
 }

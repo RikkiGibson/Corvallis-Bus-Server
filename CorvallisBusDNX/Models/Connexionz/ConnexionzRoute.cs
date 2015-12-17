@@ -12,19 +12,39 @@ namespace CorvallisBusDNX.Models.Connexionz
     /// </summary>
     public class ConnexionzRoute
     {
-        public ConnexionzRoute(RoutePatternProjectRoute routePatternProjectRoute)
+        public ConnexionzRoute(string routeNo, 
+            IEnumerable<RouteDestination> destinations, 
+            string mif, 
+            IEnumerable<RoutePattern> platforms)
+        {
+            RouteNo = routeNo;
+
+            // Some routes have multiple paths. Let's just take whichever path is longest.
+            var longestPattern = destinations
+                                 .Select(d => d.Pattern)
+                                 .Aggregate((p1, p2) => p1.Platforms.Count > p2.Platforms.Count ? p1 : p2);
+
+            Polyline = EncodePolyline(GetPoints(longestPattern.Mif));
+
+            Path = longestPattern.Platforms
+                   .Select(p => new ConnexionzRoutePlatform(p.PlatformNo, p.ScheduleAdherenceTimePointText))
+                   .Distinct(ConnexionzRoutePlatformComparer.Instance)
+                   .ToList();
+        }
+
+        public ConnexionzRoute(Route routePatternProjectRoute)
         {
             RouteNo = routePatternProjectRoute.RouteNo;
 
             // Some routes have multiple paths. Let's just take whichever path is longest.
-            var longestPattern = routePatternProjectRoute.Destination
-                                 .Select(d => d.Pattern.First())
-                                 .Aggregate((p1, p2) => p1.Platform.Length > p2.Platform.Length ? p1 : p2);
+            var longestPattern = routePatternProjectRoute.Destinations
+                                 .Select(d => d.Pattern)
+                                 .Aggregate((p1, p2) => p1.Platforms.Count > p2.Platforms.Count ? p1 : p2);
 
             Polyline = EncodePolyline(GetPoints(longestPattern.Mif));
 
-            Path = longestPattern.Platform
-                   .Select(p => new ConnexionzRoutePlatform(p))
+            Path = longestPattern.Platforms
+                   .Select(p => new ConnexionzRoutePlatform(p.PlatformNo, p.ScheduleAdherenceTimePointText))
                    .Distinct(ConnexionzRoutePlatformComparer.Instance)
                    .ToList();
         }

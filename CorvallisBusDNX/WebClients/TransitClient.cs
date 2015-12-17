@@ -62,7 +62,7 @@ namespace CorvallisBusDNX.WebClients
         public async Task<Dictionary<int, int>> CreatePlatformTagsAsync() =>
             (await ConnexionzClient.Platforms).ToDictionary(p => p.PlatformNo, p => p.PlatformTag);
 
-        public async Task<ConnexionzPlatformET> GetEtaAsync(int platformTag) => await ConnexionzClient.GetPlatformEta(platformTag);
+        public async Task<ConnexionzPlatformET> GetEtaAsync(int platformTag) => await ConnexionzClient.GetPlatformEtaAsync(platformTag);
 
         private static TimeSpan RoundToNearestMinute(TimeSpan source)
         {

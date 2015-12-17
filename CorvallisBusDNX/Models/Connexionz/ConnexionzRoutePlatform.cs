@@ -9,12 +9,12 @@ namespace CorvallisBusDNX.Models.Connexionz
     /// </summary>
     public struct ConnexionzRoutePlatform
     {
-        public ConnexionzRoutePlatform(Platform platform)
+        public ConnexionzRoutePlatform(string platformNo, string scheduleAdherencePointText)
         {
-            PlatformId = int.Parse(platform.PlatformNo);
+            PlatformId = int.Parse(platformNo);
 
             bool result;
-            IsScheduleAdherancePoint = bool.TryParse(platform.ScheduleAdherenceTimepoint, out result) ? result : false;
+            IsScheduleAdherancePoint = bool.TryParse(scheduleAdherencePointText, out result) ? result : false;
         }
 
         /// <summary>

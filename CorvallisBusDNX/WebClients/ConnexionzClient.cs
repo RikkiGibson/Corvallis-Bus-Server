@@ -1,5 +1,6 @@
 ﻿using CorvallisBusDNX.Models.Connexionz;
 using CorvallisBusDNX.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,8 +20,8 @@ namespace CorvallisBusDNX.WebClients
 
         private static readonly HttpClient _client = new HttpClient();
 
-        public static readonly AsyncLazy<IEnumerable<ConnexionzPlatform>> Platforms = new AsyncLazy<IEnumerable<ConnexionzPlatform>>(() => DownloadPlatforms());
-        public static readonly AsyncLazy<IEnumerable<ConnexionzRoute>> Routes = new AsyncLazy<IEnumerable<ConnexionzRoute>>(() => DownloadRoutes());
+        public static readonly AsyncLazy<IEnumerable<ConnexionzPlatform>> Platforms = new AsyncLazy<IEnumerable<ConnexionzPlatform>>(() => GetPlatformsAsync());
+        public static readonly AsyncLazy<IEnumerable<ConnexionzRoute>> Routes = new AsyncLazy<IEnumerable<ConnexionzRoute>>(() => GetRoutesAsync());
 
         // Yes this is IDisposable, but it makes sense to have this object "live"
         // for the entire duration of the service, hence make it just a static object.
@@ -41,33 +42,30 @@ namespace CorvallisBusDNX.WebClients
         /// <summary>
         /// Downloads static Connexionz Platforms (Stops) info.
         /// </summary>
-        private static async Task<IEnumerable<ConnexionzPlatform>> DownloadPlatforms()
+        private static async Task<IEnumerable<ConnexionzPlatform>> GetPlatformsAsync()
         {
-            string xml = await _client.GetStringAsync(BASE_URL + "&Name=Platform.rxml");
+            var xmlStream = await _client.GetStreamAsync(BASE_URL + "&Name=Platform.rxml");
 
-            var document = XDocument.Parse(xml);
+            var document = XDocument.Load(xmlStream);
 
             return document.Element("Platforms")
-                    .Elements("Platform")
-                    .Select(e => new ConnexionzPlatform(e));
+                           .Elements("Platform")
+                           .Select(e => new ConnexionzPlatform(e));
         }
 
         /// <summary>
         /// Downloads static Connexionz Route (e.g. Route 1, Route 8, etc) info.
         /// </summary>
-        private static async Task<IEnumerable<ConnexionzRoute>> DownloadRoutes()
+        private static async Task<IEnumerable<ConnexionzRoute>> GetRoutesAsync()
         {
-            RoutePattern routePattern = await GetEntityAsync<RoutePattern>(BASE_URL + "&Name=RoutePattern.rxml");
-
-            var routePatternProject = routePattern.Items.Skip(1).FirstOrDefault() as RoutePatternProject;
-
-            return routePatternProject.Route.Select(r => new ConnexionzRoute(r));
+            var xmlStream = await _client.GetStreamAsync(BASE_URL + "&Name=RoutePattern.rxml");
+            return ConnexionzXmlParser.ParseConnexionzRoutes(xmlStream);
         }
 
         /// <summary>
         /// Gets the Connexionz-estimated time of arrival for a given stop.
         /// </summary>
-        public static async Task<ConnexionzPlatformET> GetPlatformEta(int platformTag)
+        public static async Task<ConnexionzPlatformET> GetPlatformEtaAsync(int platformTag)
         {
             RoutePosition position = await GetEntityAsync<RoutePosition>(BASE_URL + "&Name=RoutePositionET.xml&PlatformTag=" + platformTag.ToString());
 
