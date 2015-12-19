@@ -43,14 +43,14 @@ namespace API.Controllers
         /// Redirects the user to the GitHub repo where this API is documented.
         /// </summary>
         [HttpGet]
-        [Route("api")]
+        [Route("")]
         public ActionResult Index()
         {
             return RedirectPermanent("http://github.com/RikkiGibson/Corvallis-Bus-Server");
         }
 
         [HttpGet]
-        [Route("api/static")]
+        [Route("static")]
         public async Task<ActionResult> GetStaticData()
         {
             try
@@ -82,7 +82,7 @@ namespace API.Controllers
         /// is represented as a dictionary, where the keys are the given stop IDs and the values are dictionaries.
         /// These nested dictionaries have route numbers as the keys and integers (ETA) as the values.
         /// </summary>
-        [Route("api/eta/{stopIds}")]
+        [Route("eta/{stopIds}")]
         public async Task<ActionResult> GetETAs(string stopIds)
         {
             List<int> parsedStopIds;
@@ -134,7 +134,7 @@ namespace API.Controllers
         /// <summary>
         /// Endpoint for the Corvallis Bus iOS app's favorites extension.
         /// </summary>
-        [Route("api/favorites")]
+        [Route("favorites")]
         public async Task<ActionResult> GetFavoritesViewModel(string location, string stops)
         {
             LatLong? userLocation;
@@ -170,7 +170,7 @@ namespace API.Controllers
         /// Exposes the schedule that CTS routes adhere to for a set of stops.
         /// </summary>
         [HttpGet]
-        [Route("api/schedule/{stopIds}")]
+        [Route("schedule/{stopIds}")]
         public async Task<ActionResult> GetSchedule(string stopIds)
         {
             List<int> parsedStopIds;
@@ -201,7 +201,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("api/arrivals-summary/{stopIds}")]
+        [Route("arrivals-summary/{stopIds}")]
         public async Task<ActionResult> GetArrivalsSummary(string stopIds)
         {
             List<int> parsedStopIds;
@@ -235,7 +235,7 @@ namespace API.Controllers
         /// Performs a first-time setup and import of static data.
         /// </summary>
         [HttpGet]
-        [Route("api/tasks/init")]
+        [Route("tasks/init")]
         public string Init()
         {
             var staticData = _client.CreateStaticData();

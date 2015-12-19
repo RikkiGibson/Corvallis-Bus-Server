@@ -9,6 +9,7 @@ using Microsoft.AspNet.Mvc;
 using CorvallisBusCoreNetCore.Models;
 using CorvallisBusCoreNetCore;
 using Microsoft.AspNet.Hosting;
+using Microsoft.Extensions.PlatformAbstractions;
 
 namespace CorvallisBusWebDNX.Controllers
 {
@@ -22,10 +23,9 @@ namespace CorvallisBusWebDNX.Controllers
         /// <summary>
         /// Dependency-injected application settings which are then passed on to other components.
         /// </summary>
-        public TransitApiController()
+        public TransitApiController(IApplicationEnvironment appEnv)
         {
-            var filePath = new HostingEnvironment().WebRootPath;
-            _repository = new MemoryTransitRepository(filePath);
+            _repository = new MemoryTransitRepository(appEnv.ApplicationBasePath);
             _client = new TransitClient();
 
             _getCurrentTime = () => TimeZoneInfo.ConvertTime(DateTimeOffset.Now, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"));
