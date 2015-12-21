@@ -1,6 +1,8 @@
 ## Corvallis Bus Server
 
 The backend that powers the best apps for the Corvallis Transit System.
+####[iOS client](https://github.com/RikkiGibson/Corvallis-Bus-iOS)
+####[Web client](https://github.com/RikkiGibson/corvallis-bus-web)
 
 ## Prerequisites for running
 
