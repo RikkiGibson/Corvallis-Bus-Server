@@ -82,7 +82,7 @@ namespace CorvallisBusCoreNetCore.DataAccess
         {
             s_staticData = staticData;
             s_serializedStaticData = JsonConvert.SerializeObject(staticData);
-            File.WriteAllText(_staticDataPath, JsonConvert.SerializeObject(staticData));
+            File.WriteAllText(_staticDataPath, s_serializedStaticData);
         }
     }
 }
