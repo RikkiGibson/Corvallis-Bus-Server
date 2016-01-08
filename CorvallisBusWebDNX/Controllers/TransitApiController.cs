@@ -1,15 +1,14 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using CorvallisBusCoreNetCore;
 using CorvallisBusCoreNetCore.DataAccess;
-using System;
-using System.Collections.Generic;
-using System.Net;
+using CorvallisBusCoreNetCore.Models;
 using CorvallisBusCoreNetCore.WebClients;
 using Microsoft.AspNet.Mvc;
-using CorvallisBusCoreNetCore.Models;
-using CorvallisBusCoreNetCore;
-using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.PlatformAbstractions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace CorvallisBusWebDNX.Controllers
 {
