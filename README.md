@@ -1,6 +1,8 @@
 ## Corvallis Bus Server
 
 The backend that powers the best apps for the Corvallis Transit System.
+####[iOS client](https://github.com/RikkiGibson/Corvallis-Bus-iOS)
+####[Web client](https://github.com/RikkiGibson/corvallis-bus-web)
 
 ## Prerequisites for running
 
@@ -28,34 +30,34 @@ Url: https://corvallisb.us/api/static
 
 ```
 {
-   "Routes":
+   "routes":
    {
       "1":
       {
-        "RouteNo": "1",
-        "Path": [
+        "routeNo": "1",
+        "path": [
           14244,
           13265,
           ...
         ],
-        "Color": "00ADEE",
-        "Url": "http://www.corvallisoregon.gov/index.aspx?page=822",
-        "Polyline": "[a long string encoded with the Google polyline format]"
+        "color": "00ADEE",
+        "url": "http://www.corvallisoregon.gov/index.aspx?page=822",
+        "polyline": "[a long string encoded with the Google polyline format]"
       }
       "2":
       {
         ...
       }
     }
-    "Stops":
+    "stops":
     {
       "10019": 
       {
-        "ID": 10019,
-        "Name": "Benton Oaks RV Park",
-        "Lat": 44.5701824,
-        "Long": -123.3122203,
-        "RouteNames": ["C3"]},
+        "id": 10019,
+        "name": "Benton Oaks RV Park",
+        "lat": 44.5701824,
+        "lng": -123.3122203,
+        "routeNames": ["C3"]},
       },
       ...
     }
@@ -63,14 +65,14 @@ Url: https://corvallisb.us/api/static
 
 ###/eta/
 
-Queries the city api for arrival estimates, which are encoded as integers.
+Queries the city API for arrival estimates, which are encoded as integers.
 
 Input:
    - **Required** one or more Stop IDs
 
 Output:
 
-Returns a JSON dictionary, where they keys are the supplied Stop IDs, and the values are dictionaries.  These nested dictionaries are such that the keys are route numbers, and the values are lists of integers corresponding to the ETAs for that route to that stop. For example, ``"6":[1, 21]"`` means that Route 6 is arriving at the given stop in 1 minute, and again in 21 minutes. ETAs are limited to 30 minutes in the future.
+Returns a JSON dictionary, where they keys are the supplied Stop IDs, and the values are dictionaries.  These nested dictionaries are such that the keys are route numbers, and the values are lists of integers corresponding to the ETAs for that route to that stop. For example, ``"6":[1, 21]"`` means that Route 6 is arriving at the given stop in 1 minute, and again in 21 minutes. ETAs are limited to 30 minutes in the future by the city.
 
 Sample Url: https://corvallisb.us/api/eta/14244,13265
 
@@ -93,7 +95,9 @@ Sample Url: https://corvallisb.us/api/eta/14244,13265
 Returns an interleaved list of arrival times for each route for each stop ID provided.
 Most of the stops in the Corvallis Transit System don't have a schedule. This app fabricates schedules for them by interpolating between those stops that have a schedule. The time between two officially scheduled stops is divided by the number of unscheduled stops between them. This turns out to be a reasonably accurate method.
 
-Since buses can run behind by 15 minutes or more, or have runs cancelled outright, some interpretation is necessary to communicate the schedule and the estimates in the most informative way possible for users. Check out the source for TransitClient if you want to know the details on what is done for this.
+Since buses can run behind by 15 minutes or more, or have runs cancelled outright, some interpretation is necessary to communicate the schedule and the estimates in the most informative way possible for users.
+
+For instance, in the case of a bus running late, scheduled arrival times can be shown only at least 20 minutes in advance. If they instead were shown only at least 30 minutes in advance, there would be gaps in time where a bus's likely arrival wouldn't be apparent to the user. In other words, the API allows the schedule a 10-minute grace period to "pass" as an estimate, but when the city starts putting out an estimate for that same bus's arrival, the scheduled time gets replaced by the estimated time.
 
 Input: 
    - **Required** one or more stop IDs
@@ -101,7 +105,7 @@ Input:
 Output:
 
    A JSON dictionary where the keys are Stop IDs and the values are dictionaries of ``{ Route No : schedule }``.
-   The schedule is a list of integers where each integer is "minutes from now." Integers are used because ETAs are interleaved with scheduled arrival times. This avoids a problem where an ETA appears to go up by a minute at the same time the minute on the system clock increments. It introduces a problem where the scheduled times vary by a minute if the server has a different minute value at the time it creates the payload than the client has at the time it consumes the payload. This is a case of settling for "good enough."
+   The schedule is a list of integers where each integer is "minutes from now." Integers are used because ETAs are interleaved with scheduled arrival times. This avoids a problem where an ETA appears to go up by a minute at the same time the minute on the system clock increments. It introduces a problem where the scheduled times vary by a minute if the server has a different minute value at the time it creates the payload than the client has at the time it consumes the payload. For the time being, it's recommended to use the endpoints which interpret these times and produce user-friendly descriptions for you.
 
 Sample Url: https://corvallisb.us/api/schedule/14244,13265
 
@@ -152,47 +156,47 @@ One or more of the following is required.
 
 Output:
 
-   A JSON array of stop information for "favorite stops" features.  See sample for details.
+   A JSON array of stop information for "favorite stops" features. This allows a developer to easily create a widget to show the user's favorite stops. It shows arrivals summary information for the nearest 2 routes that will arrive at each favorite stop. If the user consents to provide a location, it will determine the stop's distance from the user and sort ascending by this quantity. The widget merely needs to wake up, download less than 1 KB of data, and display it.
    
 Sample Url: https://corvallisb.us/api/favorites?stops=11776,10308&location=44.5645659,-123.2620435
    
 ```
 [
   {
-    "StopName": "Downtown Transit Center",
-    "StopId": 14237,
-    "DistanceFromUser": "0.1 miles",
-    "IsNearestStop": true,
-    "FirstRouteColor": "034DA1",
-    "FirstRouteName": "6",
-    "FirstRouteArrivals": "26 minutes, 3:14 PM",
-    "SecondRouteColor": "",
-    "SecondRouteName": "",
-    "SecondRouteArrivals": ""
+    "stopName": "Downtown Transit Center",
+    "stopID": 14237,
+    "distanceFromUser": "0.1 miles",
+    "isNearestStop": true,
+    "firstRouteColor": "034DA1",
+    "firstRouteName": "6",
+    "firstRouteArrivals": "26 minutes, 3:14 PM",
+    "secondRouteColor": "",
+    "secondRouteName": "",
+    "secondRouteArrivals": ""
   },
   {
-    "StopName": "NW Monroe Ave & NW 7th St",
-    "StopId": 10308,
-    "DistanceFromUser": "0.2 miles",
-    "IsNearestStop": false,
-    "FirstRouteColor": "F26521",
-    "FirstRouteName": "3",
-    "FirstRouteArrivals": "2 minutes, 3:08 PM",
-    "SecondRouteColor": "D7181F",
-    "SecondRouteName": "7",
-    "SecondRouteArrivals": "2 minutes, 3:23 PM"
+    "stopName": "NW Monroe Ave & NW 7th St",
+    "stopID": 10308,
+    "distanceFromUser": "0.2 miles",
+    "isNearestStop": false,
+    "firstRouteColor": "F26521",
+    "firstRouteName": "3",
+    "firstRouteArrivals": "2 minutes, 3:08 PM",
+    "secondRouteColor": "D7181F",
+    "secondRouteName": "7",
+    "secondRouteArrivals": "2 minutes, 3:23 PM"
   },
   {
-    "StopName": "SW Western Blvd & SW Hillside Dr",
-    "StopId": 11776,
-    "DistanceFromUser": "1.7 miles",
-    "IsNearestStop": false,
-    "FirstRouteColor": "F26521",
-    "FirstRouteName": "3",
-    "FirstRouteArrivals": "2:57 PM, 3:57 PM",
-    "SecondRouteColor": "EC0C6D",
-    "SecondRouteName": "C3",
-    "SecondRouteArrivals": "3:19 PM, 5:34 PM"
+    "stopName": "SW Western Blvd & SW Hillside Dr",
+    "stopID": 11776,
+    "distanceFromUser": "1.7 miles",
+    "isNearestStop": false,
+    "firstRouteColor": "F26521",
+    "firstRouteName": "3",
+    "firstRouteArrivals": "2:57 PM, 3:57 PM",
+    "secondRouteColor": "EC0C6D",
+    "secondRouteName": "C3",
+    "secondRouteArrivals": "3:19 PM, 5:34 PM"
   }
 ]
 ```
@@ -203,7 +207,7 @@ Input:
    - **Required** one or more stop IDs
 
 Output:
-   A dictionary where the keys are stop IDs and the values are a list of nice, sorted view models with user-friendly descriptions of the arrival times for each route at that stop.
+   A dictionary where the keys are stop IDs and the values are a list of nice, user-friendly descriptions of the arrival times for each route at that stop, sorted by descending arrival time. The server tries to determine if the route arrives at the stop "pretty much" hourly or half-hourly. Most routes arrive hourly, with a 10-minute break in the middle of the day. Thus if all the scheduled times left in the day are between 50-70 minutes from each other, it's considered to be an hourly schedule. Similarly with all being 20-40 minutes apart to be considered half-hourly.
    
 Sample URL: https://corvallisb.us/api/arrivals-summary/10308,14237
 
@@ -211,55 +215,47 @@ Sample URL: https://corvallisb.us/api/arrivals-summary/10308,14237
 {  
   "10308":[  
     {  
-      "RouteName":"2",
-      "RouteColor":"882790",
-      "ArrivalsSummary":"1 minute, 07:48 PM",
-      "ScheduleSummary":""
+      "routeName":"2",
+      "arrivalsSummary":"1 minute, 07:48 PM",
+      "scheduleSummary":""
     },
     {  
-      "RouteName":"1",
-      "RouteColor":"00ADEE",
-      "ArrivalsSummary":"10 minutes",
-      "ScheduleSummary":""
+      "routeName":"1",
+      "arrivalsSummary":"10 minutes",
+      "scheduleSummary":""
     },
     {  
-      "RouteName":"5",
-      "RouteColor":"BD559F",
-      "ArrivalsSummary":"11 minutes, 07:48 PM",
-      "ScheduleSummary":"Last arrival at 09:18 PM"
+      "routeName":"5",
+      "arrivalsSummary":"11 minutes, 07:48 PM",
+      "scheduleSummary":"Last arrival at 09:18 PM"
     },
     ...,
     {  
-      "RouteName":"8",
-      "RouteColor":"008540",
-      "ArrivalsSummary":"No arrivals!",
-      "ScheduleSummary":""
+      "routeName":"8",
+      "arrivalsSummary":"No arrivals!",
+      "scheduleSummary":""
     },
     {  
-      "RouteName":"C1",
-      "RouteColor":"614630",
-      "ArrivalsSummary":"No arrivals!",
-      "ScheduleSummary":""
+      "routeName":"C1",
+      "arrivalsSummary":"No arrivals!",
+      "scheduleSummary":""
     },
     {  
-      "RouteName":"C3",
-      "RouteColor":"EC0C6D",
-      "ArrivalsSummary":"No arrivals!",
-      "ScheduleSummary":""
+      "routeName":"C3",
+      "arrivalsSummary":"No arrivals!",
+      "scheduleSummary":""
     },
     {  
-      "RouteName":"CVA",
-      "RouteColor":"3F2885",
-      "ArrivalsSummary":"No arrivals!",
-      "ScheduleSummary":""
+      "routeName":"CVA",
+      "arrivalsSummary":"No arrivals!",
+      "scheduleSummary":""
     }
   ],
   "14237":[  
     {  
-      "RouteName":"6",
-      "RouteColor":"034DA1",
-      "ArrivalsSummary":"17 minutes, 07:54 PM",
-      "ScheduleSummary":"Last arrival at 08:24 PM"
+      "routeName":"6",
+      "arrivalsSummary":"17 minutes, 07:54 PM",
+      "scheduleSummary":"Last arrival at 08:24 PM"
     }
   ]
 }

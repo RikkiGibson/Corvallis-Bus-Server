@@ -176,10 +176,11 @@ namespace API.WebClients
         /// </summary>
         private static Stream GetZipFile()
         {
-            string url = "https://dl.dropboxusercontent.com/u/3107589/Google_Transit.zip";
+            string url = "https://dl.dropboxusercontent.com/s/522mkq9rud73r8f/Google_Transit.zip";
 
             using (var client = new WebClient())
             {
+                
                 var data = client.DownloadData(url);
                 return new MemoryStream(data);
             }
