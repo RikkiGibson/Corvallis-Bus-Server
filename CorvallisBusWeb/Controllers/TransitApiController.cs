@@ -9,6 +9,7 @@ using System.Net;
 using System.Configuration;
 using System.Web.Hosting;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 
 namespace API.Controllers
 {
@@ -103,7 +104,8 @@ namespace API.Controllers
             try
             {
                 var etas = await TransitManager.GetEtas(_repository, _client, parsedStopIds);
-                return Json(etas);
+                var etasJson = JsonConvert.SerializeObject(etas);
+                return Content(etasJson, "application/json");
             }
             catch
             {
@@ -158,7 +160,8 @@ namespace API.Controllers
             try
             {
                 var viewModel = await TransitManager.GetFavoritesViewModel(_repository, _client, _getCurrentTime(), parsedStopIds, userLocation);
-                return Json(viewModel);
+                var viewModelJson = JsonConvert.SerializeObject(viewModel);
+                return Content(viewModelJson, "application/json");
             }
             catch
             {
@@ -192,7 +195,8 @@ namespace API.Controllers
             try
             {
                 var todaySchedule = await TransitManager.GetSchedule(_repository, _client, _getCurrentTime(), parsedStopIds);
-                return Json(todaySchedule);
+                var todayScheduleJson = JsonConvert.SerializeObject(todaySchedule);
+                return Content(todayScheduleJson, "application/json");
             }
             catch
             {
@@ -223,7 +227,8 @@ namespace API.Controllers
             try
             {
                 var arrivalsSummary = await TransitManager.GetArrivalsSummary(_repository, _client, _getCurrentTime(), parsedStopIds);
-                return Json(arrivalsSummary);
+                var arrivalsSummaryJson = JsonConvert.SerializeObject(arrivalsSummary);
+                return Content(arrivalsSummaryJson, "application/json");
             }
             catch
             {
