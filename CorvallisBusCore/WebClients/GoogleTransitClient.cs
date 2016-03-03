@@ -10,18 +10,34 @@ using System.Text.RegularExpressions;
 
 namespace API.WebClients
 {
+    public class GoogleTransitData
+    {
+        public List<GoogleRoute> Routes { get; set; }
+        public List<GoogleRouteSchedule> Schedules { get; set; }
+    }
+
     /// <summary>
     /// Contains the task for importing Route colors from Google Transit.  This task is run once per year(?).
     /// </summary>
     public static class GoogleTransitClient
     {
-        public static Lazy<Tuple<List<GoogleRoute>, List<GoogleRouteSchedule>>> GoogleRoutes =
-            new Lazy<Tuple<List<GoogleRoute>, List<GoogleRouteSchedule>>>(DoTask);
+        private static GoogleTransitData m_googleTransitData;
+        public static GoogleTransitData GoogleTransitData
+        {
+            get
+            {
+                if (m_googleTransitData == null)
+                {
+                    m_googleTransitData = DoTask();
+                }
+                return m_googleTransitData;
+            }
+        }
         
         /// <summary>
         /// Downloads and interprets the ZIP file CTS uploads for Google.  This is primarily to get route colors and route schedules.
         /// </summary>
-        private static Tuple<List<GoogleRoute>, List<GoogleRouteSchedule>> DoTask()
+        private static GoogleTransitData DoTask()
         {
             List<GoogleRoute> routes = null;
             List<GoogleRouteSchedule> schedules = null;
@@ -44,7 +60,11 @@ namespace API.WebClients
                 schedules = ParseScheduleCSV(scheduleEntry);
             }
 
-            return Tuple.Create(routes, schedules);
+            return new GoogleTransitData
+            {
+                Routes = routes,
+                Schedules = schedules
+            };
         }
 
         private static IEnumerable<string> ReadLines(StreamReader reader)

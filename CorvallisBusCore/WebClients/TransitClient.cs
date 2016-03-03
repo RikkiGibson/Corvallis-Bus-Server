@@ -28,12 +28,13 @@ namespace API.WebClients
                     new BusStop(p, routes.Where(r => r.Path.Any(rp => rp.PlatformId == p.PlatformNo))
                                          .Select(r => r.RouteNo)
                                          .ToList()))
+                            .Where(r => r.RouteNames.Any())
                             .ToList();
         }
 
         public List<BusRoute> CreateRoutes()
         {
-            var googleRoutes = GoogleTransitClient.GoogleRoutes.Value.Item1.ToDictionary(gr => gr.ConnexionzName);
+            var googleRoutes = GoogleTransitClient.GoogleTransitData.Routes.ToDictionary(gr => gr.ConnexionzName);
             var routes = ConnexionzClient.Routes.Value.Where(r => googleRoutes.ContainsKey(r.RouteNo));
             return routes.Select(r => new BusRoute(r, googleRoutes)).ToList();
         }
@@ -113,7 +114,7 @@ namespace API.WebClients
         /// </summary>
         public ServerBusSchedule CreateSchedule()
         {
-            var googleRouteSchedules = GoogleTransitClient.GoogleRoutes.Value.Item2.ToDictionary(schedule => schedule.ConnexionzName);
+            var googleRouteSchedules = GoogleTransitClient.GoogleTransitData.Schedules.ToDictionary(schedule => schedule.ConnexionzName);
             var routes = ConnexionzClient.Routes.Value.Where(r => googleRouteSchedules.ContainsKey(r.RouteNo));
 
             // build all the schedule data for intermediate stops
