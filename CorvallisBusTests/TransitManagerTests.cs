@@ -1,14 +1,14 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using CorvallisBusDNX;
 using Moq;
-using CorvallisBusDNX.DataAccess;
 using System.Collections.Generic;
-using CorvallisBusDNX.Models;
 using System.Threading.Tasks;
-using CorvallisBusDNX.WebClients;
-using CorvallisBusDNX.Models.Connexionz;
 using System.Linq;
+using API.Models;
+using API.DataAccess;
+using API.Models.Connexionz;
+using API.WebClients;
+using API;
 
 namespace CorvallisBusTests
 {

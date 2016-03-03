@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorvallisBusCore", "CorvallisBusCore\CorvallisBusCore.csproj", "{55C1B947-1556-4E9E-B052-146538F1D407}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorvallisBusTests", "CorvallisBusTests\CorvallisBusTests.csproj", "{F1E593F9-8B44-4A1F-8C4E-9D4C9EAC56D0}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F59185FA-6C8E-4C68-ADA4-C6A1FA7F7969}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
@@ -14,9 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorvallisBusWeb", "CorvallisBusWeb\CorvallisBusWeb.csproj", "{67DD4183-8E77-45FE-9477-92EF9E665E3B}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CorvallisBusWebDNX", "CorvallisBusWebDNX\CorvallisBusWebDNX.xproj", "{F9EC8C4E-57D8-4329-90CF-116174586363}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CorvallisBusCoreNetCore", "CorvallisBusCoreNetCore\CorvallisBusCoreNetCore.xproj", "{D98FC785-FA63-4EE3-9BD3-BC036CE79A56}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorvallisBusTests", "CorvallisBusTests\CorvallisBusTests.csproj", "{F1E593F9-8B44-4A1F-8C4E-9D4C9EAC56D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,22 +24,14 @@ Global
 		{55C1B947-1556-4E9E-B052-146538F1D407}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55C1B947-1556-4E9E-B052-146538F1D407}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55C1B947-1556-4E9E-B052-146538F1D407}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F1E593F9-8B44-4A1F-8C4E-9D4C9EAC56D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F1E593F9-8B44-4A1F-8C4E-9D4C9EAC56D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F1E593F9-8B44-4A1F-8C4E-9D4C9EAC56D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F1E593F9-8B44-4A1F-8C4E-9D4C9EAC56D0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{67DD4183-8E77-45FE-9477-92EF9E665E3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{67DD4183-8E77-45FE-9477-92EF9E665E3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67DD4183-8E77-45FE-9477-92EF9E665E3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67DD4183-8E77-45FE-9477-92EF9E665E3B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F9EC8C4E-57D8-4329-90CF-116174586363}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F9EC8C4E-57D8-4329-90CF-116174586363}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F9EC8C4E-57D8-4329-90CF-116174586363}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F9EC8C4E-57D8-4329-90CF-116174586363}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D98FC785-FA63-4EE3-9BD3-BC036CE79A56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D98FC785-FA63-4EE3-9BD3-BC036CE79A56}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D98FC785-FA63-4EE3-9BD3-BC036CE79A56}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D98FC785-FA63-4EE3-9BD3-BC036CE79A56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1E593F9-8B44-4A1F-8C4E-9D4C9EAC56D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1E593F9-8B44-4A1F-8C4E-9D4C9EAC56D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1E593F9-8B44-4A1F-8C4E-9D4C9EAC56D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1E593F9-8B44-4A1F-8C4E-9D4C9EAC56D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

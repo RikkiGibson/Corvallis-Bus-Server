@@ -2,6 +2,7 @@
 
 The backend that powers the best apps for the Corvallis Transit System.
 ####[iOS client](https://github.com/RikkiGibson/Corvallis-Bus-iOS)
+####[Android client](https://github.com/OSU-App-Club/Corvallis-Bus-Android)
 ####[Web client](https://github.com/RikkiGibson/corvallis-bus-web)
 
 ## Prerequisites for running
