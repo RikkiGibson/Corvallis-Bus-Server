@@ -278,9 +278,9 @@ namespace API.WebClients
                                         Name = "MonroeAve_S_7thSt",
                                         Times = new List<TimeSpan>
                                         {
-                                            new TimeSpan(15,0,0),
                                             new TimeSpan(16,0,0),
                                             new TimeSpan(17,0,0),
+                                            new TimeSpan(18,0,0),
                                         }
                                     }
                                 }
