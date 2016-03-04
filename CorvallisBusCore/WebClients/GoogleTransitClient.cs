@@ -103,7 +103,7 @@ namespace API.WebClients
 
             if(!routes.Any(x => x.Name == "C1R"))
             {
-                routes.Add(new GoogleRoute("C1R", "#000000", "http://www.corvallisoregon.gov/index.aspx?page=1774"));
+                routes.Add(new GoogleRoute("C1R", "000000", "http://www.corvallisoregon.gov/index.aspx?page=1774"));
             }
             return routes;
         }
@@ -228,9 +228,9 @@ namespace API.WebClients
                                         Name = "MonroeAve_S_5thSt",
                                         Times = new List<TimeSpan>
                                         {
-                                            new TimeSpan(3,35,0),
-                                            new TimeSpan(4,35,0),
-                                            new TimeSpan(5,35,0),
+                                            new TimeSpan(15,35,0),
+                                            new TimeSpan(16,35,0),
+                                            new TimeSpan(17,35,0),
                                         }
                                     },
                                     new GoogleStopSchedule
@@ -238,9 +238,9 @@ namespace API.WebClients
                                         Name = "ArnoldWay_N_26thSt",
                                         Times = new List<TimeSpan>
                                         {
-                                            new TimeSpan(3,40,0),
-                                            new TimeSpan(4,40,0),
-                                            new TimeSpan(5,40,0),
+                                            new TimeSpan(15,40,0),
+                                            new TimeSpan(16,40,0),
+                                            new TimeSpan(175,40,0),
                                         }
                                     },
                                     new GoogleStopSchedule
@@ -248,9 +248,9 @@ namespace API.WebClients
                                         Name = "WithamHillDr_E_UniversityPl",
                                         Times = new List<TimeSpan>
                                         {
-                                            new TimeSpan(3,45,0),
-                                            new TimeSpan(4,45,0),
-                                            new TimeSpan(5,45,0),
+                                            new TimeSpan(15,45,0),
+                                            new TimeSpan(16,45,0),
+                                            new TimeSpan(17,45,0),
                                         }
                                     },
                                     new GoogleStopSchedule
@@ -258,9 +258,9 @@ namespace API.WebClients
                                         Name = "WithamHillDr_W_ElmwoodDr",
                                         Times = new List<TimeSpan>
                                         {
-                                            new TimeSpan(3,50,0),
-                                            new TimeSpan(4,50,0),
-                                            new TimeSpan(5,50,0),
+                                            new TimeSpan(15,50,0),
+                                            new TimeSpan(16,50,0),
+                                            new TimeSpan(17,50,0),
                                         }
                                     },
                                     new GoogleStopSchedule
@@ -268,9 +268,9 @@ namespace API.WebClients
                                         Name = "KingsBlvd_E_MonroeAve",
                                         Times = new List<TimeSpan>
                                         {
-                                            new TimeSpan(3,55,0),
-                                            new TimeSpan(4,55,0),
-                                            new TimeSpan(5,55,0),
+                                            new TimeSpan(15,55,0),
+                                            new TimeSpan(16,55,0),
+                                            new TimeSpan(17,55,0),
                                         }
                                     },
                                     new GoogleStopSchedule
@@ -278,9 +278,9 @@ namespace API.WebClients
                                         Name = "MonroeAve_S_7thSt",
                                         Times = new List<TimeSpan>
                                         {
-                                            new TimeSpan(4,0,0),
-                                            new TimeSpan(5,0,0),
-                                            new TimeSpan(6,0,0),
+                                            new TimeSpan(15,0,0),
+                                            new TimeSpan(16,0,0),
+                                            new TimeSpan(17,0,0),
                                         }
                                     }
                                 }
