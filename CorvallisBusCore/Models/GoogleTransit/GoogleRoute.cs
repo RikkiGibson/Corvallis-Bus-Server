@@ -1,4 +1,6 @@
-﻿namespace API.Models.GoogleTransit
+﻿using System.Text.RegularExpressions;
+
+namespace API.Models.GoogleTransit
 {
     /// <summary>
     /// Representation of a CTS Route from Google Transit data.
@@ -12,6 +14,13 @@
             Url = csv[csv.Length - 3].Replace("\"", string.Empty);
         }
 
+        public GoogleRoute(string Name, string Color, string Url)
+        {
+            this.Name = Name;
+            this.Color = Color;
+            this.Url = Url;
+        }
+
         /// <summary>
         /// A name from the Google Transit CSV e.g. "BB_N".
         /// Must be converted to Connexionz format before merging.
@@ -21,8 +30,7 @@
         public string ConnexionzName => ToConnexionzName(Name);
 
         public static string ToConnexionzName(string googleRouteNo) =>
-            googleRouteNo.Replace("BB_", "NO")
-                .Replace("R", string.Empty);
+            Regex.Replace(googleRouteNo.Replace("BB_", "NO"), "^R", "");
 
         /// <summary>
         /// The color of the route as a hex string, e.g. "35EFA0".
