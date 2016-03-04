@@ -240,7 +240,7 @@ namespace API.WebClients
                                         {
                                             new TimeSpan(15,40,0),
                                             new TimeSpan(16,40,0),
-                                            new TimeSpan(175,40,0),
+                                            new TimeSpan(17,40,0),
                                         }
                                     },
                                     new GoogleStopSchedule
