@@ -193,77 +193,7 @@ namespace API.WebClients
 
                 if(!routeSchedules.Any(x => x.RouteNo == "C1R"))
                 {
-                    routeSchedules.Add(new GoogleRouteSchedule
-                    {
-                        RouteNo = "C1R",
-                        Days = new List<GoogleDaySchedule>{
-                                        new GoogleDaySchedule {Days = DaysOfWeek.Weekdays,
-                                             StopSchedules = new List<GoogleStopSchedule>
-                                             {
-                                                 new GoogleStopSchedule
-                                                 {
-                                                      Name = "MonroeAve_S_5thSt",
-                                                      Times = new List<TimeSpan>
-                                                      {
-                                                          new TimeSpan(3,35,0),
-                                                          new TimeSpan(4,35,0),
-                                                          new TimeSpan(5,35,0),
-                                                      }
-                                                 },
-                                                 new GoogleStopSchedule
-                                                 {
-                                                      Name = "ArnoldWay_N_26thSt",
-                                                      Times = new List<TimeSpan>
-                                                      {
-                                                          new TimeSpan(3,40,0),
-                                                          new TimeSpan(4,40,0),
-                                                          new TimeSpan(5,40,0),
-                                                      }
-                                                 },
-                                                 new GoogleStopSchedule
-                                                 {
-                                                      Name = "WithamHillDr_E_UniversityPl",
-                                                      Times = new List<TimeSpan>
-                                                      {
-                                                          new TimeSpan(3,45,0),
-                                                          new TimeSpan(4,45,0),
-                                                          new TimeSpan(5,45,0),
-                                                      }
-                                                 },
-                                                 new GoogleStopSchedule
-                                                 {
-                                                      Name = "WithamHillDr_W_ElmwoodDr",
-                                                      Times = new List<TimeSpan>
-                                                      {
-                                                          new TimeSpan(3,50,0),
-                                                          new TimeSpan(4,50,0),
-                                                          new TimeSpan(5,50,0),
-                                                      }
-                                                 },
-                                                 new GoogleStopSchedule
-                                                 {
-                                                      Name = "KingsBlvd_E_MonroeAve",
-                                                      Times = new List<TimeSpan>
-                                                      {
-                                                          new TimeSpan(3,55,0),
-                                                          new TimeSpan(4,55,0),
-                                                          new TimeSpan(5,55,0),
-                                                      }
-                                                 },
-                                                 new GoogleStopSchedule
-                                                 {
-                                                      Name = "MonroeAve_S_7thSt",
-                                                      Times = new List<TimeSpan>
-                                                      {
-                                                          new TimeSpan(4,0,0),
-                                                          new TimeSpan(5,0,0),
-                                                          new TimeSpan(6,0,0),
-                                                      }
-                                                 }
-                                             }
-                                        }
-                        }
-                    });
+                    routeSchedules.Add(GetC1RSchedule());
                 }
                 return routeSchedules.ToList();
             }
@@ -282,6 +212,81 @@ namespace API.WebClients
                 var data = client.DownloadData(url);
                 return new MemoryStream(data);
             }
+        }
+
+        private static GoogleRouteSchedule GetC1RSchedule()
+        {
+            return new GoogleRouteSchedule
+            {
+                RouteNo = "C1R",
+                Days = new List<GoogleDaySchedule>{
+                        new GoogleDaySchedule {Days = DaysOfWeek.Weekdays,
+                                StopSchedules = new List<GoogleStopSchedule>
+                                {
+                                    new GoogleStopSchedule
+                                    {
+                                        Name = "MonroeAve_S_5thSt",
+                                        Times = new List<TimeSpan>
+                                        {
+                                            new TimeSpan(3,35,0),
+                                            new TimeSpan(4,35,0),
+                                            new TimeSpan(5,35,0),
+                                        }
+                                    },
+                                    new GoogleStopSchedule
+                                    {
+                                        Name = "ArnoldWay_N_26thSt",
+                                        Times = new List<TimeSpan>
+                                        {
+                                            new TimeSpan(3,40,0),
+                                            new TimeSpan(4,40,0),
+                                            new TimeSpan(5,40,0),
+                                        }
+                                    },
+                                    new GoogleStopSchedule
+                                    {
+                                        Name = "WithamHillDr_E_UniversityPl",
+                                        Times = new List<TimeSpan>
+                                        {
+                                            new TimeSpan(3,45,0),
+                                            new TimeSpan(4,45,0),
+                                            new TimeSpan(5,45,0),
+                                        }
+                                    },
+                                    new GoogleStopSchedule
+                                    {
+                                        Name = "WithamHillDr_W_ElmwoodDr",
+                                        Times = new List<TimeSpan>
+                                        {
+                                            new TimeSpan(3,50,0),
+                                            new TimeSpan(4,50,0),
+                                            new TimeSpan(5,50,0),
+                                        }
+                                    },
+                                    new GoogleStopSchedule
+                                    {
+                                        Name = "KingsBlvd_E_MonroeAve",
+                                        Times = new List<TimeSpan>
+                                        {
+                                            new TimeSpan(3,55,0),
+                                            new TimeSpan(4,55,0),
+                                            new TimeSpan(5,55,0),
+                                        }
+                                    },
+                                    new GoogleStopSchedule
+                                    {
+                                        Name = "MonroeAve_S_7thSt",
+                                        Times = new List<TimeSpan>
+                                        {
+                                            new TimeSpan(4,0,0),
+                                            new TimeSpan(5,0,0),
+                                            new TimeSpan(6,0,0),
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    };
         }
     }
 }
