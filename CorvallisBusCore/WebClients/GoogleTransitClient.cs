@@ -103,7 +103,7 @@ namespace API.WebClients
 
             if(!routes.Any(x => x.Name == "C1R"))
             {
-                routes.Add(new GoogleRoute("C1R", "000000", "http://www.corvallisoregon.gov/index.aspx?page=1774"));
+                routes.Add(new GoogleRoute("C1R", "9F8E7D", "http://www.corvallisoregon.gov/index.aspx?page=1774"));
             }
             return routes;
         }
