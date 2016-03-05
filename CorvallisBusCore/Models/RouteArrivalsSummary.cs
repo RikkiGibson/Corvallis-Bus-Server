@@ -12,19 +12,15 @@ namespace API.Models
         [JsonProperty("routeName")]
         public string RouteName { get; set; }
 
-        [JsonProperty("routeColor")]
-        public string RouteColor { get; set; }
-
         [JsonProperty("arrivalsSummary")]
         public string ArrivalsSummary { get; set; }
 
         [JsonProperty("scheduleSummary")]
         public string ScheduleSummary { get; set; }
 
-        public RouteArrivalsSummary(string routeName, string routeColor, List<int> routeArrivalTimes, DateTimeOffset currentTime)
+        public RouteArrivalsSummary(string routeName, List<int> routeArrivalTimes, DateTimeOffset currentTime)
         {
             RouteName = routeName;
-            RouteColor = routeColor;
             ArrivalsSummary = ToEstimateSummary(routeArrivalTimes, currentTime);
             ScheduleSummary = ToScheduleSummary(routeArrivalTimes, currentTime);
         }

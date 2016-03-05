@@ -247,18 +247,17 @@ namespace API
         public static async Task<Dictionary<int, List<RouteArrivalsSummary>>> GetArrivalsSummary(ITransitRepository repository, ITransitClient client, DateTimeOffset currentTime, IEnumerable<int> stopIds)
         {
             var schedule = await GetSchedule(repository, client, currentTime, stopIds);
-            var staticData = await repository.GetStaticDataAsync();
 
             return schedule.ToDictionary(stopSchedule => stopSchedule.Key,
-                stopSchedule => ToRouteArrivalsSummaries(stopSchedule.Value, staticData, currentTime));
+                stopSchedule => ToRouteArrivalsSummaries(stopSchedule.Value, currentTime));
         }
 
-        private static List<RouteArrivalsSummary> ToRouteArrivalsSummaries(Dictionary<string, List<int>> stopArrivals,
-            BusStaticData staticData, DateTimeOffset currentTime)
+        private static List<RouteArrivalsSummary> ToRouteArrivalsSummaries(
+            Dictionary<string, List<int>> stopArrivals, DateTimeOffset currentTime)
         {
             return stopArrivals.OrderBy(stopSchedule => stopSchedule.Value.DefaultIfEmpty(int.MaxValue).Min())
                                .Select(kvp =>
-                new RouteArrivalsSummary(routeName: kvp.Key, routeColor: staticData.Routes[kvp.Key].Color,
+                new RouteArrivalsSummary(routeName: kvp.Key,
                     routeArrivalTimes: kvp.Value, currentTime: currentTime)).ToList();
         }
     }
