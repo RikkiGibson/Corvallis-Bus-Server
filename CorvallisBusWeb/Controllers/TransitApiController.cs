@@ -16,9 +16,9 @@ namespace API.Controllers
     [RoutePrefix("api")]
     public class TransitApiController : Controller
     {
-        private ITransitRepository _repository;
-        private ITransitClient _client;
-        private Func<DateTimeOffset> _getCurrentTime;
+        private readonly ITransitRepository _repository;
+        private readonly ITransitClient _client;
+        private readonly Func<DateTimeOffset> _getCurrentTime;
 
         /// <summary>
         /// Dependency-injected application settings which are then passed on to other components.
