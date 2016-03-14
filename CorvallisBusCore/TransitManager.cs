@@ -2,6 +2,7 @@
 using API.Models;
 using API.Models.Connexionz;
 using API.WebClients;
+using CorvallisBusCore.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace API
 {
     // Maps a stop ID to a dictionary that maps a route number to a list of arrival times.
     // Intended for client consumption.
-    using ClientBusSchedule = Dictionary<int, Dictionary<string, List<int>>>;
+    using ClientBusSchedule = Dictionary<int, Dictionary<string, List<BusArrivalTime>>>;
 
     // Maps a 5-digit stop ID to a dictionary that maps a route number to an arrival estimate in minutes.
     // Exists to provide some compile-time semantics to differ between schedules and estimates.
@@ -20,6 +21,21 @@ namespace API
 
     public static class TransitManager
     {
+        /// <summary>
+        /// The greatest number of minutes from now that an estimate can have.
+        /// </summary>
+        public const int ESTIMATES_MAX_ADVANCE_MINUTES = 30;
+
+        /// <summary>
+        /// The range of minutes in which an estimate time can replace a scheduled time.
+        /// </summary>
+        public const int ESTIMATE_CORRELATION_TOLERANCE_MINUTES = 10;
+
+        /// <summary>
+        /// The smallest number of minutes from now that a scheduled time can be rendered.
+        /// </summary>
+        public const int SCHEDULE_CUTOFF_MINUTES = 20;
+
         /// <summary>
         /// Returns the bus schedule for the given stop IDs, incorporating the ETA from Connexionz.
         /// </summary>
@@ -31,51 +47,49 @@ namespace API
             var schedule = await schedulesTask;
             var estimates = await estimatesTask;
             
-            // Holy nested dictionaries batman
+            Func<int, Dictionary<string, List<BusArrivalTime>>> makePlatformSchedule = platformNo =>
+                schedule[platformNo].ToDictionary(routeSchedule => routeSchedule.RouteNo,
+                    routeSchedule => InterleaveRouteScheduleAndEstimates(
+                        routeSchedule,
+                        estimates.ContainsKey(platformNo)
+                            ? estimates[platformNo]
+                            : new Dictionary<string, List<int>>(),
+                        currentTime));
+
             var todaySchedule = stopIds.Where(schedule.ContainsKey)
-                                       .ToDictionary(platformNo => platformNo,
-                                                     platformNo => schedule[platformNo]
-                .ToDictionary(routeSchedule => routeSchedule.RouteNo,
-                              routeSchedule => InterleaveRouteScheduleAndEstimates(routeSchedule, estimates.ContainsKey(platformNo) ? estimates[platformNo] : new Dictionary<string, List<int>>(), currentTime)));
+                                       .ToDictionary(platformNo => platformNo, makePlatformSchedule);
 
             return todaySchedule;
         }
 
-        private static List<int> InterleaveRouteScheduleAndEstimates(BusStopRouteSchedule routeSchedule,
+        private static List<BusArrivalTime> InterleaveRouteScheduleAndEstimates(BusStopRouteSchedule routeSchedule,
             Dictionary<string, List<int>> stopEstimates, DateTimeOffset currentTime)
         {
-            var result = new List<int>();
+            var arrivalTimes = Enumerable.Empty<BusArrivalTime>();
 
             var daySchedule = routeSchedule.DaySchedules.FirstOrDefault(ds => DaysOfWeekUtils.IsToday(ds.Days, currentTime));
             if (daySchedule != null)
             {
-                result.AddRange(ToMinutesFromNow(daySchedule, currentTime));
+                var relativeSchedule = MakeRelativeScheduleWithinCutoff(daySchedule, currentTime);
+                arrivalTimes = relativeSchedule.Select(minutes => new BusArrivalTime(minutes, isEstimate: false));
             }
             
             if (stopEstimates.ContainsKey(routeSchedule.RouteNo))
             {
                 var routeEstimates = stopEstimates[routeSchedule.RouteNo];
-                foreach(int estimate in routeEstimates)
-                {
-                    // When an estimate time is close to a scheduled time, overwrite the schedule with the estimate.
-                    var scheduleIndex = result.FindIndex(i => Math.Abs(i - estimate) <= 10);
-                    if (scheduleIndex != -1)
-                    {
-                        result[scheduleIndex] = estimate;
-                    }
-                    else
-                    {
-                        result.Insert(0, estimate);
-                    }
-                }
+                arrivalTimes = arrivalTimes.Where(arrivalTime =>
+                        !routeEstimates.Any(estimate =>
+                            Math.Abs(arrivalTime.MinutesFromNow - estimate) <= ESTIMATE_CORRELATION_TOLERANCE_MINUTES));
+                arrivalTimes = arrivalTimes.Concat(
+                    routeEstimates.Select(estimate => new BusArrivalTime(estimate, isEstimate: true)));
             }
 
-            result.Sort();
+            arrivalTimes = arrivalTimes.OrderBy(arrivalTime => arrivalTime.MinutesFromNow);
 
-            return result;
+            return arrivalTimes.ToList();
         }
 
-        private static IEnumerable<int> ToMinutesFromNow(BusStopRouteDaySchedule daySchedule, DateTimeOffset currentTime)
+        private static IEnumerable<int> MakeRelativeScheduleWithinCutoff(BusStopRouteDaySchedule daySchedule, DateTimeOffset currentTime)
         {
             // Is there a better condition for this, i.e. involving a check whether there are 24hr+ time spans in the schedule?
             var timeOfDay = daySchedule.Days == DaysOfWeek.NightOwl &&
@@ -118,25 +132,6 @@ namespace API
             return dist;
         }
 
-        private static string RenderArrivalTime(DateTimeOffset currentTime, int minutesFromNow)
-        {
-            if (minutesFromNow > 30)
-            {
-                return currentTime.AddMinutes(minutesFromNow).ToString("h:mm tt");
-            }
-            if (minutesFromNow == 1)
-            {
-                return $"{minutesFromNow} minute";
-            }
-            return $"{minutesFromNow} minutes";
-        }
-
-        private static string ToArrivalsSummary(List<int> arrivalTimes, DateTimeOffset currentTime)
-        {
-            var summaries = arrivalTimes.Take(2).Select(t => RenderArrivalTime(currentTime, t));
-            return string.Join(", ", summaries);
-        }
-
         private static List<FavoriteStop> GetFavoriteStops(BusStaticData staticData, IEnumerable<int> stopIds, LatLong? optionalUserLocation)
         {
             var favoriteStops = stopIds.Where(staticData.Stops.ContainsKey).Select(id =>
@@ -172,12 +167,13 @@ namespace API
             return favoriteStops;
         }
 
+        private static readonly BusArrivalTime ARRIVAL_TIME_SEED = new BusArrivalTime(int.MaxValue, isEstimate: false);
         private static FavoriteStopViewModel ToViewModel(FavoriteStop favorite, BusStaticData staticData,
             ClientBusSchedule schedule, DateTimeOffset currentTime)
         {
             var routeSchedules = schedule[favorite.Id]
                        .Where(rs => rs.Value.Any())
-                       .OrderBy(rs => rs.Value.Aggregate(int.MaxValue, Math.Min))
+                       .OrderBy(rs => rs.Value.Aggregate(ARRIVAL_TIME_SEED, BusArrivalTime.Min))
                        .Take(2)
                        .ToList();
 
@@ -191,11 +187,11 @@ namespace API
 
                 FirstRouteName = firstRoute != null ? firstRoute.RouteNo : string.Empty,
                 FirstRouteColor = firstRoute != null ? firstRoute.Color : string.Empty,
-                FirstRouteArrivals = routeSchedules.Count > 0 ? ToArrivalsSummary(routeSchedules[0].Value, currentTime) : "No arrivals!",
+                FirstRouteArrivals = routeSchedules.Count > 0 ? RouteArrivalsSummary.ToEstimateSummary(routeSchedules[0].Value, currentTime) : "No arrivals!",
 
                 SecondRouteName = secondRoute != null ? secondRoute.RouteNo : string.Empty,
                 SecondRouteColor = secondRoute != null ? secondRoute.Color : string.Empty,
-                SecondRouteArrivals = routeSchedules.Count > 1 ? ToArrivalsSummary(routeSchedules[1].Value, currentTime) : string.Empty,
+                SecondRouteArrivals = routeSchedules.Count > 1 ? RouteArrivalsSummary.ToEstimateSummary(routeSchedules[1].Value, currentTime) : string.Empty,
 
                 DistanceFromUser = double.IsNaN(favorite.DistanceFromUser) ? "" : $"{favorite.DistanceFromUser:F1} miles",
                 IsNearestStop = favorite.IsNearestStop
@@ -205,7 +201,7 @@ namespace API
         public static async Task<List<FavoriteStopViewModel>> GetFavoritesViewModel(ITransitRepository repository,
             ITransitClient client, DateTimeOffset currentTime, IEnumerable<int> stopIds, LatLong? optionalUserLocation)
         {
-            var staticData = JsonConvert.DeserializeObject<BusStaticData>(await repository.GetSerializedStaticDataAsync());
+            var staticData = await repository.GetStaticDataAsync();
 
             var favoriteStops = GetFavoriteStops(staticData, stopIds, optionalUserLocation);
 
@@ -253,9 +249,9 @@ namespace API
         }
 
         private static List<RouteArrivalsSummary> ToRouteArrivalsSummaries(
-            Dictionary<string, List<int>> stopArrivals, DateTimeOffset currentTime)
+            Dictionary<string, List<BusArrivalTime>> stopArrivals, DateTimeOffset currentTime)
         {
-            return stopArrivals.OrderBy(stopSchedule => stopSchedule.Value.DefaultIfEmpty(int.MaxValue).Min())
+            return stopArrivals.OrderBy(stopSchedule => stopSchedule.Value.DefaultIfEmpty(ARRIVAL_TIME_SEED).Min())
                                .Select(kvp =>
                 new RouteArrivalsSummary(routeName: kvp.Key,
                     routeArrivalTimes: kvp.Value, currentTime: currentTime)).ToList();

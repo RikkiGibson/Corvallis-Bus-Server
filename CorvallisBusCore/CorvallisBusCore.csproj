@@ -79,6 +79,7 @@
     <Compile Include="DataAccess\MemoryTransitRepository.cs" />
     <Compile Include="DataAccess\StorageManager.cs" />
     <Compile Include="DataAccess\AzureTransitRepository.cs" />
+    <Compile Include="Models\BusArrivalTime.cs" />
     <Compile Include="Models\BusRoute.cs" />
     <Compile Include="Models\BusStaticData.cs" />
     <Compile Include="Models\BusStop.cs" />
