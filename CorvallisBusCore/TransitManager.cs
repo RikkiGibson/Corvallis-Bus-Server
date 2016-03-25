@@ -243,18 +243,27 @@ namespace API
         public static async Task<Dictionary<int, List<RouteArrivalsSummary>>> GetArrivalsSummary(ITransitRepository repository, ITransitClient client, DateTimeOffset currentTime, IEnumerable<int> stopIds)
         {
             var schedule = await GetSchedule(repository, client, currentTime, stopIds);
+            var staticData = await repository.GetStaticDataAsync();
 
-            return schedule.ToDictionary(stopSchedule => stopSchedule.Key,
-                stopSchedule => ToRouteArrivalsSummaries(stopSchedule.Value, currentTime));
+            var matchingStopIds = stopIds.Where(staticData.Stops.ContainsKey);
+            var arrivalsSummaries = matchingStopIds.ToDictionary(stopId => stopId,
+                stopId => ToRouteArrivalsSummaries(staticData.Stops[stopId].RouteNames, schedule[stopId], currentTime));
+            return arrivalsSummaries;
         }
 
-        private static List<RouteArrivalsSummary> ToRouteArrivalsSummaries(
+        private static List<RouteArrivalsSummary> ToRouteArrivalsSummaries(List<string> routeNames,
             Dictionary<string, List<BusArrivalTime>> stopArrivals, DateTimeOffset currentTime)
         {
-            return stopArrivals.OrderBy(stopSchedule => stopSchedule.Value.DefaultIfEmpty(ARRIVAL_TIME_SEED).Min())
-                               .Select(kvp =>
-                new RouteArrivalsSummary(routeName: kvp.Key,
-                    routeArrivalTimes: kvp.Value, currentTime: currentTime)).ToList();
+            var arrivalsSummaries =
+                routeNames.Select(routeName =>
+                            new KeyValuePair<string, List<BusArrivalTime>>(routeName,
+                                stopArrivals.ContainsKey(routeName) ? stopArrivals[routeName] : new List<BusArrivalTime>()))
+                          .OrderBy(kvp => kvp.Value.DefaultIfEmpty(ARRIVAL_TIME_SEED).Min())
+                          .Select(kvp => new RouteArrivalsSummary(routeName: kvp.Key,
+                                routeArrivalTimes: kvp.Value, currentTime: currentTime))
+                          .ToList();
+
+            return arrivalsSummaries;
         }
     }
 }

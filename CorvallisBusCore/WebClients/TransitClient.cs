@@ -115,9 +115,9 @@ namespace API.WebClients
         public ServerBusSchedule CreateSchedule()
         {
             var googleRouteSchedules = GoogleTransitClient.GoogleTransitData.Schedules.ToDictionary(schedule => schedule.ConnexionzName);
-            var routes = ConnexionzClient.Routes.Value.Where(r => googleRouteSchedules.ContainsKey(r.RouteNo));
+            var routes = ConnexionzClient.Routes.Value.Where(r => r.IsActive && googleRouteSchedules.ContainsKey(r.RouteNo));
 
-            // build all the schedule data for intermediate stops
+            // Build all the schedule data for intermediate stops.
             var routeSchedules = routes.Select(r => new
             {
                 routeNo = r.RouteNo,
@@ -129,7 +129,7 @@ namespace API.WebClients
                     })
             });
 
-            // now turn it on its head so it's easy to query from a stop-oriented way.
+            // Now turn it on its head so it's easy to query from a stop-oriented way.
             var platforms = ConnexionzClient.Platforms.Value;
 
             var result = platforms.ToDictionary(p => p.PlatformNo,

@@ -21,6 +21,8 @@ namespace API.Models.Connexionz
                                  .Select(d => d.Pattern.First())
                                  .Aggregate((p1, p2) => p1.Platform.Length > p2.Platform.Length ? p1 : p2);
 
+            IsActive = longestPattern.Schedule == "Active";
+
             Polyline = EncodePolyline(GetPoints(longestPattern.Mif));
 
             Path = longestPattern.Platform
@@ -94,5 +96,12 @@ namespace API.Models.Connexionz
         /// Google it if you don't know what that is.
         /// </summary>
         public string Polyline { get; private set; }
+
+        /// <summary>
+        /// Indicates whether the route is active in general, i.e. its schedule applies at all.
+        /// Several routes are marked as inactive during OSU breaks.
+        /// Schedules should only be created for active routes.
+        /// </summary>
+        public bool IsActive { get; private set; }
     }
 }
