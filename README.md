@@ -56,6 +56,7 @@ Url: https://corvallisb.us/api/static
       {
         "id": 10019,
         "name": "Benton Oaks RV Park",
+		"bearing": 273.36652,
         "lat": 44.5701824,
         "lng": -123.3122203,
         "routeNames": ["C3"]},
@@ -106,7 +107,7 @@ Input:
 Output:
 
    A JSON dictionary where the keys are Stop IDs and the values are dictionaries of ``{ Route No : schedule }``.
-   The schedule is a list of integers where each integer is "minutes from now." Integers are used because ETAs are interleaved with scheduled arrival times. This avoids a problem where an ETA appears to go up by a minute at the same time the minute on the system clock increments. It introduces a problem where the scheduled times vary by a minute if the server has a different minute value at the time it creates the payload than the client has at the time it consumes the payload. For the time being, it's recommended to use the endpoints which interpret these times and produce user-friendly descriptions for you.
+   The schedule is a list of pairs of a boolean "is an estimate" and integer "minutes from now." Integers are used because ETAs are interleaved with scheduled arrival times. This avoids a problem where an ETA appears to go up by a minute at the same time the minute on the system clock increments. It introduces a problem where the scheduled times vary by a minute if the server has a different minute value at the time it creates the payload than the client has at the time it consumes the payload. For the time being, it's recommended to use the endpoints which interpret these times and produce user-friendly descriptions for you.
 
 Sample Url: https://corvallisb.us/api/schedule/14244,13265
 
@@ -117,7 +118,10 @@ Sample Url: https://corvallisb.us/api/schedule/14244,13265
       
     ],
     "2": [
-      40
+      {
+	      "minutesFromNow": 40,
+		  "isEstimate": false
+	  }
     ],
     "4": [
       
@@ -128,19 +132,22 @@ Sample Url: https://corvallisb.us/api/schedule/14244,13265
       
     ],
     "2": [
-      37
+      {
+	      "minutesFromNow": 37,
+		  "isEstimate": false
+	  }
     ],
     "3": [
       
     ],
     "5": [
-      35,
-      65,
-      95,
-      125
+      { "minutesFromNow": 35, "isEstimate": false },
+      { "minutesFromNow": 65, "isEstimate": false },
+      { "minutesFromNow": 95, "isEstimate": false },
+      { "minutesFromNow": 125, "isEstimate": false }
     ],
     "7": [
-      12
+      { "minutesFromNow": 12, "isEstimate": true }
     ],
     "8": [
       

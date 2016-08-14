@@ -24,6 +24,7 @@ namespace API.Models
         {
             ID = platform.PlatformNo;
             Name = platform.Name;
+            Bearing = platform.BearingToRoad;
             Lat = platform.Lat;
             Long = platform.Long;
             RouteNames = routeNames;
@@ -40,6 +41,13 @@ namespace API.Models
         /// </summary>
         [JsonProperty("name")]
         public string Name { get; set; }
+
+        /// <summary>
+        /// The angle in degrees between this bus stop and the road. This can be treated as
+        /// the angle between the positive X axis and the direction of travel for buses at this stop.
+        /// </summary>
+        [JsonProperty("bearing")]
+        public double Bearing { get; set; }
 
         /// <summary>
         /// The latitude value for the stop (between -90 and 90 degrees).

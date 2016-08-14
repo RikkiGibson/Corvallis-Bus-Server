@@ -11,6 +11,13 @@ namespace API.Models.Connexionz
         {
             PlatformTag = int.Parse(platform.Attribute("PlatformTag").Value);
             PlatformNo = int.Parse(platform.Attribute("PlatformNo").Value);
+
+            // Almost all stops except for places like HP and CVHS have this attribute.
+            // It's reasonable to default to having those stops point in the positive X axis direction.
+            double bearing = 0.0;
+            double.TryParse(platform.Attribute("BearingToRoad")?.Value, out bearing);
+            BearingToRoad = bearing;
+
             Name = platform.Attribute("Name").Value;
 
             XElement position = platform.Element("Position");
@@ -27,6 +34,12 @@ namespace API.Models.Connexionz
         /// The 5 digit number which is printed on bus stop signs in Corvallis.
         /// </summary>
         public int PlatformNo { get; private set; }
+
+        /// <summary>
+        /// The angle in degrees between this bus stop and the road. This can be treated as
+        /// the angle between the positive X axis and the direction of travel for buses at this stop.
+        /// </summary>
+        public double BearingToRoad { get; private set; }
 
         public string Name { get; private set; }
 
