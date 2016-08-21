@@ -84,7 +84,7 @@ namespace API
                     routeEstimates.Select(estimate => new BusArrivalTime(estimate, isEstimate: true)));
             }
 
-            arrivalTimes = arrivalTimes.OrderBy(arrivalTime => arrivalTime.MinutesFromNow);
+            arrivalTimes = arrivalTimes.OrderBy(arrivalTime => arrivalTime);
 
             return arrivalTimes.ToList();
         }

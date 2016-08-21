@@ -24,6 +24,16 @@ namespace CorvallisBusCore.Models
 
         public int CompareTo(BusArrivalTime other)
         {
+            if (IsEstimate && !other.IsEstimate)
+            {
+                return -1;
+            }
+
+            if (!IsEstimate && other.IsEstimate)
+            {
+                return 1;
+            }
+
             return MinutesFromNow - other.MinutesFromNow;
         }
 

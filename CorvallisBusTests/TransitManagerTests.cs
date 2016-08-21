@@ -494,6 +494,19 @@ namespace CorvallisBusTests
             };
 
             var mockRepo = new Mock<ITransitRepository>();
+            mockRepo.Setup(repo => repo.GetStaticDataAsync()).Returns(
+                Task.FromResult(
+                    new BusStaticData
+                    {
+                        Routes = new Dictionary<string, BusRoute>
+                        {
+                            { "TEST", new BusRoute() }
+                        },
+                        Stops = new Dictionary<int, BusStop>
+                        {
+                            { 12345, new BusStop { RouteNames = new List<string> { "TEST" } } }
+                        }
+                    }));
             mockRepo.Setup(repo => repo.GetScheduleAsync()).Returns(Task.FromResult(testSchedule));
             mockRepo.Setup(repo => repo.GetPlatformTagsAsync()).Returns(Task.FromResult(new Dictionary<int, int> { { 12345, 123 } }));
 
@@ -525,9 +538,123 @@ namespace CorvallisBusTests
 
             var actual = TransitManager.GetArrivalsSummary(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
 
-            Assert.IsTrue(Enumerable.SequenceEqual(expected,actual[12345]));
+            Assert.IsTrue(Enumerable.SequenceEqual(expected, actual[12345]));
         }
 
+        [TestMethod]
+        public void TestLateScheduledTimesOrderedAfterEstimates()
+        {
+            DateTimeOffset testTime = new DateTime(year: 2015, month: 10, day: 3, hour: 12, minute: 00, second: 00);
+
+            var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>>
+            {
+                {
+                    12345,
+                    new List<BusStopRouteSchedule>
+                    {
+                        new BusStopRouteSchedule
+                        {
+                            RouteNo = "TEST1",
+                            DaySchedules = new List<BusStopRouteDaySchedule>
+                            {
+                                new BusStopRouteDaySchedule
+                                {
+                                    Days = DaysOfWeek.All,
+                                    Times = new List<TimeSpan>
+                                    {
+                                        new TimeSpan(12, 24, 0),
+                                        new TimeSpan(13, 24, 0),
+                                        new TimeSpan(14, 24, 0),
+                                        new TimeSpan(15, 24, 0),
+                                    }
+                                }
+                            }
+                        },
+                        new BusStopRouteSchedule
+                        {
+                            RouteNo = "TEST2",
+                            DaySchedules = new List<BusStopRouteDaySchedule>
+                            {
+                                new BusStopRouteDaySchedule
+                                {
+                                    Days = DaysOfWeek.All,
+                                    Times = new List<TimeSpan>
+                                    {
+                                        new TimeSpan(12, 25, 0),
+                                        new TimeSpan(13, 25, 0),
+                                        new TimeSpan(14, 25, 0),
+                                        new TimeSpan(15, 25, 0),
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            var mockRepo = new Mock<ITransitRepository>();
+            mockRepo.Setup(repo => repo.GetStaticDataAsync()).Returns(
+                Task.FromResult(
+                    new BusStaticData
+                    {
+                        Routes = new Dictionary<string, BusRoute>
+                        {
+                        },
+                        Stops = new Dictionary<int, BusStop>
+                        {
+                            { 12345, new BusStop { RouteNames = new List<string> { "TEST1", "TEST2" } } }
+                        }
+                    }));
+
+            mockRepo.Setup(repo => repo.GetScheduleAsync()).Returns(Task.FromResult(testSchedule));
+            mockRepo.Setup(repo => repo.GetPlatformTagsAsync()).Returns(
+                Task.FromResult(
+                    new Dictionary<int, int>
+                    {
+                        { 12345, 123 }
+                    }));
+
+            var testEstimate = new ConnexionzPlatformET
+            {
+                PlatformTag = 123,
+                RouteEstimatedArrivals = new List<ConnexionzRouteET>
+                {
+                    new ConnexionzRouteET
+                    {
+                        RouteNo = "TEST1",
+                        EstimatedArrivalTime = new List<int> { }
+                    },
+                    new ConnexionzRouteET
+                    {
+                        RouteNo = "TEST2",
+                        EstimatedArrivalTime = new List<int> { 25 }
+                    }
+                }
+            };
+
+            var mockClient = new Mock<ITransitClient>();
+            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult(testEstimate));
+
+            var expected = new List<RouteArrivalsSummary>
+            {
+                new RouteArrivalsSummary
+                {
+                    RouteName = "TEST2",
+                    ArrivalsSummary = "25 minutes, 1:25 PM",
+                    ScheduleSummary = "Hourly until 3:25 PM"
+                },
+                new RouteArrivalsSummary
+                {
+                    RouteName = "TEST1",
+                    ArrivalsSummary = "Over 30 minutes, 1:24 PM",
+                    ScheduleSummary = "Hourly until 3:24 PM"
+                }
+            };
+
+            var actual = TransitManager.GetArrivalsSummary(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
+
+            Assert.IsTrue(Enumerable.SequenceEqual(expected, actual[12345]));
+        }
         #endregion
     }
 }
