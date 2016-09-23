@@ -19,8 +19,8 @@ namespace API.WebClients
     {
         private const string BASE_URL = "http://www.corvallistransit.com/rtt/public/utility/file.aspx?contenttype=SQLXML";
 
-        public static readonly Lazy<IEnumerable<ConnexionzPlatform>> Platforms = new Lazy<IEnumerable<ConnexionzPlatform>>(DownloadPlatforms);
-        public static readonly Lazy<IEnumerable<ConnexionzRoute>> Routes = new Lazy<IEnumerable<ConnexionzRoute>>(DownloadRoutes);
+        public static readonly Lazy<List<ConnexionzPlatform>> Platforms = new Lazy<List<ConnexionzPlatform>>(DownloadPlatforms);
+        public static readonly Lazy<List<ConnexionzRoute>> Routes = new Lazy<List<ConnexionzRoute>>(DownloadRoutes);
 
         // Yes this is IDisposable, but it makes sense to have this object "live"
         // for the entire duration of the service, hence make it just a static object.
@@ -64,7 +64,7 @@ namespace API.WebClients
         /// <summary>
         /// Downloads static Connexionz Platforms (Stops) info.
         /// </summary>
-        private static IEnumerable<ConnexionzPlatform> DownloadPlatforms()
+        private static List<ConnexionzPlatform> DownloadPlatforms()
         {
             using (var client = new WebClient())
             {
@@ -74,20 +74,21 @@ namespace API.WebClients
 
                 return document.Element("Platforms")
                     .Elements("Platform")
-                    .Select(e => new ConnexionzPlatform(e));
+                    .Select(e => new ConnexionzPlatform(e))
+                    .ToList();
             }
         }
 
         /// <summary>
         /// Downloads static Connexionz Route (e.g. Route 1, Route 8, etc) info.
         /// </summary>
-        private static IEnumerable<ConnexionzRoute> DownloadRoutes()
+        private static List<ConnexionzRoute> DownloadRoutes()
         {
             RoutePattern routePattern = GetEntity<RoutePattern>(BASE_URL + "&Name=RoutePattern.rxml");
 
             var routePatternProject = routePattern.Items.Skip(1).FirstOrDefault() as RoutePatternProject;
 
-            return routePatternProject.Route.Select(r => new ConnexionzRoute(r));
+            return routePatternProject.Route.Select(r => new ConnexionzRoute(r)).ToList();
         }
 
         /// <summary>
