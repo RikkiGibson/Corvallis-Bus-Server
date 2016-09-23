@@ -19,17 +19,29 @@ namespace API.WebClients
     /// </summary>
     public class TransitClient : ITransitClient
     {
+        private static bool ShouldAppendDirection(ConnexionzPlatform platform, List<ConnexionzPlatform> platforms)
+        {
+            if (platform.Name == "Downtown Transit Center")
+                return false;
+
+            bool existsSameNamedStop = platforms.Any(p => p.PlatformNo != platform.PlatformNo && p.Name == platform.Name);
+            return existsSameNamedStop;
+        }
+
         public List<BusStop> CreateStops()
         {
             var platforms = ConnexionzClient.Platforms.Value;
             var routes = ConnexionzClient.Routes.Value;
 
-            return platforms.Select(p => 
-                    new BusStop(p, routes.Where(r => r.Path.Any(rp => rp.PlatformId == p.PlatformNo))
-                                         .Select(r => r.RouteNo)
-                                         .ToList()))
-                            .Where(r => r.RouteNames.Any())
-                            .ToList();
+            return platforms
+                .Select(p => 
+                    new BusStop(p,
+                        routes.Where(r => r.Path.Any(rp => rp.PlatformId == p.PlatformNo))
+                            .Select(r => r.RouteNo)
+                            .ToList(),
+                        ShouldAppendDirection(p, platforms)))
+                .Where(r => r.RouteNames.Any())
+                .ToList();
         }
 
         public List<BusRoute> CreateRoutes()

@@ -1,5 +1,6 @@
 ﻿using API.Models.Connexionz;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace API.Models
@@ -14,16 +15,40 @@ namespace API.Models
         /// </summary>
         public BusStop() { }
 
-        /// <summary>
-        /// This makes it look like there is little purpose to this type,
-        /// but it's good to get the semantics clear. ConnexionzPlatform is
-        /// something you've just pulled from Connexionz,
-        /// while BusStop is fully processed and ready to serve to clients.
-        /// </summary>
-        public BusStop(ConnexionzPlatform platform, List<string> routeNames)
+        public static string ToDirection(double bearing)
+        {
+            if (!(bearing >= 0 && bearing <= 360))
+                throw new ArgumentException($"Bearing outside of range (0-360): {bearing}");
+
+            if (bearing <= 22.5 || bearing >= 337.5)
+                return "E";
+            else if (bearing >= 22.5 && bearing <= 67.5)
+                return "SE";
+            else if (bearing >= 67.5 && bearing <= 112.5)
+                return "S";
+            else if (bearing >= 112.5 && bearing <= 157.5)
+                return "SW";
+            else if (bearing >= 157.5 && bearing <= 202.5)
+                return "W";
+            else if (bearing >= 202.5 && bearing <= 247.5)
+                return "NW";
+            else if (bearing >= 247.5 && bearing <= 292.5)
+                return "N";
+            else if (bearing >= 292.5 && bearing <= 337.5)
+                return "NE";
+            else
+                return string.Empty;
+        }
+
+        public BusStop(ConnexionzPlatform platform, List<string> routeNames, bool appendDirection)
         {
             ID = platform.PlatformNo;
-            Name = platform.Name;
+
+            Name = platform.Name +
+                (appendDirection
+                    ? " " + ToDirection(platform.BearingToRoad)
+                    : string.Empty);
+
             Bearing = platform.BearingToRoad;
             Lat = platform.Lat;
             Long = platform.Long;
