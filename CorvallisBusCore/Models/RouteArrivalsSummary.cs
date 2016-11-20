@@ -35,7 +35,7 @@ namespace API.Models
             {
                 case 0: return "No arrivals!";
                 case 1: return ArrivalTimeDescription(arrivals[0], currentTime, isFirstElement: true);
-                default: return ArrivalTimeDescription(arrivals[0], currentTime, isFirstElement: true) + ", " +
+                default: return ArrivalTimeDescription(arrivals[0], currentTime, isFirstElement: true) + ", then " +
                         ArrivalTimeDescription(arrivals[1], currentTime, isFirstElement: false);
             }
         }

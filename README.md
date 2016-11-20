@@ -177,7 +177,7 @@ Sample Url: https://corvallisb.us/api/favorites?stops=11776,10308&location=44.56
     "isNearestStop": true,
     "firstRouteColor": "034DA1",
     "firstRouteName": "6",
-    "firstRouteArrivals": "26 minutes, 3:14 PM",
+    "firstRouteArrivals": "26 minutes, then 3:14 PM",
     "secondRouteColor": "",
     "secondRouteName": "",
     "secondRouteArrivals": ""
@@ -189,10 +189,10 @@ Sample Url: https://corvallisb.us/api/favorites?stops=11776,10308&location=44.56
     "isNearestStop": false,
     "firstRouteColor": "F26521",
     "firstRouteName": "3",
-    "firstRouteArrivals": "2 minutes, 3:08 PM",
+    "firstRouteArrivals": "2 minutes, then 3:08 PM",
     "secondRouteColor": "D7181F",
     "secondRouteName": "7",
-    "secondRouteArrivals": "2 minutes, 3:23 PM"
+    "secondRouteArrivals": "2 minutes, then 3:23 PM"
   },
   {
     "stopName": "SW Western Blvd & SW Hillside Dr",
@@ -201,10 +201,10 @@ Sample Url: https://corvallisb.us/api/favorites?stops=11776,10308&location=44.56
     "isNearestStop": false,
     "firstRouteColor": "F26521",
     "firstRouteName": "3",
-    "firstRouteArrivals": "2:57 PM, 3:57 PM",
+    "firstRouteArrivals": "2:57 PM, then 3:57 PM",
     "secondRouteColor": "EC0C6D",
     "secondRouteName": "C3",
-    "secondRouteArrivals": "3:19 PM, 5:34 PM"
+    "secondRouteArrivals": "3:19 PM, then 5:34 PM"
   }
 ]
 ```
@@ -224,7 +224,7 @@ Sample URL: https://corvallisb.us/api/arrivals-summary/10308,14237
   "10308":[  
     {  
       "routeName":"2",
-      "arrivalsSummary":"1 minute, 07:48 PM",
+      "arrivalsSummary":"1 minute, then 07:48 PM",
       "scheduleSummary":""
     },
     {  
@@ -234,7 +234,7 @@ Sample URL: https://corvallisb.us/api/arrivals-summary/10308,14237
     },
     {  
       "routeName":"5",
-      "arrivalsSummary":"11 minutes, 07:48 PM",
+      "arrivalsSummary":"11 minutes, then 07:48 PM",
       "scheduleSummary":"Last arrival at 09:18 PM"
     },
     ...,
@@ -262,7 +262,7 @@ Sample URL: https://corvallisb.us/api/arrivals-summary/10308,14237
   "14237":[  
     {  
       "routeName":"6",
-      "arrivalsSummary":"17 minutes, 07:54 PM",
+      "arrivalsSummary":"17 minutes, then 07:54 PM",
       "scheduleSummary":"Last arrival at 08:24 PM"
     }
   ]
