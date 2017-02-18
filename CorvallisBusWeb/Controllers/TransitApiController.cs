@@ -243,14 +243,11 @@ namespace API.Controllers
         [Route("tasks/init")]
         public string Init()
         {
-            var staticData = _client.CreateStaticData();
-            _repository.SetStaticData(staticData);
+            var busSystemData = _client.LoadTransitData();
 
-            var platformTags = _client.CreatePlatformTags();
-            _repository.SetPlatformTags(platformTags);
-
-            var schedule = _client.CreateSchedule();
-            _repository.SetSchedule(schedule);
+            _repository.SetStaticData(busSystemData.StaticData);
+            _repository.SetPlatformTags(busSystemData.PlatformIdToPlatformTag);
+            _repository.SetSchedule(busSystemData.Schedule);
 
             return "Init job successful.";
         }

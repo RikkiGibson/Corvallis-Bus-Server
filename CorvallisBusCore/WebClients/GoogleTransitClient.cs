@@ -21,23 +21,10 @@ namespace API.WebClients
     /// </summary>
     public static class GoogleTransitClient
     {
-        private static GoogleTransitData m_googleTransitData;
-        public static GoogleTransitData GoogleTransitData
-        {
-            get
-            {
-                if (m_googleTransitData == null)
-                {
-                    m_googleTransitData = DoTask();
-                }
-                return m_googleTransitData;
-            }
-        }
-        
         /// <summary>
         /// Downloads and interprets the ZIP file CTS uploads for Google.  This is primarily to get route colors and route schedules.
         /// </summary>
-        private static GoogleTransitData DoTask()
+        public static GoogleTransitData LoadData()
         {
             List<GoogleRoute> routes = null;
             List<GoogleRouteSchedule> schedules = null;

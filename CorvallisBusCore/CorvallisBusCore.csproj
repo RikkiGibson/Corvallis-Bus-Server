@@ -85,6 +85,7 @@
     <Compile Include="Models\BusStop.cs" />
     <Compile Include="Models\BusStopRouteDaySchedule.cs" />
     <Compile Include="Models\BusStopRouteSchedule.cs" />
+    <Compile Include="Models\BusSystemData.cs" />
     <Compile Include="Models\Connexionz\ConnexionzPlatform.cs" />
     <Compile Include="Models\Connexionz\ConnexionzPlatformET.cs" />
     <Compile Include="Models\Connexionz\ConnexionzRoute.cs" />

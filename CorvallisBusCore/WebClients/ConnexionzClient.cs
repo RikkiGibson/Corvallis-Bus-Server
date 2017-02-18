@@ -19,13 +19,6 @@ namespace API.WebClients
     {
         private const string BASE_URL = "http://www.corvallistransit.com/rtt/public/utility/file.aspx?contenttype=SQLXML";
 
-        public static readonly Lazy<List<ConnexionzPlatform>> Platforms = new Lazy<List<ConnexionzPlatform>>(DownloadPlatforms);
-        public static readonly Lazy<List<ConnexionzRoute>> Routes = new Lazy<List<ConnexionzRoute>>(DownloadRoutes);
-
-        // Yes this is IDisposable, but it makes sense to have this object "live"
-        // for the entire duration of the service, hence make it just a static object.
-        //private static Lazy<HttpClient> _httpClient = new Lazy<HttpClient>();
-
         /// <summary>
         /// Gets and deserializes XML from the specified Connexionz/CTS endpoints.
         /// </summary>
@@ -64,7 +57,7 @@ namespace API.WebClients
         /// <summary>
         /// Downloads static Connexionz Platforms (Stops) info.
         /// </summary>
-        private static List<ConnexionzPlatform> DownloadPlatforms()
+        public static List<ConnexionzPlatform> LoadPlatforms()
         {
             using (var client = new WebClient())
             {
@@ -82,7 +75,7 @@ namespace API.WebClients
         /// <summary>
         /// Downloads static Connexionz Route (e.g. Route 1, Route 8, etc) info.
         /// </summary>
-        private static List<ConnexionzRoute> DownloadRoutes()
+        public static List<ConnexionzRoute> LoadRoutes()
         {
             RoutePattern routePattern = GetEntity<RoutePattern>(BASE_URL + "&Name=RoutePattern.rxml");
 

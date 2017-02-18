@@ -1,4 +1,5 @@
 ﻿using API.Models;
+using CorvallisBusCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,30 @@ namespace API.WebClients
     /// </summary>
     public class TransitClient : ITransitClient
     {
+        public BusSystemData LoadTransitData()
+        {
+            var connexionzPlatforms = ConnexionzClient.LoadPlatforms();
+            var connexionzRoutes = ConnexionzClient.LoadRoutes();
+            var googleData = GoogleTransitClient.LoadData();
+
+            var routes = CreateRoutes(googleData.Routes, connexionzRoutes);
+            var stops = CreateStops(connexionzPlatforms, connexionzRoutes);
+            
+            var staticData = new BusStaticData
+            {
+                Routes = routes.ToDictionary(r => r.RouteNo),
+                Stops = stops.ToDictionary(s => s.ID)
+            };
+
+            var platformTagsLookup = connexionzPlatforms.ToDictionary(p => p.PlatformNo, p => p.PlatformTag);
+            var schedule = CreateSchedule(googleData.Schedules, connexionzRoutes, connexionzPlatforms);
+
+            return new BusSystemData(
+                staticData,
+                schedule,
+                platformTagsLookup);
+        }
+
         private static bool ShouldAppendDirection(ConnexionzPlatform platform, List<ConnexionzPlatform> platforms)
         {
             if (platform.Name == "Downtown Transit Center")
@@ -28,11 +53,8 @@ namespace API.WebClients
             return existsSameNamedStop;
         }
 
-        public List<BusStop> CreateStops()
+        private static List<BusStop> CreateStops(List<ConnexionzPlatform> platforms, List<ConnexionzRoute> routes)
         {
-            var platforms = ConnexionzClient.Platforms.Value;
-            var routes = ConnexionzClient.Routes.Value;
-
             return platforms
                 .Select(p => 
                     new BusStop(p,
@@ -44,30 +66,12 @@ namespace API.WebClients
                 .ToList();
         }
 
-        public List<BusRoute> CreateRoutes()
+        private static List<BusRoute> CreateRoutes(List<GoogleRoute> googleRoutes, List<ConnexionzRoute> connexionzRoutes)
         {
-            var googleRoutes = GoogleTransitClient.GoogleTransitData.Routes.ToDictionary(gr => gr.ConnexionzName);
-            var routes = ConnexionzClient.Routes.Value.Where(r => googleRoutes.ContainsKey(r.RouteNo));
-            return routes.Select(r => new BusRoute(r, googleRoutes)).ToList();
+            var googleRoutesDict = googleRoutes.ToDictionary(gr => gr.ConnexionzName);
+            var routes = connexionzRoutes.Where(r => googleRoutesDict.ContainsKey(r.RouteNo));
+            return routes.Select(r => new BusRoute(r, googleRoutesDict)).ToList();
         }
-
-        public BusStaticData CreateStaticData()
-        {
-            var routes = CreateRoutes();
-            var stops = CreateStops();
-
-            return new BusStaticData
-            {
-                Routes = routes.ToDictionary(r => r.RouteNo),
-                Stops = stops.ToDictionary(s => s.ID)
-            };
-        }
-
-        /// <summary>
-        /// Maps a platform number (5-digit number shown on real bus stop signs) to a platform tag (3-digit internal Connexionz identifier).
-        /// </summary>
-        public Dictionary<int, int> CreatePlatformTags() =>
-            ConnexionzClient.Platforms.Value.ToDictionary(p => p.PlatformNo, p => p.PlatformTag);
 
         public async Task<ConnexionzPlatformET> GetEta(int platformTag) => await ConnexionzClient.GetPlatformEta(platformTag);
 
@@ -124,16 +128,19 @@ namespace API.WebClients
         /// <summary>
         /// Creates a bus schedule based on Google Transit data.
         /// </summary>
-        public ServerBusSchedule CreateSchedule()
+        public ServerBusSchedule CreateSchedule(
+            List<GoogleRouteSchedule> googleSchedules,
+            List<ConnexionzRoute> connexionzRoutes,
+            List<ConnexionzPlatform> connexionzPlatforms)
         {
-            var googleRouteSchedules = GoogleTransitClient.GoogleTransitData.Schedules.ToDictionary(schedule => schedule.ConnexionzName);
-            var routes = ConnexionzClient.Routes.Value.Where(r => r.IsActive && googleRouteSchedules.ContainsKey(r.RouteNo));
+            var googleSchedulesDict = googleSchedules.ToDictionary(schedule => schedule.ConnexionzName);
+            var routes = connexionzRoutes.Where(r => r.IsActive && googleSchedulesDict.ContainsKey(r.RouteNo));
 
             // Build all the schedule data for intermediate stops.
             var routeSchedules = routes.Select(r => new
             {
                 routeNo = r.RouteNo,
-                daySchedules = googleRouteSchedules[r.RouteNo].Days.Select(
+                daySchedules = googleSchedulesDict[r.RouteNo].Days.Select(
                     d => new
                     {
                         days = d.Days,
@@ -142,9 +149,7 @@ namespace API.WebClients
             });
 
             // Now turn it on its head so it's easy to query from a stop-oriented way.
-            var platforms = ConnexionzClient.Platforms.Value;
-
-            var result = platforms.ToDictionary(p => p.PlatformNo,
+            var result = connexionzPlatforms.ToDictionary(p => p.PlatformNo,
                 p => routeSchedules.Select(r => new BusStopRouteSchedule
                 {
                     RouteNo = r.routeNo,

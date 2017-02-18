@@ -1,5 +1,6 @@
 ﻿using API.Models;
 using API.Models.Connexionz;
+using CorvallisBusCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +13,7 @@ namespace API.WebClients
 
     public interface ITransitClient
     {
-        List<BusStop> CreateStops();
-        List<BusRoute> CreateRoutes();
-        BusStaticData CreateStaticData();
-        Dictionary<int, int> CreatePlatformTags();
+        BusSystemData LoadTransitData();
         Task<ConnexionzPlatformET> GetEta(int platformTag);
-        ServerBusSchedule CreateSchedule();
     }
 }
