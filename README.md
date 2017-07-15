@@ -1,9 +1,9 @@
 ## Corvallis Bus Server
 
 The backend that powers the best apps for the Corvallis Transit System.
-####[iOS client](https://github.com/RikkiGibson/Corvallis-Bus-iOS)
-####[Android client](https://github.com/OSU-App-Club/Corvallis-Bus-Android)
-####[Web client](https://github.com/RikkiGibson/corvallis-bus-web)
+#### [iOS client](https://github.com/RikkiGibson/Corvallis-Bus-iOS)
+#### [Android client](https://github.com/OSU-App-Club/Corvallis-Bus-Android)
+#### [Web client](https://github.com/RikkiGibson/corvallis-bus-web)
 
 ## Prerequisites for running
 
@@ -19,7 +19,7 @@ We assume no liability for any missed buses.  Buses may be erratic in their arri
 
 ## API Routes
 
-###/static
+### /static
 
 Input: None
 
@@ -65,7 +65,7 @@ Url: https://corvallisb.us/api/static
     }
 ```
 
-###/eta/
+### /eta/
 
 Queries the city API for arrival estimates, which are encoded as integers.
 
@@ -92,7 +92,7 @@ Sample Url: https://corvallisb.us/api/eta/14244,13265
 }
 ```
 
-###/schedule/
+### /schedule/
 
 Returns an interleaved list of arrival times for each route for each stop ID provided.
 Most of the stops in the Corvallis Transit System don't have a schedule. This app fabricates schedules for them by interpolating between those stops that have a schedule. The time between two officially scheduled stops is divided by the number of unscheduled stops between them. This turns out to be a reasonably accurate method.
@@ -155,7 +155,7 @@ Sample Url: https://corvallisb.us/api/schedule/14244,13265
   }
 }
 ```
-###/favorites
+### /favorites
 
 Input:
 One or more of the following is required.
@@ -209,7 +209,7 @@ Sample Url: https://corvallisb.us/api/favorites?stops=11776,10308&location=44.56
 ]
 ```
 
-###/arrivals-summary/
+### /arrivals-summary/
 
 Input:
    - **Required** one or more stop IDs
