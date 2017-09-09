@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Moq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,11 +13,11 @@ using CorvallisBusCore.Models;
 
 namespace CorvallisBusTests
 {
-    [TestClass]
+    
     public class TransitManagerTests
     {
         #region Schedule Interpolation
-        [TestMethod]
+        [Fact]
         public void TestEstimateReplacesScheduledTime()
         {
             DateTimeOffset testTime = new DateTime(2015, 10, 20, 12, 00, 00);
@@ -77,10 +77,10 @@ namespace CorvallisBusTests
             };
             var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
 
-            Assert.IsTrue(Enumerable.SequenceEqual(expectedArrivalTimes, actual[12345]["TEST"]));
+            Assert.True(Enumerable.SequenceEqual(expectedArrivalTimes, actual[12345]["TEST"]));
         }
 
-        [TestMethod]
+        [Fact]
         public void TestScheduledTimesBeforeCutoffWithoutEstimates()
         {
             DateTimeOffset testTime = new DateTime(2015, 10, 20, 12, 00, 00);
@@ -132,10 +132,10 @@ namespace CorvallisBusTests
             };
             var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
             
-            Assert.IsTrue(Enumerable.SequenceEqual(expectedArrivalTimes, actual[12345]["TEST"]));
+            Assert.True(Enumerable.SequenceEqual(expectedArrivalTimes, actual[12345]["TEST"]));
         }
 
-        [TestMethod]
+        [Fact]
         public void TestEstimatePrependedToScheduledTimes()
         {
             DateTimeOffset testTime = new DateTime(2015, 10, 20, 12, 00, 00);
@@ -195,10 +195,10 @@ namespace CorvallisBusTests
             };
             var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
             
-            Assert.IsTrue(Enumerable.SequenceEqual(expectedArrivalTimes, actual[12345]["TEST"]));
+            Assert.True(Enumerable.SequenceEqual(expectedArrivalTimes, actual[12345]["TEST"]));
         }
 
-        [TestMethod]
+        [Fact]
         public void TestSecondEstimateReplacesScheduledTime()
         {
             DateTimeOffset testTime = new DateTime(2015, 10, 20, 12, 00, 00);
@@ -258,7 +258,7 @@ namespace CorvallisBusTests
             };
             var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
             
-            Assert.IsTrue(Enumerable.SequenceEqual(expectedArrivalTimes, actual[12345]["TEST"]));
+            Assert.True(Enumerable.SequenceEqual(expectedArrivalTimes, actual[12345]["TEST"]));
         }
 
         /// <summary>
@@ -267,7 +267,7 @@ namespace CorvallisBusTests
         /// Once I'm able to create a test case, this is where it should live.
         /// For now I'm gonna try to get by just adding a sort call in the schedule endpoint.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public void TestUnsortedEstimatesHaveSortedOutput()
         {
             DateTimeOffset testTime = new DateTime(2015, 10, 20, 12, 00, 00);
@@ -328,10 +328,10 @@ namespace CorvallisBusTests
             };
             var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
             
-            Assert.IsTrue(Enumerable.SequenceEqual(expectedArrivalTimes, actual[12345]["TEST"]));
+            Assert.True(Enumerable.SequenceEqual(expectedArrivalTimes, actual[12345]["TEST"]));
         }
 
-        [TestMethod]
+        [Fact]
         public void TestArrivalTimesAfterMidnightRenderCorrectly()
         {
             // This happens to be a Sunday morning.
@@ -391,10 +391,10 @@ namespace CorvallisBusTests
             };
             var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
             
-            Assert.IsTrue(Enumerable.SequenceEqual(expectedArrivalTimes, actual[12345]["TEST"]));
+            Assert.True(Enumerable.SequenceEqual(expectedArrivalTimes, actual[12345]["TEST"]));
         }
 
-        [TestMethod]
+        [Fact]
         public void TestNightOwlTimesBeforeMidnightRenderCorrectly()
         {
             DateTimeOffset testTime = new DateTime(2015, 10, 3, 23, 00, 00);
@@ -455,12 +455,12 @@ namespace CorvallisBusTests
             };
             var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
             
-            Assert.IsTrue(Enumerable.SequenceEqual(expectedArrivalTimes, actual[12345]["TEST"]));
+            Assert.True(Enumerable.SequenceEqual(expectedArrivalTimes, actual[12345]["TEST"]));
         }
         #endregion
 
         #region Arrivals Summaries
-        [TestMethod]
+        [Fact]
         public void TestImminentScheduledTimesIndicateRunningLate()
         {
             DateTimeOffset testTime = new DateTime(2015, 10, 3, 12, 00, 00);
@@ -538,10 +538,10 @@ namespace CorvallisBusTests
 
             var actual = TransitManager.GetArrivalsSummary(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
 
-            Assert.IsTrue(Enumerable.SequenceEqual(expected, actual[12345]));
+            Assert.True(Enumerable.SequenceEqual(expected, actual[12345]));
         }
 
-        [TestMethod]
+        [Fact]
         public void TestLateScheduledTimesOrderedAfterEstimates()
         {
             DateTimeOffset testTime = new DateTime(year: 2015, month: 10, day: 3, hour: 12, minute: 00, second: 00);
@@ -653,7 +653,7 @@ namespace CorvallisBusTests
 
             var actual = TransitManager.GetArrivalsSummary(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
 
-            Assert.IsTrue(Enumerable.SequenceEqual(expected, actual[12345]));
+            Assert.True(Enumerable.SequenceEqual(expected, actual[12345]));
         }
         #endregion
     }
