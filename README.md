@@ -19,6 +19,8 @@ We assume no liability for any missed buses.  Buses may be erratic in their arri
 
 ## API Routes
 
+The API is also available via [PostMan Docs](https://documenter.getpostman.com/view/1830246/collection/7LgFmXw)!
+
 ### /static
 
 Input: None
@@ -52,7 +54,7 @@ Url: https://corvallisb.us/api/static
     }
     "stops":
     {
-      "10019": 
+      "10019":
       {
         "id": 10019,
         "name": "Benton Oaks RV Park",
@@ -81,7 +83,7 @@ Sample Url: https://corvallisb.us/api/eta/14244,13265
 ```
 {
   "14244": {
-    
+
   },
   "13265": {
     "1": [6],
@@ -101,7 +103,7 @@ Since buses can run behind by 15 minutes or more, or have runs cancelled outrigh
 
 For instance, in the case of a bus running late, scheduled arrival times can be shown only at least 20 minutes in advance. If they instead were shown only at least 30 minutes in advance, there would be gaps in time where a bus's likely arrival wouldn't be apparent to the user. In other words, the API allows the schedule a 10-minute grace period to "pass" as an estimate, but when the city starts putting out an estimate for that same bus's arrival, the scheduled time gets replaced by the estimated time.
 
-Input: 
+Input:
    - **Required** one or more stop IDs
 
 Output:
@@ -115,7 +117,7 @@ Sample Url: https://corvallisb.us/api/schedule/14244,13265
 {
   "14244": {
     "1": [
-      
+
     ],
     "2": [
       {
@@ -124,12 +126,12 @@ Sample Url: https://corvallisb.us/api/schedule/14244,13265
 	  }
     ],
     "4": [
-      
+
     ]
   },
   "13265": {
     "1": [
-      
+
     ],
     "2": [
       {
@@ -138,7 +140,7 @@ Sample Url: https://corvallisb.us/api/schedule/14244,13265
 	  }
     ],
     "3": [
-      
+
     ],
     "5": [
       { "minutesFromNow": 35, "isEstimate": false },
@@ -150,7 +152,7 @@ Sample Url: https://corvallisb.us/api/schedule/14244,13265
       { "minutesFromNow": 12, "isEstimate": true }
     ],
     "8": [
-      
+
     ]
   }
 }
@@ -165,9 +167,9 @@ One or more of the following is required.
 Output:
 
    A JSON array of stop information for "favorite stops" features. This allows a developer to easily create a widget to show the user's favorite stops. It shows arrivals summary information for the nearest 2 routes that will arrive at each favorite stop. If the user consents to provide a location, it will determine the stop's distance from the user and sort ascending by this quantity. The widget merely needs to wake up, download less than 1 KB of data, and display it.
-   
+
 Sample Url: https://corvallisb.us/api/favorites?stops=11776,10308&location=44.5645659,-123.2620435
-   
+
 ```
 [
   {
@@ -216,7 +218,7 @@ Input:
 
 Output:
    A dictionary where the keys are stop IDs and the values are a list of nice, user-friendly descriptions of the arrival times for each route at that stop, sorted by descending arrival time. The server tries to determine if the route arrives at the stop "pretty much" hourly or half-hourly. Most routes arrive hourly, with a 10-minute break in the middle of the day. Thus if all the scheduled times left in the day are between 50-70 minutes from each other, it's considered to be an hourly schedule. Similarly with all being 20-40 minutes apart to be considered half-hourly.
-   
+
 Sample URL: https://corvallisb.us/api/arrivals-summary/10308,14237
 
 ```
