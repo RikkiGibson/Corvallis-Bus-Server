@@ -17,7 +17,10 @@ To have a more convenient way to get real-time information about the free buses 
 
 We assume no liability for any missed buses.  Buses may be erratic in their arrival behavior, and we cannot control that.
 
-## API Routes
+## API Documentation
+
+The API documentation is also available via [PostMan Docs](https://documenter.getpostman.com/view/1830246/collection/7LgFmXw)!
+
 
 ### /static
 
@@ -267,4 +270,3 @@ Sample URL: https://corvallisb.us/api/arrivals-summary/10308,14237
     }
   ]
 }
-```
