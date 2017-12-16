@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="RoutePosition" targetNamespace="urn:connexionz-co-nz" xmlns:mstns="urn:connexionz-co-nz" xmlns="urn:connexionz-co-nz" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="RoutePosition" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_DataSetName="RoutePosition" msprop:Generator_UserDSName="RoutePosition">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Content" msprop:Generator_TableClassName="ContentDataTable" msprop:Generator_TableVarName="tableContent" msprop:Generator_TablePropName="Content" msprop:Generator_RowDeletingName="ContentRowDeleting" msprop:Generator_RowChangingName="ContentRowChanging" msprop:Generator_RowEvHandlerName="ContentRowChangeEventHandler" msprop:Generator_RowDeletedName="ContentRowDeleted" msprop:Generator_UserTableName="Content" msprop:Generator_RowChangedName="ContentRowChanged" msprop:Generator_RowEvArgName="ContentRowChangeEvent" msprop:Generator_RowClassName="ContentRow">
+          <xs:complexType>
+            <xs:attribute name="Expires" form="unqualified" msprop:Generator_ColumnVarNameInTable="columnExpires" msprop:Generator_ColumnPropNameInRow="Expires" msprop:Generator_ColumnPropNameInTable="ExpiresColumn" msprop:Generator_UserColumnName="Expires" type="xs:dateTime" />
+            <xs:attribute name="MaxArrivalScope" form="unqualified" msprop:Generator_ColumnVarNameInTable="columnMaxArrivalScope" msprop:Generator_ColumnPropNameInRow="MaxArrivalScope" msprop:Generator_ColumnPropNameInTable="MaxArrivalScopeColumn" msprop:Generator_UserColumnName="MaxArrivalScope" type="xs:int" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Platform" msprop:Generator_TableClassName="PlatformDataTable" msprop:Generator_TableVarName="tablePlatform" msprop:Generator_TablePropName="Platform" msprop:Generator_RowDeletingName="PlatformRowDeleting" msprop:Generator_RowChangingName="PlatformRowChanging" msprop:Generator_RowEvHandlerName="PlatformRowChangeEventHandler" msprop:Generator_RowDeletedName="PlatformRowDeleted" msprop:Generator_UserTableName="Platform" msprop:Generator_RowChangedName="PlatformRowChanged" msprop:Generator_RowEvArgName="PlatformRowChangeEvent" msprop:Generator_RowClassName="PlatformRow" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Route" msprop:Generator_TableClassName="RouteDataTable" msprop:Generator_TableVarName="tableRoute" msprop:Generator_TablePropName="Route" msprop:Generator_RowDeletingName="RouteRowDeleting" msprop:Generator_RowChangingName="RouteRowChanging" msprop:Generator_RowEvHandlerName="RouteRowChangeEventHandler" msprop:Generator_RowDeletedName="RouteRowDeleted" msprop:Generator_UserTableName="Route" msprop:Generator_RowChangedName="RouteRowChanged" msprop:Generator_RowEvArgName="RouteRowChangeEvent" msprop:Generator_RowClassName="RouteRow" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Destination" msprop:Generator_TableClassName="DestinationDataTable" msprop:Generator_TableVarName="tableDestination" msprop:Generator_TablePropName="Destination" msprop:Generator_RowDeletingName="DestinationRowDeleting" msprop:Generator_RowChangingName="DestinationRowChanging" msprop:Generator_RowEvHandlerName="DestinationRowChangeEventHandler" msprop:Generator_RowDeletedName="DestinationRowDeleted" msprop:Generator_UserTableName="Destination" msprop:Generator_RowChangedName="DestinationRowChanged" msprop:Generator_RowEvArgName="DestinationRowChangeEvent" msprop:Generator_RowClassName="DestinationRow" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Trip" msprop:Generator_TableClassName="TripDataTable" msprop:Generator_TableVarName="tableTrip" msprop:Generator_TablePropName="Trip" msprop:Generator_RowDeletingName="TripRowDeleting" msprop:Generator_RowChangingName="TripRowChanging" msprop:Generator_RowEvHandlerName="TripRowChangeEventHandler" msprop:Generator_RowDeletedName="TripRowDeleted" msprop:Generator_UserTableName="Trip" msprop:Generator_RowChangedName="TripRowChanged" msprop:Generator_RowEvArgName="TripRowChangeEvent" msprop:Generator_RowClassName="TripRow" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:attribute name="ETA" form="unqualified" msprop:Generator_ColumnVarNameInTable="columnETA" msprop:Generator_ColumnPropNameInRow="ETA" msprop:Generator_ColumnPropNameInTable="ETAColumn" msprop:Generator_UserColumnName="ETA" type="xs:int" />
+                              <xs:attribute name="Destination_Id" msprop:Generator_ColumnVarNameInTable="columnDestination_Id" msprop:Generator_ColumnPropNameInRow="Destination_Id" msprop:Generator_ColumnPropNameInTable="Destination_IdColumn" msprop:Generator_UserColumnName="Destination_Id" type="xs:int" use="prohibited" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="Name" form="unqualified" msprop:Generator_ColumnVarNameInTable="columnName" msprop:Generator_ColumnPropNameInRow="Name" msprop:Generator_ColumnPropNameInTable="NameColumn" msprop:Generator_UserColumnName="Name" type="xs:string" />
+                        <xs:attribute name="Destination_Id" msdata:AutoIncrement="true" msprop:Generator_ColumnVarNameInTable="columnDestination_Id" msprop:Generator_ColumnPropNameInRow="Destination_Id" msprop:Generator_ColumnPropNameInTable="Destination_IdColumn" msprop:Generator_UserColumnName="Destination_Id" type="xs:int" msdata:AllowDBNull="false" use="prohibited" />
+                        <xs:attribute name="Route_Id" msprop:Generator_ColumnVarNameInTable="columnRoute_Id" msprop:Generator_ColumnPropNameInRow="Route_Id" msprop:Generator_ColumnPropNameInTable="Route_IdColumn" msprop:Generator_UserColumnName="Route_Id" type="xs:int" use="prohibited" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="RouteNo" form="unqualified" msprop:Generator_ColumnVarNameInTable="columnRouteNo" msprop:Generator_ColumnPropNameInRow="RouteNo" msprop:Generator_ColumnPropNameInTable="RouteNoColumn" msprop:Generator_UserColumnName="RouteNo" type="xs:int" />
+                  <xs:attribute name="Name" form="unqualified" msprop:Generator_ColumnVarNameInTable="columnName" msprop:Generator_ColumnPropNameInRow="Name" msprop:Generator_ColumnPropNameInTable="NameColumn" msprop:Generator_UserColumnName="Name" type="xs:string" />
+                  <xs:attribute name="Route_Id" msdata:AutoIncrement="true" msprop:Generator_ColumnVarNameInTable="columnRoute_Id" msprop:Generator_ColumnPropNameInRow="Route_Id" msprop:Generator_ColumnPropNameInTable="Route_IdColumn" msprop:Generator_UserColumnName="Route_Id" type="xs:int" msdata:AllowDBNull="false" use="prohibited" />
+                  <xs:attribute name="Platform_Id" msprop:Generator_ColumnVarNameInTable="columnPlatform_Id" msprop:Generator_ColumnPropNameInRow="Platform_Id" msprop:Generator_ColumnPropNameInTable="Platform_IdColumn" msprop:Generator_UserColumnName="Platform_Id" type="xs:int" use="prohibited" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="PlatformTag" form="unqualified" msprop:Generator_ColumnVarNameInTable="columnPlatformTag" msprop:Generator_ColumnPropNameInRow="PlatformTag" msprop:Generator_ColumnPropNameInTable="PlatformTagColumn" msprop:Generator_UserColumnName="PlatformTag" type="xs:string" />
+            <xs:attribute name="Name" form="unqualified" msprop:Generator_ColumnVarNameInTable="columnName" msprop:Generator_ColumnPropNameInRow="Name" msprop:Generator_ColumnPropNameInTable="NameColumn" msprop:Generator_UserColumnName="Name" type="xs:string" />
+            <xs:attribute name="Platform_Id" msdata:AutoIncrement="true" msprop:Generator_ColumnVarNameInTable="columnPlatform_Id" msprop:Generator_ColumnPropNameInRow="Platform_Id" msprop:Generator_ColumnPropNameInTable="Platform_IdColumn" msprop:Generator_UserColumnName="Platform_Id" type="xs:int" msdata:AllowDBNull="false" use="prohibited" />
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="Destination_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:Destination" />
+      <xs:field xpath="@mstns:Destination_Id" />
+    </xs:unique>
+    <xs:unique name="Route_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:Route" />
+      <xs:field xpath="@mstns:Route_Id" />
+    </xs:unique>
+    <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:Platform" />
+      <xs:field xpath="@mstns:Platform_Id" />
+    </xs:unique>
+    <xs:keyref name="Platform_Route" refer="Constraint1" msdata:IsNested="true" msprop:rel_Generator_UserChildTable="Route" msprop:rel_Generator_ChildPropName="GetRouteRows" msprop:rel_Generator_UserRelationName="Platform_Route" msprop:rel_Generator_ParentPropName="PlatformRow" msprop:rel_Generator_RelationVarName="relationPlatform_Route" msprop:rel_Generator_UserParentTable="Platform">
+      <xs:selector xpath=".//mstns:Route" />
+      <xs:field xpath="@mstns:Platform_Id" />
+    </xs:keyref>
+    <xs:keyref name="Route_Destination" refer="Route_Constraint1" msdata:IsNested="true" msprop:rel_Generator_UserChildTable="Destination" msprop:rel_Generator_ChildPropName="GetDestinationRows" msprop:rel_Generator_UserRelationName="Route_Destination" msprop:rel_Generator_ParentPropName="RouteRow" msprop:rel_Generator_RelationVarName="relationRoute_Destination" msprop:rel_Generator_UserParentTable="Route">
+      <xs:selector xpath=".//mstns:Destination" />
+      <xs:field xpath="@mstns:Route_Id" />
+    </xs:keyref>
+    <xs:keyref name="Destination_Trip" refer="Destination_Constraint1" msdata:IsNested="true" msprop:rel_Generator_UserChildTable="Trip" msprop:rel_Generator_ChildPropName="GetTripRows" msprop:rel_Generator_UserRelationName="Destination_Trip" msprop:rel_Generator_ParentPropName="DestinationRow" msprop:rel_Generator_RelationVarName="relationDestination_Trip" msprop:rel_Generator_UserParentTable="Destination">
+      <xs:selector xpath=".//mstns:Trip" />
+      <xs:field xpath="@mstns:Destination_Id" />
+    </xs:keyref>
+  </xs:element>
+</xs:schema>
