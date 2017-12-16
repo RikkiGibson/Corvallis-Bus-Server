@@ -40,7 +40,7 @@
                       </xs:complexType>
                     </xs:element>
                   </xs:sequence>
-                  <xs:attribute name="RouteNo" form="unqualified" msprop:Generator_ColumnVarNameInTable="columnRouteNo" msprop:Generator_ColumnPropNameInRow="RouteNo" msprop:Generator_ColumnPropNameInTable="RouteNoColumn" msprop:Generator_UserColumnName="RouteNo" type="xs:int" />
+                  <xs:attribute name="RouteNo" form="unqualified" msprop:Generator_ColumnVarNameInTable="columnRouteNo" msprop:Generator_ColumnPropNameInRow="RouteNo" msprop:Generator_ColumnPropNameInTable="RouteNoColumn" msprop:Generator_UserColumnName="RouteNo" type="xs:string" />
                   <xs:attribute name="Name" form="unqualified" msprop:Generator_ColumnVarNameInTable="columnName" msprop:Generator_ColumnPropNameInRow="Name" msprop:Generator_ColumnPropNameInTable="NameColumn" msprop:Generator_UserColumnName="Name" type="xs:string" />
                   <xs:attribute name="Route_Id" msdata:AutoIncrement="true" msprop:Generator_ColumnVarNameInTable="columnRoute_Id" msprop:Generator_ColumnPropNameInRow="Route_Id" msprop:Generator_ColumnPropNameInTable="Route_IdColumn" msprop:Generator_UserColumnName="Route_Id" type="xs:int" msdata:AllowDBNull="false" use="prohibited" />
                   <xs:attribute name="Platform_Id" msprop:Generator_ColumnVarNameInTable="columnPlatform_Id" msprop:Generator_ColumnPropNameInRow="Platform_Id" msprop:Generator_ColumnPropNameInTable="Platform_IdColumn" msprop:Generator_UserColumnName="Platform_Id" type="xs:int" use="prohibited" />
