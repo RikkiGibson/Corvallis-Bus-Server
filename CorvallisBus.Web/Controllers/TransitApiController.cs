@@ -9,22 +9,26 @@ using CorvallisBus.Core.DataAccess;
 using CorvallisBus.Core.WebClients;
 using CorvallisBus.Core.Models;
 using Microsoft.AspNetCore.Hosting;
+using System.Runtime.InteropServices;
 
 namespace CorvallisBus.Controllers
 {
     [Route("api")]
     public class TransitApiController : Controller
     {
+        private static string _destinationTimeZoneId = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? "Pacific Standard Time"
+                : "America/Los_Angeles";
+
         private readonly ITransitRepository _repository;
         private readonly ITransitClient _client;
         private readonly Func<DateTimeOffset> _getCurrentTime;
-        
+
         public TransitApiController(IHostingEnvironment env)
         {
             _repository = new MemoryTransitRepository(env.WebRootPath);
             _client = new TransitClient();
-
-            _getCurrentTime = () => TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTimeOffset.Now, "Pacific Standard Time");
+            _getCurrentTime = () => TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTimeOffset.Now, _destinationTimeZoneId);
         }
 
         /// <summary>
@@ -127,31 +131,17 @@ namespace CorvallisBus.Controllers
             LatLong? userLocation;
             List<int> parsedStopIds;
 
-            try
-            {
-                userLocation = ParseUserLocation(location);
-                parsedStopIds = ParseStopIds(stops);
-            }
-            catch (FormatException)
-            {
-                return StatusCode(400);
-            }
+            userLocation = ParseUserLocation(location);
+            parsedStopIds = ParseStopIds(stops);
 
             if (userLocation == null && (parsedStopIds == null || parsedStopIds.Count == 0))
             {
-                return StatusCode(400);
+                throw new ArgumentException($"One of {nameof(location)} or {nameof(stops)} must be non-empty.");
             }
 
-            try
-            {
-                var viewModel = await TransitManager.GetFavoritesViewModel(_repository, _client, _getCurrentTime(), parsedStopIds, userLocation);
-                var viewModelJson = JsonConvert.SerializeObject(viewModel);
-                return Content(viewModelJson, "application/json");
-            }
-            catch
-            {
-                return StatusCode(500);
-            }
+            var viewModel = await TransitManager.GetFavoritesViewModel(_repository, _client, _getCurrentTime(), parsedStopIds, userLocation);
+            var viewModelJson = JsonConvert.SerializeObject(viewModel);
+            return Content(viewModelJson, "application/json");
         }
 
         /// <summary>
