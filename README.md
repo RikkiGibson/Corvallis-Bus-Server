@@ -1,13 +1,13 @@
 ## Corvallis Bus Server
 
 The backend that powers the best apps for the Corvallis Transit System.
-#### [iOS client](https://github.com/RikkiGibson/Corvallis-Bus-iOS)
-#### [Android client](https://github.com/OSU-App-Club/Corvallis-Bus-Android)
-#### [Web client](https://github.com/RikkiGibson/corvallis-bus-web)
+- [iOS client](https://github.com/RikkiGibson/Corvallis-Bus-iOS)
+- [Android client](https://github.com/OSU-App-Club/Corvallis-Bus-Android)
+- [Web client](https://github.com/RikkiGibson/corvallis-bus-web)
 
 ## Prerequisites for running
 
-- Visual Studio 2015
+- [.NET Core 2.0 SDK](https://www.microsoft.com/net/learn/get-started)
 
 ## Purpose
 
@@ -17,17 +17,23 @@ To have a more convenient way to get real-time information about the free buses 
 
 We assume no liability for any missed buses.  Buses may be erratic in their arrival behavior, and we cannot control that.
 
-## API Routes
+## API Documentation
 
-### /static
+- [/static](#static)
+- [/eta/](#eta)
+- [/schedule/](#eta)
+- [/favorites](#favorites)
+- [/arrivals-summary/](#arrivals-summary)
+
+### /static <a name="static"></a>
+
+Sample URL: https://corvallisb.us/api/static
 
 Input: None
 
 Output:
 
    Returns a JSON dictionary containing static route and stop information.  Recommended usage is a one-time download and then local storage on the device.  This will allow for simpler and far less data-intensive calls later.
-
-Url: https://corvallisb.us/api/static
 
 ```
 {
@@ -65,7 +71,9 @@ Url: https://corvallisb.us/api/static
     }
 ```
 
-### /eta/
+### /eta/{stopIds} <a name="eta"></a>
+
+Sample URL: https://corvallisb.us/api/eta/14244,13265
 
 Queries the city API for arrival estimates, which are encoded as integers.
 
@@ -75,8 +83,6 @@ Input:
 Output:
 
 Returns a JSON dictionary, where they keys are the supplied Stop IDs, and the values are dictionaries.  These nested dictionaries are such that the keys are route numbers, and the values are lists of integers corresponding to the ETAs for that route to that stop. For example, ``"6":[1, 21]"`` means that Route 6 is arriving at the given stop in 1 minute, and again in 21 minutes. ETAs are limited to 30 minutes in the future by the city.
-
-Sample Url: https://corvallisb.us/api/eta/14244,13265
 
 ```
 {
@@ -92,7 +98,9 @@ Sample Url: https://corvallisb.us/api/eta/14244,13265
 }
 ```
 
-### /schedule/
+### /schedule/{stopIds} <a name="schedule"></a>
+
+Sample URL: https://corvallisb.us/api/schedule/14244,13265
 
 Returns an interleaved list of arrival times for each route for each stop ID provided.
 Most of the stops in the Corvallis Transit System don't have a schedule. This app fabricates schedules for them by interpolating between those stops that have a schedule. The time between two officially scheduled stops is divided by the number of unscheduled stops between them. This turns out to be a reasonably accurate method.
@@ -108,8 +116,6 @@ Output:
 
    A JSON dictionary where the keys are Stop IDs and the values are dictionaries of ``{ Route No : schedule }``.
    The schedule is a list of pairs of a boolean "is an estimate" and integer "minutes from now." Integers are used because ETAs are interleaved with scheduled arrival times. This avoids a problem where an ETA appears to go up by a minute at the same time the minute on the system clock increments. It introduces a problem where the scheduled times vary by a minute if the server has a different minute value at the time it creates the payload than the client has at the time it consumes the payload. For the time being, it's recommended to use the endpoints which interpret these times and produce user-friendly descriptions for you.
-
-Sample Url: https://corvallisb.us/api/schedule/14244,13265
 
 ```
 {
@@ -155,18 +161,18 @@ Sample Url: https://corvallisb.us/api/schedule/14244,13265
   }
 }
 ```
-### /favorites
+### /favorites <a name="favorites"></a>
+   
+Sample URL: https://corvallisb.us/api/favorites?stops=11776,10308&location=44.5645659,-123.2620435
 
 Input:
-One or more of the following is required.
-   - one or more stop IDs, comma-separated
-   - latitude and longitude, comma-separated
+One or more of the following query parameters are required.
+   - stops: one or more stop IDs, comma-separated
+   - location: latitude and longitude, comma-separated
 
 Output:
 
    A JSON array of stop information for "favorite stops" features. This allows a developer to easily create a widget to show the user's favorite stops. It shows arrivals summary information for the nearest 2 routes that will arrive at each favorite stop. If the user consents to provide a location, it will determine the stop's distance from the user and sort ascending by this quantity. The widget merely needs to wake up, download less than 1 KB of data, and display it.
-   
-Sample Url: https://corvallisb.us/api/favorites?stops=11776,10308&location=44.5645659,-123.2620435
    
 ```
 [
@@ -209,15 +215,15 @@ Sample Url: https://corvallisb.us/api/favorites?stops=11776,10308&location=44.56
 ]
 ```
 
-### /arrivals-summary/
+### /arrivals-summary/ <a name="arrivals-summary"></a>
+   
+Sample URL: https://corvallisb.us/api/arrivals-summary/10308,14237
 
 Input:
    - **Required** one or more stop IDs
 
 Output:
    A dictionary where the keys are stop IDs and the values are a list of nice, user-friendly descriptions of the arrival times for each route at that stop, sorted by descending arrival time. The server tries to determine if the route arrives at the stop "pretty much" hourly or half-hourly. Most routes arrive hourly, with a 10-minute break in the middle of the day. Thus if all the scheduled times left in the day are between 50-70 minutes from each other, it's considered to be an hourly schedule. Similarly with all being 20-40 minutes apart to be considered half-hourly.
-   
-Sample URL: https://corvallisb.us/api/arrivals-summary/10308,14237
 
 ```
 {  
