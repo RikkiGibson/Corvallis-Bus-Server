@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CorvallisBus.Core.Models
 {
-    public class RouteArrivalsSummary : IEquatable<RouteArrivalsSummary>
+    public class RouteArrivalsSummary
     {
         [JsonProperty("routeName")]
         public string RouteName { get; set; }
@@ -82,7 +82,7 @@ namespace CorvallisBus.Core.Models
 
             if (arrivals.Count == 3)
             {
-                return "Last arrival at " + lastTimeDescription; 
+                return "Last arrival at " + lastTimeDescription;
             }
 
             // Check for whether there's a regular half-hourly or hourly arrival pattern.
@@ -93,7 +93,7 @@ namespace CorvallisBus.Core.Models
             {
                 int difference = arrivals[i + 1].MinutesFromNow - arrivals[i].MinutesFromNow;
                 isHourly = isHourly && difference >= 50 && difference <= 70;
-                isHalfHourly = isHalfHourly && difference >= 20 && difference <= 40; 
+                isHalfHourly = isHalfHourly && difference >= 20 && difference <= 40;
             }
 
             if (isHourly)
@@ -108,13 +108,6 @@ namespace CorvallisBus.Core.Models
             {
                 return "Last arrival at " + lastTimeDescription;
             }
-        }
-
-        public bool Equals(RouteArrivalsSummary other)
-        {
-            return RouteName == other.RouteName &&
-                ArrivalsSummary == other.ArrivalsSummary &&
-                ScheduleSummary == other.ScheduleSummary;
         }
     }
 }
