@@ -2,7 +2,6 @@
 using CorvallisBus.Core.Models;
 using CorvallisBus.Core.Models.Connexionz;
 using CorvallisBus.Core.WebClients;
-using CorvallisBus.Core.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

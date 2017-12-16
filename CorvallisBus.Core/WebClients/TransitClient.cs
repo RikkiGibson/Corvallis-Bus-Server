@@ -1,5 +1,4 @@
 ﻿using CorvallisBus.Core.Models;
-using CorvallisBus.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +11,6 @@ using Newtonsoft.Json;
 namespace CorvallisBus.Core.WebClients
 {
     using ServerBusSchedule = Dictionary<int, IEnumerable<BusStopRouteSchedule>>;
-
 
     /// <summary>
     /// Merges data obtained from Connexionz and Google Transit
