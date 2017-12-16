@@ -17,6 +17,18 @@ namespace CorvallisBus.Core.Models
         [JsonProperty("stopID")]
         public int StopId { get; set; }
 
+        /// <summary>
+        /// The latitude value for the stop (between -90 and 90 degrees).
+        /// </summary>
+        [JsonProperty("lat")]
+        public double Lat { get; set; }
+
+        /// <summary>
+        /// The longitude value for the stop (between -180 and 180 degrees).
+        /// </summary>
+        [JsonProperty("lng")]
+        public double Long { get; set; }
+
         [JsonProperty("distanceFromUser")]
         public string DistanceFromUser { get; set; }
 
