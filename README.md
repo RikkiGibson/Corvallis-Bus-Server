@@ -1,5 +1,7 @@
 ## Corvallis Bus Server
 
+[![Build Status](https://travis-ci.org/RikkiGibson/Corvallis-Bus-Server.svg?branch=NetCore)](https://travis-ci.org/RikkiGibson/Corvallis-Bus-Server)
+
 The backend that powers the best apps for the Corvallis Transit System.
 - [iOS client](https://github.com/RikkiGibson/Corvallis-Bus-iOS)
 - [Android client](https://github.com/OSU-App-Club/Corvallis-Bus-Android)
@@ -7,7 +9,14 @@ The backend that powers the best apps for the Corvallis Transit System.
 
 ## Prerequisites for running
 
-- [.NET Core 2.0 SDK](https://www.microsoft.com/net/learn/get-started)
+[.NET Core 2.0 SDK](https://www.microsoft.com/net/learn/get-started) must be installed. Then you can run the following commands in the repo root directory:
+```sh
+$ dotnet test CorvallisBus.Test
+
+$ cd CorvallisBus.Web
+$ dotnet run
+# then browse to /api/tasks/init on the local server to populate the cache
+```
 
 ## Purpose
 
