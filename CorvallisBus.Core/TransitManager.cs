@@ -140,7 +140,7 @@ namespace CorvallisBus
                         ? DistanceTo(optionalUserLocation.Value.Lat, optionalUserLocation.Value.Lon, stop.Lat, stop.Long, 'M')
                         : double.NaN;
 
-                return new FavoriteStop(stop.ID, stop.Name, stop.RouteNames, distanceFromUser, isNearestStop: false);
+                return new FavoriteStop(stop.ID, stop.Name, stop.RouteNames, stop.Lat, stop.Long, distanceFromUser, isNearestStop: false);
             })
             .ToList();
 
@@ -158,6 +158,7 @@ namespace CorvallisBus
                     : double.NaN;
 
                 favoriteStops.Add(new FavoriteStop(nearestStop.ID, nearestStop.Name, nearestStop.RouteNames,
+                                                   nearestStop.Lat, nearestStop.Long,
                                                    distanceFromUser, isNearestStop: true));
             }
 
@@ -191,6 +192,9 @@ namespace CorvallisBus
                 SecondRouteName = secondRoute != null ? secondRoute.RouteNo : string.Empty,
                 SecondRouteColor = secondRoute != null ? secondRoute.Color : string.Empty,
                 SecondRouteArrivals = routeSchedules.Count > 1 ? RouteArrivalsSummary.ToEstimateSummary(routeSchedules[1].Value, currentTime) : string.Empty,
+
+                Lat = favorite.Lat,
+                Long = favorite.Long,
 
                 DistanceFromUser = double.IsNaN(favorite.DistanceFromUser) ? "" : $"{favorite.DistanceFromUser:F1} miles",
                 IsNearestStop = favorite.IsNearestStop
