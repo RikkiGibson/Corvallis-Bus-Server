@@ -11,11 +11,15 @@ The backend that powers the best apps for the Corvallis Transit System.
 
 [.NET Core 2.0 SDK](https://www.microsoft.com/net/learn/get-started) must be installed. Then you can run the following commands in the repo root directory:
 ```sh
+# If you want to run tests
 $ dotnet test CorvallisBus.Test
 
+# Run the web app
 $ cd CorvallisBus.Web
 $ dotnet run
-# then browse to /api/tasks/init on the local server to populate the cache
+
+# Run the data init job locally by sending a POST request
+$ curl -d {} localhost:57855/api/job/init
 ```
 
 ## Purpose
