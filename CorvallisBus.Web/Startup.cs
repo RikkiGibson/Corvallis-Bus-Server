@@ -34,6 +34,8 @@ namespace CorvallisBus.Web
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
             app.UseMvc();
         }
     }
