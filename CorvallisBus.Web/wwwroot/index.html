@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+    <meta name="apple-itunes-app" content="app-id=936262664">
+    <link rel="mask-icon" href="mask-icon.svg" color="#579492" />
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <link rel="icon" sizes="192x192" href="img/nice-highres.png" />
+    <title>Corvallis Bus</title>
+
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-71740582-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </head>
+  <body>
+    <div class="nav-container">
+      <div class="logo">
+        <img class="logo-image" src="img/corvallisbus-icon.png" />
+      </div>
+      <div class="nav">
+        <a href="https://rikkigibson.github.io/corvallisbus">About</a>
+      </div>
+      <div class="nav">
+        <a href="http://www.corvallisoregon.gov/index.aspx?page=1105">
+          Service Alerts
+        </a>
+      </div>
+    </div>
+    <div id="browse" class="browse">
+      <div id="stop-details" class="table-container">
+        <table class="stop-details">
+          <thead>
+            <tr>
+              <th class="stop-details-header" data-bind="text: selectedStop().name"></th>
+            </tr>
+          </thead>
+          <tbody data-bind="foreach: selectedStopArrivals">
+            <tr class="clickable-row" data-bind="css: { selected: $root.selectedRouteName() == routeName }, click: function() { $root.setSelectedRoute(routeName); return true; }">
+              <td>
+                <div class="route-details">
+                  <div class="route-name flex-item">
+                    <span data-bind="style: { backgroundColor: '#' + routeColor }, text: routeName"></span>
+                  </div>
+                  <div>
+                    <div data-bind="text: arrivalsSummary"></div>
+                    <div class="schedule-summary" data-bind="text: scheduleSummary"></div>
+                  </div>
+                  <div class="flex-item end">
+                    <a data-bind="attr: { href: routeURL }">
+                      <img class="more-info" data-bind="attr: { src: 'img/idea.png' }" />
+                    </a>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div data-bind="text: errorMessage"></div>
+      </div>
+      <div class="map-container">
+        <div id="map" class="map"></div>
+        <a id="user-location-button" class="location-button clickable"></a>
+      </div>
+    </div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBUrWz47ar9OpfjH_ytw1dgO8b9hslLNmg&libraries=geometry"></script>
+    <script src="js/bundle.js"></script>
+  </body>
+</html>
