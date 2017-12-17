@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc;
 using CorvallisBus.Core.DataAccess;
@@ -212,16 +211,30 @@ namespace CorvallisBus.Controllers
         /// <summary>
         /// Performs a first-time setup and import of static data.
         /// </summary>
-        [HttpGet("tasks/init")]
-        public string Init()
+        [HttpPost("job/init")]
+        public ActionResult Init()
+        {
+            var expectedAuth = Environment.GetEnvironmentVariable("CorvallisBusAuthorization");
+            if (!string.IsNullOrEmpty(expectedAuth))
+            {
+                string authValue = Request.Headers["Authorization"];
+                if (expectedAuth != authValue)
+                {
+                    return Unauthorized();
+                }
+            }
+
+            DataLoadJob();
+            return Ok("Init job successful.");
+        }
+
+        private void DataLoadJob()
         {
             var busSystemData = _client.LoadTransitData();
-
+            
             _repository.SetStaticData(busSystemData.StaticData);
             _repository.SetPlatformTags(busSystemData.PlatformIdToPlatformTag);
             _repository.SetSchedule(busSystemData.Schedule);
-
-            return "Init job successful.";
         }
     }
 }
