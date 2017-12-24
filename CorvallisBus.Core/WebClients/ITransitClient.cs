@@ -8,11 +8,10 @@ using System.Threading.Tasks;
 
 namespace CorvallisBus.Core.WebClients
 {
-    using ServerBusSchedule = Dictionary<int, IEnumerable<BusStopRouteSchedule>>;
-
     public interface ITransitClient
     {
         BusSystemData LoadTransitData();
         Task<ConnexionzPlatformET> GetEta(int platformTag);
+        Task<List<ServiceAlert>> GetServiceAlerts();
     }
 }

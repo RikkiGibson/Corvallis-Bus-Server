@@ -208,6 +208,12 @@ namespace CorvallisBus.Controllers
             }
         }
 
+        [HttpGet("service-alerts")]
+        public Task<List<ServiceAlert>> GetServiceAlerts()
+        {
+            return _client.GetServiceAlerts();
+        }
+
         /// <summary>
         /// Performs a first-time setup and import of static data.
         /// </summary>
@@ -228,7 +234,7 @@ namespace CorvallisBus.Controllers
             return Ok("Init job successful.");
         }
 
-        private void DataLoadJob()
+        void DataLoadJob()
         {
             var busSystemData = _client.LoadTransitData();
             
