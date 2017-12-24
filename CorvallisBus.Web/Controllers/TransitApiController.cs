@@ -214,6 +214,12 @@ namespace CorvallisBus.Controllers
             return _client.GetServiceAlerts();
         }
 
+        [HttpGet("service-alerts/html")]
+        public ActionResult GetServiceAlertsWebsite()
+        {
+            return Redirect("https://www.corvallisoregon.gov/news?field_microsite_tid=581");
+        }
+
         /// <summary>
         /// Performs a first-time setup and import of static data.
         /// </summary>
@@ -237,7 +243,7 @@ namespace CorvallisBus.Controllers
         void DataLoadJob()
         {
             var busSystemData = _client.LoadTransitData();
-            
+
             _repository.SetStaticData(busSystemData.StaticData);
             _repository.SetPlatformTags(busSystemData.PlatformIdToPlatformTag);
             _repository.SetSchedule(busSystemData.Schedule);
