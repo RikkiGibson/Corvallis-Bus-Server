@@ -25,8 +25,23 @@ namespace CorvallisBus.Core.Models
                 .ToList();
 
             Color = googleRoute[RouteNo].Color;
-            Url = googleRoute[RouteNo].Url;
+            Url = LookupUrl(RouteNo);
             Polyline = connectionzRoute.Polyline;
+        }
+
+        public static string LookupUrl(string routeName)
+        {
+            string suffix;
+            if (routeName == "NON")
+                suffix = "night-owl-north";
+            else if (routeName == "NOSE")
+                suffix = "night-owl-southeast";
+            else if (routeName == "NOSW")
+                suffix = "night-owl-southwest";
+            else
+                suffix = routeName.ToLower();
+
+            return "https://www.corvallisoregon.gov/cts/page/cts-route-" + suffix;
         }
 
         /// <summary>

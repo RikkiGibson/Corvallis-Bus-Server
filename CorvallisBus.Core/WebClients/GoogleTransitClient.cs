@@ -90,7 +90,7 @@ namespace CorvallisBus.Core.WebClients
 
             if(!routes.Any(x => x.Name == "C1R"))
             {
-                routes.Add(new GoogleRoute("C1R", "9F8E7D", "http://www.corvallisoregon.gov/index.aspx?page=1774"));
+                routes.Add(new GoogleRoute("C1R", "9F8E7D"));
             }
             return routes;
         }
@@ -122,7 +122,7 @@ namespace CorvallisBus.Core.WebClients
                 // skip format line
                 reader.ReadLine();
                 var lines = ReadLines(reader).ToList();
-                
+
                 var flatSchedule = lines.Select(line => line.Split(','))
                     .Where(line => !string.IsNullOrWhiteSpace(line[1]))
                     .Select(line => new
@@ -168,7 +168,7 @@ namespace CorvallisBus.Core.WebClients
                             StopSchedules = new List<GoogleStopSchedule>()
                         }
                     }, (result, line) => { result.daySchedule.StopSchedules.Add(line.stopSchedules); return result; }));
-                
+
                 // the aristocrats!
                 IList<GoogleRouteSchedule> routeSchedules = routeDaySchedules
                     .GroupBy(line => line.route)
@@ -195,7 +195,7 @@ namespace CorvallisBus.Core.WebClients
 
             using (var client = new WebClient())
             {
-                
+
                 var data = client.DownloadData(url);
                 return new MemoryStream(data);
             }
