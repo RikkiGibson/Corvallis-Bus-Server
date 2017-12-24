@@ -39,6 +39,8 @@ The API documentation is also available via [PostMan Docs](https://documenter.ge
 - [/schedule/](#eta)
 - [/favorites](#favorites)
 - [/arrivals-summary/](#arrivals-summary)
+- [/service-alerts](#service-alerts)
+- [/service-alerts/html](#service-alerts/html)
 
 ### /static <a name="static"></a>
 
@@ -73,7 +75,7 @@ Output:
     }
     "stops":
     {
-      "10019": 
+      "10019":
       {
         "id": 10019,
         "name": "Benton Oaks RV Park",
@@ -102,7 +104,7 @@ Returns a JSON dictionary, where they keys are the supplied Stop IDs, and the va
 ```
 {
   "14244": {
-    
+
   },
   "13265": {
     "1": [6],
@@ -124,7 +126,7 @@ Since buses can run behind by 15 minutes or more, or have runs cancelled outrigh
 
 For instance, in the case of a bus running late, scheduled arrival times can be shown only at least 20 minutes in advance. If they instead were shown only at least 30 minutes in advance, there would be gaps in time where a bus's likely arrival wouldn't be apparent to the user. In other words, the API allows the schedule a 10-minute grace period to "pass" as an estimate, but when the city starts putting out an estimate for that same bus's arrival, the scheduled time gets replaced by the estimated time.
 
-Input: 
+Input:
    - **Required** one or more stop IDs
 
 Output:
@@ -136,7 +138,7 @@ Output:
 {
   "14244": {
     "1": [
-      
+
     ],
     "2": [
       {
@@ -145,12 +147,12 @@ Output:
 	  }
     ],
     "4": [
-      
+
     ]
   },
   "13265": {
     "1": [
-      
+
     ],
     "2": [
       {
@@ -159,7 +161,7 @@ Output:
 	  }
     ],
     "3": [
-      
+
     ],
     "5": [
       { "minutesFromNow": 35, "isEstimate": false },
@@ -171,13 +173,13 @@ Output:
       { "minutesFromNow": 12, "isEstimate": true }
     ],
     "8": [
-      
+
     ]
   }
 }
 ```
 ### /favorites <a name="favorites"></a>
-   
+
 Sample URL: https://corvallisb.us/api/favorites?stops=11776,10308&location=44.5645659,-123.2620435
 
 Input:
@@ -188,7 +190,7 @@ One or more of the following query parameters are required.
 Output:
 
    A JSON array of stop information for "favorite stops" features. This allows a developer to easily create a widget to show the user's favorite stops. It shows arrivals summary information for the nearest 2 routes that will arrive at each favorite stop. If the user consents to provide a location, it will determine the stop's distance from the user and sort ascending by this quantity. The widget merely needs to wake up, download less than 1 KB of data, and display it.
-   
+
 ```
 [
   {
@@ -231,7 +233,7 @@ Output:
 ```
 
 ### /arrivals-summary/ <a name="arrivals-summary"></a>
-   
+
 Sample URL: https://corvallisb.us/api/arrivals-summary/10308,14237
 
 Input:
@@ -241,50 +243,84 @@ Output:
    A dictionary where the keys are stop IDs and the values are a list of nice, user-friendly descriptions of the arrival times for each route at that stop, sorted by descending arrival time. The server tries to determine if the route arrives at the stop "pretty much" hourly or half-hourly. Most routes arrive hourly, with a 10-minute break in the middle of the day. Thus if all the scheduled times left in the day are between 50-70 minutes from each other, it's considered to be an hourly schedule. Similarly with all being 20-40 minutes apart to be considered half-hourly.
 
 ```
-{  
-  "10308":[  
-    {  
+{
+  "10308":[
+    {
       "routeName":"2",
       "arrivalsSummary":"1 minute, then 07:48 PM",
       "scheduleSummary":""
     },
-    {  
+    {
       "routeName":"1",
       "arrivalsSummary":"10 minutes",
       "scheduleSummary":""
     },
-    {  
+    {
       "routeName":"5",
       "arrivalsSummary":"11 minutes, then 07:48 PM",
       "scheduleSummary":"Last arrival at 09:18 PM"
     },
     ...,
-    {  
+    {
       "routeName":"8",
       "arrivalsSummary":"No arrivals!",
       "scheduleSummary":""
     },
-    {  
+    {
       "routeName":"C1",
       "arrivalsSummary":"No arrivals!",
       "scheduleSummary":""
     },
-    {  
+    {
       "routeName":"C3",
       "arrivalsSummary":"No arrivals!",
       "scheduleSummary":""
     },
-    {  
+    {
       "routeName":"CVA",
       "arrivalsSummary":"No arrivals!",
       "scheduleSummary":""
     }
   ],
-  "14237":[  
-    {  
+  "14237":[
+    {
       "routeName":"6",
       "arrivalsSummary":"17 minutes, then 07:54 PM",
       "scheduleSummary":"Last arrival at 08:24 PM"
     }
   ]
 }
+```
+
+### /service-alerts/ <a name="service-alerts"></a>
+
+Provides information on CTS service alerts.
+
+Sample URL: https://corvallisb.us/api/service-alerts
+
+Output: A JSON list of objects containing "title", "publishDate", and "link", which is a URL to a webpage with more details on the service alert.
+```
+[
+  {
+    "title": "Holiday Service",
+    "publishDate": "2017-12-18T00:00:00-08:00",
+    "link": "https://www.corvallisoregon.gov/cts/page/holiday-service"
+  },
+  {
+    "title": "Philomath Connection Offers Saturday Service",
+    "publishDate": "2017-12-12T00:00:00-08:00",
+    "link": "https://www.corvallisoregon.gov/cts/page/philomath-connection-offers-saturday-service"
+  },
+  {
+    "title": "Upcoming Schedule for CTS and Night Owl",
+    "publishDate": "2017-11-29T00:00:00-08:00",
+    "link": "https://www.corvallisoregon.gov/cts/page/upcoming-schedule-cts-and-night-owl"
+  }
+]
+```
+
+### /service-alerts/html <a name="service-alerts/html"></a>
+
+Redirects to the current location of the Corvallis Transit Service Alerts website.
+
+Sample URL: https://corvallisb.us/api/service-alerts/html
