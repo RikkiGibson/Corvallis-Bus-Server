@@ -11,6 +11,7 @@ namespace CorvallisBus.Core.Models
         /// Matches the format "yyyy-MM-dd'T'HH:mm:ssZ".
         /// </summary>
         public string PublishDate { get; }
+
         public string Link { get; }
 
         public ServiceAlert(string title, string publishDate, string link)
