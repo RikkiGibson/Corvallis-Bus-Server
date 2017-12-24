@@ -11,14 +11,12 @@ namespace CorvallisBus.Core.Models.GoogleTransit
         {
             Name = csv[0].Replace("\"", string.Empty); ;
             Color = csv[csv.Length - 2].Replace("\"", string.Empty);
-            Url = csv[csv.Length - 3].Replace("\"", string.Empty);
         }
 
-        public GoogleRoute(string Name, string Color, string Url)
+        public GoogleRoute(string Name, string Color)
         {
             this.Name = Name;
             this.Color = Color;
-            this.Url = Url;
         }
 
         /// <summary>
@@ -36,10 +34,5 @@ namespace CorvallisBus.Core.Models.GoogleTransit
         /// The color of the route as a hex string, e.g. "35EFA0".
         /// </summary>
         public string Color { get; private set; }
-
-        /// <summary>
-        /// The URL at the Corvallis website where more information about this route can be found.
-        /// </summary>
-        public string Url { get; private set; }
     }
 }
