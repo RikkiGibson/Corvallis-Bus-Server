@@ -8,7 +8,7 @@ namespace CorvallisBus.Core.Models
 
         /// <summary>
         /// The publish date of the service alert.
-        /// e.g. 2017-12-18T00:00:00-08:00
+        /// Matches the format "yyyy-MM-dd'T'HH:mm:ssZ".
         /// </summary>
         public string PublishDate { get; }
         public string Link { get; }
