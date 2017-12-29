@@ -47,6 +47,9 @@ namespace CorvallisBus.Core.Models
             Name = platform.Name +
                 (appendDirection
                     ? " " + ToDirection(platform.BearingToRoad)
+                    : string.Empty) + 
+                (platform.Name == "Downtown Transit Center"
+                    ? " " + string.Join("/", routeNames)
                     : string.Empty);
 
             Bearing = platform.BearingToRoad;
