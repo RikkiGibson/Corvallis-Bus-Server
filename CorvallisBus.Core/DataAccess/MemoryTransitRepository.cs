@@ -21,7 +21,9 @@ namespace CorvallisBus.Core.DataAccess
         
         private readonly string _platformTagsPath;
         private readonly string _schedulePath;
-        private readonly string _staticDataPath;
+
+        public string StaticDataPath { get; }
+
         public MemoryTransitRepository(string filePath)
         {
             var folder = filePath + "/cache";
@@ -29,7 +31,7 @@ namespace CorvallisBus.Core.DataAccess
 
             _platformTagsPath = folder + "/platformTags.json";
             _schedulePath = folder + "/schedule.json";
-            _staticDataPath = folder + "/staticData.json";
+            StaticDataPath = folder + "/staticData.json";
         }
 
         public Task<Dictionary<int, int>> GetPlatformTagsAsync()
@@ -54,7 +56,7 @@ namespace CorvallisBus.Core.DataAccess
         {
             if (s_serializedStaticData == null)
             {
-                s_serializedStaticData = File.ReadAllText(_staticDataPath);
+                s_serializedStaticData = File.ReadAllText(StaticDataPath);
             }
             return Task.FromResult(s_serializedStaticData);
         }
@@ -84,7 +86,7 @@ namespace CorvallisBus.Core.DataAccess
         {
             s_staticData = staticData;
             s_serializedStaticData = JsonConvert.SerializeObject(staticData);
-            File.WriteAllText(_staticDataPath, JsonConvert.SerializeObject(staticData));
+            File.WriteAllText(StaticDataPath, JsonConvert.SerializeObject(staticData));
         }
     }
 }

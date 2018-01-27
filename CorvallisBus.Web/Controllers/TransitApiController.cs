@@ -40,17 +40,9 @@ namespace CorvallisBus.Controllers
         }
 
         [HttpGet("static")]
-        public async Task<ActionResult> GetStaticData()
+        public ActionResult GetStaticData()
         {
-            try
-            {
-                var staticDataJson = await _repository.GetSerializedStaticDataAsync();
-                return Content(staticDataJson, "application/json");
-            }
-            catch
-            {
-                return StatusCode(500);
-            }
+            return PhysicalFile(_repository.StaticDataPath, "application/json");
         }
 
         public List<int> ParseStopIds(string stopIds)

@@ -16,6 +16,8 @@ namespace CorvallisBus.Core.DataAccess
     /// </summary>
     public interface ITransitRepository
     {
+        string StaticDataPath { get; }
+
         /// <summary>
         /// Returns route and stop information intended for direct client consumption.
         /// This is specifically left as a string instead of a BusStaticData
