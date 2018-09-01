@@ -34,6 +34,7 @@ namespace CorvallisBus.Web
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors(builder => builder.AllowAnyOrigin());
             app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseMvc();
