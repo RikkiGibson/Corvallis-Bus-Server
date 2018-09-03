@@ -1,0 +1,320 @@
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: CorvallisBusClient
+  description: A REST API for getting arrival times for Corvallis buses
+  contact:
+    name: Rikki Gibson
+  license:
+    name: MIT
+host: "corvallisb.us"
+basePath: "/api"
+schemes:
+  - http
+  - https
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+paths:
+  /static:
+    get:
+      operationId: getStaticData
+      description: Gets static CTS system data (routes and stops). This data should be considered accurate for 24 hours.
+      responses:
+        200:
+          description: The CTS route and stop data.
+          schema:
+            $ref: "#/definitions/BusStaticData"
+  /eta/{stopIds}:
+    get:
+      operationId: getETAs
+      description: Gets ETAs for the given stop IDs. ETAs are limited to 30 minutes in the future.
+      parameters:
+        - name: stopIds
+          in: path
+          description: Stop IDs to get ETAs for
+          required: true
+          type: array
+          items:
+            type: number
+          collectionFormat: csv
+      responses:
+        200:
+          description: The stop ETAs.
+          schema:
+            $ref: "#/definitions/BusETAs"
+  /schedule/{stopIds}:
+    get:
+      operationId: getSchedules
+      description: "Gets schedules for the given stop IDs."
+      parameters:
+        - name: "stopIds"
+          in: "path"
+          description: "Stop IDs to get schedules for"
+          required: true
+          type: array
+          items:
+            type: number
+          collectionFormat: csv
+      responses:
+        200:
+          description: "The stop schedules."
+          schema:
+            $ref: "#/definitions/BusSchedule"
+  /favorites:
+    get:
+      operationId: getFavorites
+      description: Gets the favorites view summary for the given stop IDs.
+      parameters:
+        - name: stops
+          in: query
+          description: Stop IDs to get favorites data for
+          required: true
+          type: array
+          items:
+            type: number
+          collectionFormat: csv
+        - name: location
+          in: query
+          description: User location in lat,lng format
+          required: true
+          type: array
+          minItems: 2
+          maxItems: 2
+          items:
+            type: number
+          collectionFormat: csv
+      responses:
+        200:
+          description: The stop schedules.
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/FavoriteStop"
+  /arrivals-summary/{stopIds}:
+    get:
+      operationId: getArrivalsSummary
+      description: Gets an arrivals summary for the given stop IDs. The list of route arrivals for a stop will be ordered by the soonest arrival time.
+      parameters:
+        - name: stopIds
+          in: path
+          description: Stop IDs to get arrivals summary for
+          required: true
+          type: array
+          items:
+            type: number
+          collectionFormat: csv
+      responses:
+        200:
+          description: The arrivals summaries.
+          schema:
+            type: object
+            additionalProperties:
+              type: array
+              items:
+                $ref: "#/definitions/RouteArrivalsSummary"
+  /service-alerts:
+    get:
+      operationId: getServiceAlerts
+      description: Gets service alerts from CTS which inform the user of holidays with no bus service, temporary route changes due to construction, etc.
+      responses:
+        200:
+          description: The service alerts.
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ServiceAlert"
+  /service-alerts/html:
+    get:
+      operationId: getServiceAlertsWebsite
+      description: Redirects to the official CTS service alerts page.
+      responses:
+        302:
+          description: Redirects to the service alerts page.
+          headers:
+            Location:
+              description: The location of the service alerts page.
+              type: string
+              format: url
+definitions:
+  BusRoute:
+    type: object
+    required:
+      - routeNo
+      - path
+      - color
+      - polyline
+    properties:
+      routeNo:
+        description: The name of the route. Also used as an ID.
+        type: string
+      path:
+        description: The sequence of stop IDs of stops that are visited by this route.
+        type: array
+        items:
+          type: number
+      color:
+        description: The color associated with this route.
+        type: string
+      polyline:
+        description: A string in Google polyline format. See https://developers.google.com/maps/documentation/utilities/polylinealgorithm
+        type: string
+        format: polyline
+  BusStop:
+    type: object
+    required:
+      - id
+      - name
+      - bearing
+      - lat
+      - lng
+      - routeNames
+    properties:
+      id:
+        description: The bus stop ID.
+        type: number
+      name:
+        description: The user-friendly name of the bus stop.
+        type: string
+      bearing:
+        description: The angle relative to compass east indicating the direction of travel of buses arriving at this stop.
+        type: number
+      lat:
+        description: The latitude where this bus stop is located.
+        type: number
+      lng:
+        description: The longitude where this bus stop is located.
+        type: number
+      routeNames:
+        description: The route names for routes which stop at this stop.
+        type: array
+        items:
+          type: string
+  BusStaticData:
+    type: object
+    required:
+      - routes
+      - stops
+    properties:
+      routes:
+        description: A dictionary with the route names as keys and routes as values.
+        additionalProperties:
+          $ref: "#/definitions/BusRoute"
+      stops:
+        description: A dictionary with the stop IDs as keys and the stops as values.
+        additionalProperties:
+          $ref: "#/definitions/BusStop"
+  BusStopETAs:
+    type: object
+    description: A dictionary which, given a route name, returns a list of integer minutes-from-now ETAs for the route.
+    additionalProperties:
+      type: array
+      items:
+        type: number
+  BusETAs:
+    type: object
+    description: A dictionary which, given a stop name, returns a set of all the ETAs for that stop.
+    additionalProperties:
+      $ref: "#/definitions/BusStopETAs"
+  BusStopArrival:
+    type: object
+    description: Data about when a particular route is expected to arrive at a particular stop.
+    properties:
+      minutesFromNow:
+        type: integer
+        description: The number of minutes from "now" that the bus is due to arrive
+      isEstimate:
+        type: boolean
+        description: If true, this arrival is a live ETA. Otherwise it is the scheduled arrival time.
+  BusStopSchedule:
+    type: object
+    description: A dictionary with the route name as the key and an array of BusStopArrivals as the value.
+    additionalProperties:
+      type: array
+      items:
+        $ref: "#/definitions/BusStopArrival"
+  BusSchedule:
+    type: object
+    description: A dictionary with the stop ID as the key and the BusStopSchedule as the value.
+    additionalProperties:
+      $ref: "#/definitions/BusStopSchedule"
+  FavoriteStop:
+    type: object
+    required:
+      - stopId
+      - stopName
+      - distanceFromUser
+      - isNearestStop
+      - firstRouteColor
+      - firstRouteName
+      - firstRouteArrivals
+      - secondRouteColor
+      - secondRouteName
+      - secondRouteArrivals
+    properties:
+      stopId:
+        description: The ID of the stop.
+        type: string
+      stopName:
+        description: The name of the stop.
+        type: string
+      distanceFromUser:
+        description: The direct distance between the user location and this bus stop. If no location was provided, this is an empty string.
+        type: string
+      isNearestStop:
+        description: If true, indicates this stop was not present in the request parameter. Included because it's the closest bus stop to the user.
+        type: boolean
+      firstRouteColor:
+        description: The color of the first route in the summary.
+        type: string
+      firstRouteName:
+        description: The name of the first route in the summary.
+        type: string
+      firstRouteArrivals:
+        description: The arrivals summary for the first route.
+        type: string
+      secondRouteColor:
+        description: The color of the second route in the summary.
+        type: string
+      secondRouteName:
+        description: The name of the second route in the summary.
+        type: string
+      secondRouteArrivals:
+        description: The name of the second route in the summary.
+        type: string
+  RouteArrivalsSummary:
+    type: object
+    description: A user-friendly summary of when this route will arrive at a particular stop.
+    required:
+      - routeName
+      - arrivalsSummary
+      - scheduleSummary
+    properties:
+      routeName:
+        description: The name of the route.
+        type: string
+      arrivalsSummary:
+        description: A description of the soonest upcoming arrivals.
+        type: string
+      scheduleSummary:
+        description: A summary of the rest of the day's arrivals.
+        type: string
+  ServiceAlert:
+    type: object
+    description: A posting in the service alerts feed which may indicate interruptions or changes in service.
+    required:
+      - title
+      - publishDate
+      - link
+    properties:
+      title:
+        description: The title of the posting.
+        type: string
+      publishDate:
+        description: The date of publication.
+        type: string
+        format: date
+      link:
+        type: string
+        format: url
