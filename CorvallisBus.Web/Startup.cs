@@ -36,7 +36,11 @@ namespace CorvallisBus.Web
 
             app.UseCors(builder => builder.AllowAnyOrigin());
             app.UseDefaultFiles();
-            app.UseStaticFiles();
+            app.UseStaticFiles(
+                new StaticFileOptions
+                {
+                    ServeUnknownFileTypes = true
+                });
             app.UseMvc();
         }
     }

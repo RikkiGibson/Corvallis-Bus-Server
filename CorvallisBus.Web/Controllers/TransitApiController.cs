@@ -36,7 +36,7 @@ namespace CorvallisBus.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            return RedirectPermanent("http://github.com/RikkiGibson/Corvallis-Bus-Server");
+            return View();
         }
 
         [HttpGet("static")]
