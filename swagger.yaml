@@ -2,9 +2,28 @@ swagger: "2.0"
 info:
   version: "1.0.0"
   title: CorvallisBusClient
-  description: A REST API for getting arrival times for Corvallis buses
+  description: |
+    The REST API that powers the best apps for the Corvallis Transit System.
+
+    Check it out on GitHub: https://github.com/RikkiGibson/Corvallis-Bus-Server
+
+    ### Summary
+
+    The Corvallis Bus REST API provides a convenient way to get real-time information about the free buses in Corvallis.  Data from CTS is merged with data from Google Transit, with some convenient projections applied, and mapped into some easily-digestable JSON for different use cases.
+
+    See the official client apps:
+
+    - [iOS client](https://github.com/RikkiGibson/Corvallis-Bus-iOS)
+    - [Android client](https://github.com/OSU-App-Club/Corvallis-Bus-Android)
+    - [Web client](https://github.com/RikkiGibson/corvallis-bus-web)
+
+    ### Disclaimer
+
+    We assume no liability for any missed buses.  Buses may be erratic in their arrival behavior, and we cannot control that.
+
   contact:
     name: Rikki Gibson
+    email: rikkigibson@gmail.com
   license:
     name: MIT
 host: "corvallisb.us"
@@ -20,16 +39,44 @@ paths:
   /static:
     get:
       operationId: getStaticData
-      description: Gets static CTS system data (routes and stops). This data should be considered accurate for 24 hours.
+      description: |
+        Gets static CTS system data (routes and stops). This contains all the useful metadata about routes and stops except for the schedule itself.
+
+        This data should be considered accurate for 24 hours. Caching it on the client side is encouraged.
+
+        Sample URL: https://corvallisb.us/api/static
       responses:
         200:
+          examples:
+            application/json:
+              routes:
+                1:
+                  routeNo: "1"
+                  path:
+                    - 13212
+                    - 12454
+                    - 12420
+                  color: "00ADEE"
+                  url: "http://www.corvallisoregon.gov/index.aspx?page=822"
+                  polyline: "ua_oGfzkoVsE_CuFaCmJ`o@"
+              stops:
+                13212:
+                  id: 13212
+                  name: SW 15th St & SW Jefferson Ave
+                  bearing: 269.97678
+                  lat: 44.56386673
+                  lng: -123.2740693
+                  routeNames: ["6"]
           description: The CTS route and stop data.
           schema:
             $ref: "#/definitions/BusStaticData"
   /eta/{stopIds}:
     get:
       operationId: getETAs
-      description: Gets ETAs for the given stop IDs. ETAs are limited to 30 minutes in the future.
+      description: |
+        Returns a JSON dictionary, where the keys are the supplied stop IDs, and the values are dictionaries. These nested dictionaries are such that the keys are route numbers, and the values are lists of integers corresponding to the ETAs for that route to that stop. For example, `"6": [1, 21]` means that Route 6 is arriving at the given stop in 1 minute, and again in 21 minutes. ETAs are limited to 30 minutes in the future by the city.
+
+        Sample URL: https://corvallisb.us/api/eta/14244,13265
       parameters:
         - name: stopIds
           in: path
@@ -41,13 +88,33 @@ paths:
           collectionFormat: csv
       responses:
         200:
+          examples:
+            application/json:
+              13265:
+                "1": [6]
+                "2": [21]
+                '5': [22]
+                '8': [22]
+              14244: {}
+
           description: The stop ETAs.
           schema:
             $ref: "#/definitions/BusETAs"
   /schedule/{stopIds}:
     get:
       operationId: getSchedules
-      description: "Gets schedules for the given stop IDs."
+      description: |
+        Returns an interleaved list of arrival times for each route for each stop ID provided. Most of the stops in the Corvallis Transit System don't have a schedule. This app fabricates schedules for them by interpolating between those stops that have a schedule. The time between two officially scheduled stops is divided by the number of unscheduled stops between them. This turns out to be a reasonably accurate method.
+
+        Since buses can run behind by 15 minutes or more, or have runs cancelled outright, some interpretation is necessary to communicate the schedule and the estimates in the most informative way possible for users.
+
+        For instance, in the case of a bus running late, scheduled arrival times can be shown only at least 20 minutes in advance. If they instead were shown only at least 30 minutes in advance, there would be gaps in time where a bus's likely arrival wouldn't be apparent to the user. In other words, the API allows the schedule a 10-minute grace period to "pass" as an estimate, but when the city starts putting out an estimate for that same bus's arrival, the scheduled time gets replaced by the estimated time.
+
+        Returns a JSON dictionary where the keys are Stop IDs and the values are dictionaries of `{ routeNo: schedule }`. The schedule is a list of pairs of a boolean "is an estimate" and integer "minutes from now." Integers are used because ETAs are interleaved with scheduled arrival times. This avoids a problem where an ETA appears to go up by a minute at the same time the minute on the system clock increments. It introduces a problem where the scheduled times vary by a minute if the server has a different minute value at the time it creates the payload than the client has at the time it consumes the payload.
+
+        For the time being, it's recommended to use the endpoints which interpret these times and produce user-friendly descriptions for you, such as `/favorites` and `/arrivals-summary`.
+
+        Sample URL: https://corvallisb.us/api/schedule/14244,13265
       parameters:
         - name: "stopIds"
           in: "path"
@@ -59,13 +126,44 @@ paths:
           collectionFormat: csv
       responses:
         200:
-          description: "The stop schedules."
+          examples:
+            application/json:
+              13265:
+                "1": []
+                "2":
+                  - minutesFromNow: 37
+                    isEstimate: false
+                "3": []
+                "5":
+                  - minutesFromNow: 35
+                    isEstimate: false
+                  - minutesFromNow: 65
+                    isEstimate: false
+                  - minutesFromNow: 95
+                    isEstimate: false
+                  - minutesFromNow: 125
+                    isEstimate: false
+                "7":
+                  - minutesFromNow: 12
+                    isEstimate: true
+                "8": []
+              14244:
+                "1": []
+                "2":
+                  - minutesFromNow: 40
+                    isEstimate: false
+                "4": []
+
+          description: "A nested dictionary which groups the arrival times first by stop, then by route name."
           schema:
             $ref: "#/definitions/BusSchedule"
   /favorites:
     get:
       operationId: getFavorites
-      description: Gets the favorites view summary for the given stop IDs.
+      description: |
+        Gets an array of stop data for "favorite stops" features. This allows a developer to easily create a widget to show the user's favorite stops. It shows arrivals summary information for the nearest 2 routes that will arrive at each favorite stop. If the user consents to provide a location, it will determine the stop's distance from the user and sort ascending by this quantity. The widget merely needs to wake up, download less than 1 KB of data, and display it.
+
+        Sample URL: https://corvallisb.us/api/favorites?stops=11776,10308&location=44.5645659,-123.2620435
       parameters:
         - name: stops
           in: query
@@ -78,7 +176,7 @@ paths:
         - name: location
           in: query
           description: User location in lat,lng format
-          required: true
+          required: false
           type: array
           minItems: 2
           maxItems: 2
@@ -87,7 +185,39 @@ paths:
           collectionFormat: csv
       responses:
         200:
-          description: The stop schedules.
+          examples:
+            application/json:
+              - stopName: Downtown Transit Center
+                stopID: 14237
+                distanceFromUser: 0.1 miles
+                isNearestStop: true
+                firstRouteColor: 034DA1
+                firstRouteName: '6'
+                firstRouteArrivals: '26 minutes, then 3:14 PM'
+                secondRouteColor: ''
+                secondRouteName: ''
+                secondRouteArrivals: ''
+              - stopName: NW Monroe Ave & NW 7th St
+                stopID: 10308
+                distanceFromUser: 0.2 miles
+                isNearestStop: false
+                firstRouteColor: F26521
+                firstRouteName: '3'
+                firstRouteArrivals: '2 minutes, then 3:08 PM'
+                secondRouteColor: D7181F
+                secondRouteName: '7'
+                secondRouteArrivals: '2 minutes, then 3:23 PM'
+              - stopName: SW Western Blvd & SW Hillside Dr
+                stopID: 11776
+                distanceFromUser: 1.7 miles
+                isNearestStop: false
+                firstRouteColor: F26521
+                firstRouteName: '3'
+                firstRouteArrivals: '2:57 PM, then 3:57 PM'
+                secondRouteColor: EC0C6D
+                secondRouteName: C3
+                secondRouteArrivals: '3:19 PM, then 5:34 PM'
+          description: The favorite stops data.
           schema:
             type: array
             items:
@@ -95,7 +225,12 @@ paths:
   /arrivals-summary/{stopIds}:
     get:
       operationId: getArrivalsSummary
-      description: Gets an arrivals summary for the given stop IDs. The list of route arrivals for a stop will be ordered by the soonest arrival time.
+      description: |
+        Gets an arrivals summary for the given stop IDs. The list of route arrivals for a stop will be ordered by the soonest arrival time.
+
+        The server tries to determine if each route arrives at a given stop "pretty much" hourly or half-hourly. Most routes arrive hourly, with a 10-minute break in the middle of the day. Thus if all the scheduled times left in the day are between 50-70 minutes from each other, it's considered to be an hourly schedule. Similarly with all being 20-40 minutes apart to be considered half-hourly.
+
+        Sample URL: https://corvallisb.us/api/arrivals-summary/10308,14237
       parameters:
         - name: stopIds
           in: path
@@ -107,7 +242,35 @@ paths:
           collectionFormat: csv
       responses:
         200:
-          description: The arrivals summaries.
+          examples:
+            application/json:
+              10308:
+                - routeName: '2'
+                  arrivalsSummary: '1 minute, then 07:48 PM'
+                  scheduleSummary: ''
+                - routeName: '1'
+                  arrivalsSummary: 10 minutes
+                  scheduleSummary: ''
+                - routeName: '5'
+                  arrivalsSummary: '11 minutes, then 07:48 PM'
+                  scheduleSummary: 'Last arrival at 09:18 PM'
+                - routeName: '8'
+                  arrivalsSummary: No arrivals!
+                  scheduleSummary: ''
+                - routeName: C1
+                  arrivalsSummary: No arrivals!
+                  scheduleSummary: ''
+                - routeName: C3
+                  arrivalsSummary: No arrivals!
+                  scheduleSummary: ''
+                - routeName: CVA
+                  arrivalsSummary: No arrivals!
+                  scheduleSummary: ''
+              14237:
+                - routeName: '6'
+                  arrivalsSummary: '17 minutes, then 07:54 PM'
+                  scheduleSummary: 'Last arrival at 08:24 PM'
+          description: A dictionary with the stop IDs as the key and the summaries array as the value.
           schema:
             type: object
             additionalProperties:
@@ -117,9 +280,24 @@ paths:
   /service-alerts:
     get:
       operationId: getServiceAlerts
-      description: Gets service alerts from CTS which inform the user of holidays with no bus service, temporary route changes due to construction, etc.
+      description: |
+        Gets service alerts from CTS which inform the user of holidays with no bus service, temporary route changes due to construction, etc.
+
+        Sample URL: https://corvallisb.us/api/service-alerts
       responses:
         200:
+          examples:
+            application/json:
+              - title: Holiday Service
+                publishDate: '2017-12-18T00:00:00-08:00'
+                link: 'https://www.corvallisoregon.gov/cts/page/holiday-service'
+              - title: Philomath Connection Offers Saturday Service
+                publishDate: '2017-12-12T00:00:00-08:00'
+                link: 'https://www.corvallisoregon.gov/cts/page/philomath-connection-offers-saturday-service'
+              - title: Upcoming Schedule for CTS and Night Owl
+                publishDate: '2017-11-29T00:00:00-08:00'
+                link: 'https://www.corvallisoregon.gov/cts/page/upcoming-schedule-cts-and-night-owl'
+
           description: The service alerts.
           schema:
             type: array
@@ -128,7 +306,10 @@ paths:
   /service-alerts/html:
     get:
       operationId: getServiceAlertsWebsite
-      description: Redirects to the official CTS service alerts page.
+      description: |
+        Redirects to the official CTS service alerts page.
+
+        Sample URL: https://corvallisb.us/api/service-alerts/html
       responses:
         302:
           description: Redirects to the service alerts page.
