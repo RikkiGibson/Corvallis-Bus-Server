@@ -9,7 +9,7 @@ The backend that powers the best apps for the Corvallis Transit System.
 
 ## Prerequisites for running
 
-[.NET Core 2.0 SDK](https://www.microsoft.com/net/learn/get-started) must be installed. Then you can run the following commands in the repo root directory:
+[.NET Core 2.1 SDK](https://www.microsoft.com/net/learn/get-started) must be installed. Then you can run the following commands in the repo root directory:
 ```sh
 # If you want to run tests
 $ dotnet test CorvallisBus.Test
