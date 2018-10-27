@@ -1,6 +1,6 @@
 language: csharp
 mono: none
-dotnet: 2.1.2
+dotnet: 2.1.403
 script:
   - dotnet build
   - dotnet test CorvallisBus.Test
