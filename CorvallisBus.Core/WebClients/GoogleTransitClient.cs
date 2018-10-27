@@ -129,7 +129,7 @@ namespace CorvallisBus.Core.WebClients
                     {
                         route = s_routePattern.Match(line[0]).Groups[1].Value,
                         stop = line[3],
-                        order = line[4],
+                        order = int.Parse(line[4]),
                         days = DaysOfWeekUtils.GetDaysOfWeek(line[0]),
                         time = ToTimeSpan(line[1].Replace("\"", string.Empty))
                     });
@@ -144,6 +144,7 @@ namespace CorvallisBus.Core.WebClients
                         order = line.order,
                         days = line.days
                     })
+                    .OrderBy(line => line.Key.order)
                     .Select(grouping => grouping.Aggregate(new List<TimeSpan>(),
                         (times, time) => { times.Add(time.time); return times; },
                         times => new
