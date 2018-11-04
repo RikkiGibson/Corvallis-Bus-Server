@@ -1,11 +1,11 @@
 ﻿using CorvallisBus.Core.Models;
 using CorvallisBus.Core.Models.GoogleTransit;
+using CorvallisBus.Core.Properties;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Net;
 using System.Text.RegularExpressions;
 
 namespace CorvallisBus.Core.WebClients
@@ -29,7 +29,7 @@ namespace CorvallisBus.Core.WebClients
             List<GoogleRoute> routes = null;
             List<GoogleRouteSchedule> schedules = null;
 
-            using (var archive = new ZipArchive(GetZipFile()))
+            using (var archive = new ZipArchive(new MemoryStream(Resources.Google_Transit)))
             {
                 var routesEntry = archive.GetEntry("routes.txt");
                 if (routesEntry == null)
@@ -184,21 +184,6 @@ namespace CorvallisBus.Core.WebClients
                     routeSchedules.Add(GetC1RSchedule());
                 }
                 return routeSchedules.ToList();
-            }
-        }
-
-        /// <summary>
-        /// Gets the Google Transit Zipfile as a Memory Stream.
-        /// </summary>
-        private static Stream GetZipFile()
-        {
-            string url = "https://dl.dropboxusercontent.com/s/522mkq9rud73r8f/Google_Transit.zip";
-
-            using (var client = new WebClient())
-            {
-
-                var data = client.DownloadData(url);
-                return new MemoryStream(data);
             }
         }
 
