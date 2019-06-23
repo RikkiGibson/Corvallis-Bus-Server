@@ -25,27 +25,43 @@ namespace CorvallisBus.Core.Models.Connexionz
             Long = double.Parse(position.Attribute("Long").Value);
         }
 
+        public ConnexionzPlatform(
+            int platformTag,
+            int platformNo,
+            double bearingToRoad,
+            string name,
+            double lat,
+            double @long)
+        {
+            PlatformTag = platformTag;
+            PlatformNo = platformNo;
+            BearingToRoad = bearingToRoad;
+            Name = name;
+            Lat = lat;
+            Long = @long;
+        }
+
         /// <summary>
         /// The 3 digit number which is used in the Connexionz API to get arrival estimates.
         /// </summary>
-        public int PlatformTag { get; private set; }
+        public int PlatformTag { get; }
 
         /// <summary>
         /// The 5 digit number which is printed on bus stop signs in Corvallis.
         /// </summary>
-        public int PlatformNo { get; private set; }
+        public int PlatformNo { get; }
 
         /// <summary>
         /// The angle in degrees between this bus stop and the road. This can be treated as
         /// the angle between the positive X axis and the direction of travel for buses at this stop.
         /// </summary>
-        public double BearingToRoad { get; private set; }
+        public double BearingToRoad { get; }
 
-        public string Name { get; private set; }
+        public string Name { get; }
 
-        public double Lat { get; private set; }
+        public double Lat { get; }
 
-        public double Long { get; private set; }
+        public double Long { get; }
 
     }
 }

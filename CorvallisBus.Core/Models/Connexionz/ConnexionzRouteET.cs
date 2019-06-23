@@ -5,18 +5,21 @@ namespace CorvallisBus.Core.Models.Connexionz
 {
     public class ConnexionzRouteET
     {
-        /// <summary>
-        /// Empty Constructor for deserialization.
-        /// </summary>
-        public ConnexionzRouteET() { }
-
         public ConnexionzRouteET(RoutePositionPlatformRoute routePositionPlatformRoute)
         {
             RouteNo = routePositionPlatformRoute.RouteNo;
             EstimatedArrivalTime = routePositionPlatformRoute.Destination[0].Trip.Select(t => t.ETA).ToList();
         }
 
-        public string RouteNo { get; set; }
-        public List<int> EstimatedArrivalTime { get; set; }
+        public ConnexionzRouteET(
+            string routeNo,
+            List<int> estimatedArrivalTime)
+        {
+            RouteNo = routeNo;
+            EstimatedArrivalTime = estimatedArrivalTime;
+        }
+
+        public string RouteNo { get; }
+        public List<int> EstimatedArrivalTime { get; }
     }
 }

@@ -16,16 +16,24 @@ namespace CorvallisBus.Core.Models.Connexionz
             IsScheduleAdherancePoint = bool.TryParse(platform.ScheduleAdheranceTimepoint, out result) ? result : false;
         }
 
+        public ConnexionzRoutePlatform(
+            int platformId,
+            bool isScheduleAdherancePoint)
+        {
+            PlatformId = platformId;
+            IsScheduleAdherancePoint = isScheduleAdherancePoint;
+        }
+
         /// <summary>
         /// The 5-digit platform ID. This is what is displayed on bus stop signs.
         /// </summary> 
-        public int PlatformId { get; private set; }
+        public int PlatformId { get; }
 
         /// <summary>
         /// Indicates whether this stop has a schedule defined for it.
         /// This appears to be the most viable way to hook into the Google data.
         /// </summary>
-        public bool IsScheduleAdherancePoint { get; private set; }
+        public bool IsScheduleAdherancePoint { get; }
     }
 
     /// <summary>

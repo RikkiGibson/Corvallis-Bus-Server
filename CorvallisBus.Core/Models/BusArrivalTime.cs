@@ -36,9 +36,9 @@ namespace CorvallisBus.Core.Models
         }
 
         [JsonProperty("minutesFromNow")]
-        public int MinutesFromNow { get; private set; }
+        public int MinutesFromNow { get; }
         
         [JsonProperty("isEstimate")]
-        public bool IsEstimate { get; private set; }
+        public bool IsEstimate { get; }
     }
 }

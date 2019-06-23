@@ -23,8 +23,16 @@ namespace CorvallisBus.Core.Models.Connexionz
                 ?.ToList();
         }
 
-        public int PlatformTag { get; set; }
+        public ConnexionzPlatformET(
+            int platformTag,
+            List<ConnexionzRouteET> routeEstimatedArrivals)
+        {
+            PlatformTag = platformTag;
+            RouteEstimatedArrivals = routeEstimatedArrivals;
+        }
 
-        public List<ConnexionzRouteET> RouteEstimatedArrivals { get; set; }
+        public int PlatformTag { get; }
+
+        public List<ConnexionzRouteET> RouteEstimatedArrivals { get; }
     }
 }

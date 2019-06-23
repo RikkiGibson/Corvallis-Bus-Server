@@ -29,6 +29,18 @@ namespace CorvallisBus.Core.Models.Connexionz
                    .ToList();
         }
 
+        public ConnexionzRoute(
+            string routeNo,
+            List<ConnexionzRoutePlatform> path,
+            string polyline,
+            bool isActive)
+        {
+            RouteNo = routeNo;
+            Path = path;
+            Polyline = polyline;
+            IsActive = isActive;
+        }
+
         public static IEnumerable<LatLong> GetPoints(string mif)
         {
             var matches = Regex.Matches(mif, @"-?\d+\.\d+");
@@ -82,24 +94,24 @@ namespace CorvallisBus.Core.Models.Connexionz
         /// <summary>
         /// The route number, e.g. "1" or "C3".
         /// </summary>
-        public string RouteNo { get; private set; }
+        public string RouteNo { get; }
 
         /// <summary>
         /// Contains the platform numbers for the platforms that make up this route.
         /// </summary>
-        public List<ConnexionzRoutePlatform> Path { get; private set; }
+        public List<ConnexionzRoutePlatform> Path { get; }
 
         /// <summary>
         /// Represents the route's path of travel. Encoded as a Google Maps polyline.
         /// Google it if you don't know what that is.
         /// </summary>
-        public string Polyline { get; private set; }
+        public string Polyline { get; }
 
         /// <summary>
         /// Indicates whether the route is active in general, i.e. its schedule applies at all.
         /// Several routes are marked as inactive during OSU breaks.
         /// Schedules should only be created for active routes.
         /// </summary>
-        public bool IsActive { get; private set; }
+        public bool IsActive { get; }
     }
 }

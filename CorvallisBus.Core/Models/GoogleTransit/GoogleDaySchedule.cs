@@ -7,8 +7,16 @@ namespace CorvallisBus.Core.Models.GoogleTransit
     /// </summary>
     public class GoogleDaySchedule
     {
-        public DaysOfWeek Days { get; set; }
+        public DaysOfWeek Days { get; }
 
-        public List<GoogleStopSchedule> StopSchedules { get; set; }
+        public List<GoogleStopSchedule> StopSchedules { get; }
+
+        public GoogleDaySchedule(
+            DaysOfWeek days,
+            List<GoogleStopSchedule> stopSchedules)
+        {
+            Days = days;
+            StopSchedules = stopSchedules;
+        }
     }
 }

@@ -10,7 +10,15 @@ namespace CorvallisBus.Core.Models
     /// </summary>
     public class BusStopRouteDaySchedule
     {
-        public DaysOfWeek Days { get; set; }
-        public List<TimeSpan> Times { get; set; }
+        public DaysOfWeek Days { get; }
+        public List<TimeSpan> Times { get; }
+
+        public BusStopRouteDaySchedule(
+            DaysOfWeek days,
+            List<TimeSpan> times)
+        {
+            Days = days;
+            Times = times;
+        }
     }
 }

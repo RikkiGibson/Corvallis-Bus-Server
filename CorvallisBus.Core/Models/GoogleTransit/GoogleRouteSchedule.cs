@@ -7,10 +7,18 @@ namespace CorvallisBus.Core.Models.GoogleTransit
 {
     public class GoogleRouteSchedule
     {
-        public string RouteNo { get; set; }
+        public string RouteNo { get; }
 
-        public List<GoogleDaySchedule> Days { get; set; }
+        public List<GoogleDaySchedule> Days { get; }
 
         public string ConnexionzName => GoogleRoute.ToConnexionzName(RouteNo);
+
+        public GoogleRouteSchedule(
+            string routeNo,
+            List<GoogleDaySchedule> days)
+        {
+            RouteNo = routeNo;
+            Days = days;
+        }
     }
 }

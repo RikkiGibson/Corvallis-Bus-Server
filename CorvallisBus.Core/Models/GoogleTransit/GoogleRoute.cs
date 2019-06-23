@@ -23,7 +23,7 @@ namespace CorvallisBus.Core.Models.GoogleTransit
         /// A name from the Google Transit CSV e.g. "BB_N".
         /// Must be converted to Connexionz format before merging.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; }
 
         public string ConnexionzName => ToConnexionzName(Name);
 
@@ -33,6 +33,6 @@ namespace CorvallisBus.Core.Models.GoogleTransit
         /// <summary>
         /// The color of the route as a hex string, e.g. "35EFA0".
         /// </summary>
-        public string Color { get; private set; }
+        public string Color { get; }
     }
 }

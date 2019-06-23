@@ -12,8 +12,16 @@ namespace CorvallisBus.Core.WebClients
 {
     public class GoogleTransitData
     {
-        public List<GoogleRoute> Routes { get; set; }
-        public List<GoogleRouteSchedule> Schedules { get; set; }
+        public List<GoogleRoute> Routes { get; }
+        public List<GoogleRouteSchedule> Schedules { get; }
+
+        public GoogleTransitData(
+            List<GoogleRoute> routes,
+            List<GoogleRouteSchedule> schedules)
+        {
+            Routes = routes;
+            Schedules = schedules;
+        }
     }
 
     /// <summary>
@@ -47,11 +55,10 @@ namespace CorvallisBus.Core.WebClients
                 schedules = ParseScheduleCSV(scheduleEntry);
             }
 
-            return new GoogleTransitData
-            {
-                Routes = routes,
-                Schedules = schedules
-            };
+            return new GoogleTransitData(
+                routes: routes,
+                schedules: schedules
+            );
         }
 
         private static IEnumerable<string> ReadLines(StreamReader reader)
@@ -151,11 +158,10 @@ namespace CorvallisBus.Core.WebClients
                         {
                             route = grouping.Key.route,
                             days = grouping.Key.days,
-                            stopSchedules = new GoogleStopSchedule
-                            {
-                                Name = grouping.Key.stop,
-                                Times = times.Distinct().OrderBy(time => time).ToList()
-                            }
+                            stopSchedules = new GoogleStopSchedule(
+                                name: grouping.Key.stop,
+                                times: times.Distinct().OrderBy(time => time).ToList()
+                            )
                         }));
 
                 var routeDaySchedules = routeDayStopSchedules
@@ -163,21 +169,19 @@ namespace CorvallisBus.Core.WebClients
                     .Select(grouping => grouping.Aggregate(new
                     {
                         route = grouping.Key.route,
-                        daySchedule = new GoogleDaySchedule
-                        {
-                            Days = grouping.Key.days,
-                            StopSchedules = new List<GoogleStopSchedule>()
-                        }
+                        daySchedule = new GoogleDaySchedule(
+                            days: grouping.Key.days,
+                            stopSchedules: new List<GoogleStopSchedule>()
+                        )
                     }, (result, line) => { result.daySchedule.StopSchedules.Add(line.stopSchedules); return result; }));
 
                 // the aristocrats!
                 IList<GoogleRouteSchedule> routeSchedules = routeDaySchedules
                     .GroupBy(line => line.route)
-                    .Select(grouping => grouping.Aggregate(new GoogleRouteSchedule
-                    {
-                        RouteNo = grouping.Key,
-                        Days = new List<GoogleDaySchedule>()
-                    }, (result, line) => { result.Days.Add(line.daySchedule); return result; })).ToList();
+                    .Select(grouping => grouping.Aggregate(new GoogleRouteSchedule(
+                        routeNo: grouping.Key,
+                        days: new List<GoogleDaySchedule>()
+                    ), (result, line) => { result.Days.Add(line.daySchedule); return result; })).ToList();
 
                 if(!routeSchedules.Any(x => x.RouteNo == "C1R"))
                 {
@@ -189,77 +193,70 @@ namespace CorvallisBus.Core.WebClients
 
         private static GoogleRouteSchedule GetC1RSchedule()
         {
-            return new GoogleRouteSchedule
-            {
-                RouteNo = "C1R",
-                Days = new List<GoogleDaySchedule>{
-                        new GoogleDaySchedule {Days = DaysOfWeek.Weekdays,
-                                StopSchedules = new List<GoogleStopSchedule>
+            return new GoogleRouteSchedule(
+                routeNo: "C1R",
+                days: new List<GoogleDaySchedule>{
+                        new GoogleDaySchedule(days: DaysOfWeek.Weekdays,
+                                stopSchedules: new List<GoogleStopSchedule>
                                 {
-                                    new GoogleStopSchedule
-                                    {
-                                        Name = "MonroeAve_S_5thSt",
-                                        Times = new List<TimeSpan>
+                                    new GoogleStopSchedule(
+                                        name: "MonroeAve_S_5thSt",
+                                        times: new List<TimeSpan>
                                         {
                                             new TimeSpan(15,35,0),
                                             new TimeSpan(16,35,0),
                                             new TimeSpan(17,35,0),
                                         }
-                                    },
-                                    new GoogleStopSchedule
-                                    {
-                                        Name = "ArnoldWay_N_26thSt",
-                                        Times = new List<TimeSpan>
+                                    ),
+                                    new GoogleStopSchedule(
+                                        name: "ArnoldWay_N_26thSt",
+                                        times: new List<TimeSpan>
                                         {
                                             new TimeSpan(15,40,0),
                                             new TimeSpan(16,40,0),
                                             new TimeSpan(17,40,0),
                                         }
-                                    },
-                                    new GoogleStopSchedule
-                                    {
-                                        Name = "WithamHillDr_E_UniversityPl",
-                                        Times = new List<TimeSpan>
+                                    ),
+                                    new GoogleStopSchedule(
+                                        name: "WithamHillDr_E_UniversityPl",
+                                        times: new List<TimeSpan>
                                         {
                                             new TimeSpan(15,45,0),
                                             new TimeSpan(16,45,0),
                                             new TimeSpan(17,45,0),
                                         }
-                                    },
-                                    new GoogleStopSchedule
-                                    {
-                                        Name = "WithamHillDr_W_ElmwoodDr",
-                                        Times = new List<TimeSpan>
+                                    ),
+                                    new GoogleStopSchedule(
+                                        name: "WithamHillDr_W_ElmwoodDr",
+                                        times: new List<TimeSpan>
                                         {
                                             new TimeSpan(15,50,0),
                                             new TimeSpan(16,50,0),
                                             new TimeSpan(17,50,0),
                                         }
-                                    },
-                                    new GoogleStopSchedule
-                                    {
-                                        Name = "KingsBlvd_E_MonroeAve",
-                                        Times = new List<TimeSpan>
+                                    ),
+                                    new GoogleStopSchedule(
+                                        name: "KingsBlvd_E_MonroeAve",
+                                        times: new List<TimeSpan>
                                         {
                                             new TimeSpan(15,55,0),
                                             new TimeSpan(16,55,0),
                                             new TimeSpan(17,55,0),
                                         }
-                                    },
-                                    new GoogleStopSchedule
-                                    {
-                                        Name = "MonroeAve_S_7thSt",
-                                        Times = new List<TimeSpan>
+                                    ),
+                                    new GoogleStopSchedule(
+                                        name: "MonroeAve_S_7thSt",
+                                        times: new List<TimeSpan>
                                         {
                                             new TimeSpan(16,0,0),
                                             new TimeSpan(17,0,0),
                                             new TimeSpan(18,0,0),
                                         }
-                                    }
+                                    )
                                 }
-                            }
+                            )
                         }
-                    };
+                    );
         }
     }
 }
