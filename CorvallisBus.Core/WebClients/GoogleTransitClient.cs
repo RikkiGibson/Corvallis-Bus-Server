@@ -34,26 +34,22 @@ namespace CorvallisBus.Core.WebClients
         /// </summary>
         public static GoogleTransitData LoadData()
         {
-            List<GoogleRoute> routes = null;
-            List<GoogleRouteSchedule> schedules = null;
+            using var archive = new ZipArchive(new MemoryStream(Resources.Google_Transit));
 
-            using (var archive = new ZipArchive(new MemoryStream(Resources.Google_Transit)))
+            var routesEntry = archive.GetEntry("routes.txt");
+            if (routesEntry == null)
             {
-                var routesEntry = archive.GetEntry("routes.txt");
-                if (routesEntry == null)
-                {
-                    throw new FileNotFoundException("The Google Transit archive did not contain routes.txt.");
-                }
-
-                var scheduleEntry = archive.GetEntry("stop_times.txt");
-                if (scheduleEntry == null)
-                {
-                    throw new FileNotFoundException("The Google Transit archive did not contain stop_times.txt.");
-                }
-
-                routes = ParseRouteCSV(routesEntry);
-                schedules = ParseScheduleCSV(scheduleEntry);
+                throw new FileNotFoundException("The Google Transit archive did not contain routes.txt.");
             }
+
+            var scheduleEntry = archive.GetEntry("stop_times.txt");
+            if (scheduleEntry == null)
+            {
+                throw new FileNotFoundException("The Google Transit archive did not contain stop_times.txt.");
+            }
+
+            var routes = ParseRouteCSV(routesEntry);
+            var schedules = ParseScheduleCSV(scheduleEntry);
 
             return new GoogleTransitData(
                 routes: routes,

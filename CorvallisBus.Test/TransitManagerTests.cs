@@ -61,7 +61,7 @@ namespace CorvallisBus.Test
             );
 
             var mockClient = new Mock<ITransitClient>();
-            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult(testEstimate));
+            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult<ConnexionzPlatformET?>(testEstimate));
 
             var expectedArrivalTimes = new List<BusArrivalTime>
             {
@@ -114,7 +114,7 @@ namespace CorvallisBus.Test
             );
 
             var mockClient = new Mock<ITransitClient>();
-            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult(testEstimate));
+            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult<ConnexionzPlatformET?>(testEstimate));
 
             var expectedArrivalTimes = new List<BusArrivalTime> {
                 new BusArrivalTime(25, isEstimate: false),
@@ -172,7 +172,7 @@ namespace CorvallisBus.Test
             );
 
             var mockClient = new Mock<ITransitClient>();
-            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult(testEstimate));
+            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult<ConnexionzPlatformET?>(testEstimate));
 
             var expectedArrivalTimes = new List<BusArrivalTime> {
                 new BusArrivalTime(3, isEstimate: true),
@@ -231,7 +231,7 @@ namespace CorvallisBus.Test
             );
 
             var mockClient = new Mock<ITransitClient>();
-            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult(testEstimate));
+            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult<ConnexionzPlatformET?>(testEstimate));
 
             var expectedArrivalTimes = new List<BusArrivalTime> {
                 new BusArrivalTime(3, isEstimate: true),
@@ -296,7 +296,7 @@ namespace CorvallisBus.Test
             );
 
             var mockClient = new Mock<ITransitClient>();
-            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult(testEstimate));
+            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult<ConnexionzPlatformET?>(testEstimate));
 
             var expectedArrivalTimes = new List<BusArrivalTime> {
                 new BusArrivalTime(1, isEstimate: true),
@@ -358,7 +358,7 @@ namespace CorvallisBus.Test
             );
 
             var mockClient = new Mock<ITransitClient>();
-            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult(testEstimate));
+            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult<ConnexionzPlatformET?>(testEstimate));
 
             var expectedArrivalTimes = new List<BusArrivalTime> {
                 new BusArrivalTime(28, isEstimate: true),
@@ -416,7 +416,7 @@ namespace CorvallisBus.Test
             );
 
             var mockClient = new Mock<ITransitClient>();
-            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult(testEstimate));
+            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult<ConnexionzPlatformET?>(testEstimate));
 
             var expectedArrivalTimes = new List<BusArrivalTime> {
                 new BusArrivalTime(28, isEstimate: true),
@@ -480,7 +480,7 @@ namespace CorvallisBus.Test
             );
 
             var mockClient = new Mock<ITransitClient>();
-            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult(testEstimate));
+            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult<ConnexionzPlatformET?>(testEstimate));
 
             var expected = new List<RouteArrivalsSummary>
             {
@@ -569,7 +569,7 @@ namespace CorvallisBus.Test
             );
 
             var mockClient = new Mock<ITransitClient>();
-            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult(testEstimate));
+            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult<ConnexionzPlatformET?>(testEstimate));
 
             var expected = new List<RouteArrivalsSummary> {
                 new RouteArrivalsSummary(

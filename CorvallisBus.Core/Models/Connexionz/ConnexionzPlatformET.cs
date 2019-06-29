@@ -9,23 +9,18 @@ namespace CorvallisBus.Core.Models.Connexionz
     /// </summary>
     public class ConnexionzPlatformET
     {
-        /// <summary>
-        /// Empty constructor for Deserialization.
-        /// </summary>
-        public ConnexionzPlatformET() { }
-
         public ConnexionzPlatformET(RoutePositionPlatform routePositionPlatform)
         {
             PlatformTag = int.Parse(routePositionPlatform.PlatformTag);
 
-            RouteEstimatedArrivals = routePositionPlatform?.Route
+            RouteEstimatedArrivals = routePositionPlatform.Route
                 ?.Select(r => new ConnexionzRouteET(r))
                 ?.ToList();
         }
 
         public ConnexionzPlatformET(
             int platformTag,
-            List<ConnexionzRouteET> routeEstimatedArrivals)
+            List<ConnexionzRouteET>? routeEstimatedArrivals)
         {
             PlatformTag = platformTag;
             RouteEstimatedArrivals = routeEstimatedArrivals;
@@ -33,6 +28,6 @@ namespace CorvallisBus.Core.Models.Connexionz
 
         public int PlatformTag { get; }
 
-        public List<ConnexionzRouteET> RouteEstimatedArrivals { get; }
+        public List<ConnexionzRouteET>? RouteEstimatedArrivals { get; }
     }
 }

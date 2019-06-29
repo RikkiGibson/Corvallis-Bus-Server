@@ -225,14 +225,14 @@ namespace CorvallisBus
         {
             var toPlatformTag = await repository.GetPlatformTagsAsync();
             
-            Func<int, Task<Tuple<int, ConnexionzPlatformET>>> getEtaIfTagExists =
-                async id => Tuple.Create(id, toPlatformTag.ContainsKey(id) ? await client.GetEta(toPlatformTag[id]) : null);
+            Func<int, Task<(int stopId, ConnexionzPlatformET? platformET)>> getEtaIfTagExists =
+                async id => (id, toPlatformTag.TryGetValue(id, out int tag) ? await client.GetEta(tag) : null);
 
             var tasks = stopIds.Select(getEtaIfTagExists);
             var results = await Task.WhenAll(tasks);
 
-            return results.ToDictionary(eta => eta.Item1,
-                eta => eta.Item2?.RouteEstimatedArrivals
+            return results.ToDictionary(eta => eta.stopId,
+                eta => eta.platformET?.RouteEstimatedArrivals
                                 ?.ToDictionary(routeEta => routeEta.RouteNo,
                                                routeEta => routeEta.EstimatedArrivalTime)
                        ?? new Dictionary<string, List<int>>());

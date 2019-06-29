@@ -20,8 +20,6 @@ namespace CorvallisBus.Core.Models
         [JsonProperty("scheduleSummary")]
         public string ScheduleSummary { get; }
 
-        public RouteArrivalsSummary() { }
-
         public RouteArrivalsSummary(string routeName, List<BusArrivalTime> routeArrivalTimes, DateTimeOffset currentTime)
         {
             RouteName = routeName;
@@ -29,6 +27,7 @@ namespace CorvallisBus.Core.Models
             ScheduleSummary = ToScheduleSummary(routeArrivalTimes, currentTime);
         }
 
+        [JsonConstructor]
         public RouteArrivalsSummary(
             string routeName,
             string arrivalsSummary,

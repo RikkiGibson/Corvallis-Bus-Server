@@ -70,7 +70,7 @@ namespace CorvallisBus.Core.WebClients
             return routes.Select(r => new BusRoute(r, googleRoutesDict)).ToList();
         }
 
-        public async Task<ConnexionzPlatformET> GetEta(int platformTag) => await ConnexionzClient.GetPlatformEta(platformTag);
+        public async Task<ConnexionzPlatformET?> GetEta(int platformTag) => await ConnexionzClient.GetPlatformEta(platformTag);
 
         private static TimeSpan RoundToNearestMinute(TimeSpan source)
         {
@@ -151,7 +151,7 @@ namespace CorvallisBus.Core.WebClients
                     routeNo: r.routeNo,
                     daySchedules: r.daySchedules.Select(ds => new BusStopRouteDaySchedule(
                         days: ds.days,
-                        times: ds.stopSchedules.FirstOrDefault(ss => ss.Item1 == p.PlatformNo)?.Item2
+                        times: ds.stopSchedules.FirstOrDefault(ss => ss.Item1 == p.PlatformNo)?.Item2! // will be filtered out
                     ))
                     .Where(ds => ds.Times != null)
                     .ToList()
