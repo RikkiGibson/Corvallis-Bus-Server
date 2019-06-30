@@ -11,7 +11,7 @@ namespace CorvallisBus.Core.WebClients
     public interface ITransitClient
     {
         BusSystemData LoadTransitData();
-        Task<ConnexionzPlatformET> GetEta(int platformTag);
+        Task<ConnexionzPlatformET?> GetEta(int platformTag);
         Task<List<ServiceAlert>> GetServiceAlerts();
     }
 }

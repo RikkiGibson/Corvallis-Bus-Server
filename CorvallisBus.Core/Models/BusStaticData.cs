@@ -13,9 +13,17 @@ namespace CorvallisBus.Core.Models
     public class BusStaticData
     {
         [JsonProperty("routes")]
-        public Dictionary<string, BusRoute> Routes { get; set; }
+        public Dictionary<string, BusRoute> Routes { get; }
 
         [JsonProperty("stops")]
-        public Dictionary<int, BusStop> Stops { get; set; }
+        public Dictionary<int, BusStop> Stops { get; }
+
+        public BusStaticData(
+            Dictionary<string, BusRoute> routes,
+            Dictionary<int, BusStop> stops)
+        {
+            Routes = routes;
+            Stops = stops;
+        }
     }
 }

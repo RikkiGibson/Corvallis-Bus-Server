@@ -140,7 +140,7 @@ namespace CorvallisBus
                         ? DistanceTo(optionalUserLocation.Value.Lat, optionalUserLocation.Value.Lon, stop.Lat, stop.Long, 'M')
                         : double.NaN;
 
-                return new FavoriteStop(stop.ID, stop.Name, stop.RouteNames, stop.Lat, stop.Long, distanceFromUser, isNearestStop: false);
+                return new FavoriteStop(stop.Id, stop.Name, stop.RouteNames, stop.Lat, stop.Long, distanceFromUser, isNearestStop: false);
             })
             .ToList();
 
@@ -151,13 +151,13 @@ namespace CorvallisBus
                         DistanceTo(optionalUserLocation.Value.Lat, optionalUserLocation.Value.Lon, s2.Lat, s2.Long, 'M') ? s1 : s2)
                 : null;
 
-            if (nearestStop != null && !favoriteStops.Any(f => f.Id == nearestStop.ID))
+            if (nearestStop != null && !favoriteStops.Any(f => f.Id == nearestStop.Id))
             {
                 var distanceFromUser = optionalUserLocation != null
                     ? DistanceTo(optionalUserLocation.Value.Lat, optionalUserLocation.Value.Lon, nearestStop.Lat, nearestStop.Long, 'M')
                     : double.NaN;
 
-                favoriteStops.Add(new FavoriteStop(nearestStop.ID, nearestStop.Name, nearestStop.RouteNames,
+                favoriteStops.Add(new FavoriteStop(nearestStop.Id, nearestStop.Name, nearestStop.RouteNames,
                                                    nearestStop.Lat, nearestStop.Long,
                                                    distanceFromUser, isNearestStop: true));
             }
@@ -180,25 +180,24 @@ namespace CorvallisBus
             var firstRoute = routeSchedules.Count > 0 ? staticData.Routes[routeSchedules[0].Key] : null;
             var secondRoute = routeSchedules.Count > 1 ? staticData.Routes[routeSchedules[1].Key] : null;
 
-            return new FavoriteStopViewModel
-            {
-                StopId = favorite.Id,
-                StopName = favorite.Name,
+            return new FavoriteStopViewModel(
+                stopId: favorite.Id,
+                stopName: favorite.Name,
 
-                FirstRouteName = firstRoute != null ? firstRoute.RouteNo : string.Empty,
-                FirstRouteColor = firstRoute != null ? firstRoute.Color : string.Empty,
-                FirstRouteArrivals = routeSchedules.Count > 0 ? RouteArrivalsSummary.ToEstimateSummary(routeSchedules[0].Value, currentTime) : "No arrivals!",
+                firstRouteName: firstRoute != null ? firstRoute.RouteNo : string.Empty,
+                firstRouteColor: firstRoute != null ? firstRoute.Color : string.Empty,
+                firstRouteArrivals: routeSchedules.Count > 0 ? RouteArrivalsSummary.ToEstimateSummary(routeSchedules[0].Value, currentTime) : "No arrivals!",
 
-                SecondRouteName = secondRoute != null ? secondRoute.RouteNo : string.Empty,
-                SecondRouteColor = secondRoute != null ? secondRoute.Color : string.Empty,
-                SecondRouteArrivals = routeSchedules.Count > 1 ? RouteArrivalsSummary.ToEstimateSummary(routeSchedules[1].Value, currentTime) : string.Empty,
+                secondRouteName: secondRoute != null ? secondRoute.RouteNo : string.Empty,
+                secondRouteColor: secondRoute != null ? secondRoute.Color : string.Empty,
+                secondRouteArrivals: routeSchedules.Count > 1 ? RouteArrivalsSummary.ToEstimateSummary(routeSchedules[1].Value, currentTime) : string.Empty,
 
-                Lat = favorite.Lat,
-                Long = favorite.Long,
+                lat: favorite.Lat,
+                @long: favorite.Long,
 
-                DistanceFromUser = double.IsNaN(favorite.DistanceFromUser) ? "" : $"{favorite.DistanceFromUser:F1} miles",
-                IsNearestStop = favorite.IsNearestStop
-            };
+                distanceFromUser: double.IsNaN(favorite.DistanceFromUser) ? "" : $"{favorite.DistanceFromUser:F1} miles",
+                isNearestStop: favorite.IsNearestStop
+            );
         }
 
         public static async Task<List<FavoriteStopViewModel>> GetFavoritesViewModel(ITransitRepository repository,
@@ -226,14 +225,14 @@ namespace CorvallisBus
         {
             var toPlatformTag = await repository.GetPlatformTagsAsync();
             
-            Func<int, Task<Tuple<int, ConnexionzPlatformET>>> getEtaIfTagExists =
-                async id => Tuple.Create(id, toPlatformTag.ContainsKey(id) ? await client.GetEta(toPlatformTag[id]) : null);
+            Func<int, Task<(int stopId, ConnexionzPlatformET? platformET)>> getEtaIfTagExists =
+                async id => (id, toPlatformTag.TryGetValue(id, out int tag) ? await client.GetEta(tag) : null);
 
             var tasks = stopIds.Select(getEtaIfTagExists);
             var results = await Task.WhenAll(tasks);
 
-            return results.ToDictionary(eta => eta.Item1,
-                eta => eta.Item2?.RouteEstimatedArrivals
+            return results.ToDictionary(eta => eta.stopId,
+                eta => eta.platformET?.RouteEstimatedArrivals
                                 ?.ToDictionary(routeEta => routeEta.RouteNo,
                                                routeEta => routeEta.EstimatedArrivalTime)
                        ?? new Dictionary<string, List<int>>());

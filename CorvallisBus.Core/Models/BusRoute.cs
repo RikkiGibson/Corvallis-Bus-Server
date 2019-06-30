@@ -11,11 +11,6 @@ namespace CorvallisBus.Core.Models
     /// </summary>
     public class BusRoute
     {
-        /// <summary>
-        /// Empty Constructor for JSON Deserialization.
-        /// </summary>
-        public BusRoute() { }
-
         public BusRoute(ConnexionzRoute connectionzRoute, Dictionary<string, GoogleRoute> googleRoute)
         {
             RouteNo = connectionzRoute.RouteNo;
@@ -27,6 +22,21 @@ namespace CorvallisBus.Core.Models
             Color = googleRoute[RouteNo].Color;
             Url = LookupUrl(RouteNo);
             Polyline = connectionzRoute.Polyline;
+        }
+
+        [JsonConstructor]
+        public BusRoute(
+            string routeNo,
+            List<int> path,
+            string color,
+            string url,
+            string polyline)
+        {
+            RouteNo = routeNo;
+            Path = path;
+            Color = color;
+            Url = url;
+            Polyline = polyline;
         }
 
         public static string LookupUrl(string routeName)
@@ -48,30 +58,30 @@ namespace CorvallisBus.Core.Models
         /// Route Number (e.g. 1, 2, NON, CVA, etc).
         /// </summary>
         [JsonProperty("routeNo")]
-        public string RouteNo { get; set; }
+        public string RouteNo { get; }
 
         /// <summary>
         /// List of stop ids on this route, in the order the bus reaches them.
         /// </summary>
         [JsonProperty("path")]
-        public List<int> Path { get; set; }
+        public List<int> Path { get; }
 
         /// <summary>
         /// CTS-defined color for this route.
         /// </summary>
         [JsonProperty("color")]
-        public string Color { get; set; }
+        public string Color { get; }
 
         /// <summary>
         /// URL to the CTS web page for this route.
         /// </summary>
         [JsonProperty("url")]
-        public string Url { get; set; }
+        public string Url { get; }
 
         /// <summary>
         /// Google maps polyline for this route.
         /// </summary>
         [JsonProperty("polyline")]
-        public string Polyline { get; set; }
+        public string Polyline { get; }
     }
 }

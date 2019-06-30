@@ -10,11 +10,6 @@ namespace CorvallisBus.Core.Models
     /// </summary>
     public class BusStop
     {
-        /// <summary>
-        /// Empty constructor for deserialization.
-        /// </summary>
-        public BusStop() { }
-
         public static string ToDirection(double bearing)
         {
             if (!(bearing >= 0 && bearing <= 360))
@@ -42,7 +37,7 @@ namespace CorvallisBus.Core.Models
 
         public BusStop(ConnexionzPlatform platform, List<string> routeNames, bool appendDirection)
         {
-            ID = platform.PlatformNo;
+            Id = platform.PlatformNo;
 
             Name = platform.Name +
                 (appendDirection
@@ -55,41 +50,58 @@ namespace CorvallisBus.Core.Models
             RouteNames = routeNames;
         }
 
+        [JsonConstructor]
+        public BusStop(
+            int id,
+            string name,
+            double bearing,
+            double lat,
+            double @long,
+            List<string> routeNames)
+        {
+            Id = id;
+            Name = name;
+            Bearing = bearing;
+            Lat = lat;
+            Long = @long;
+            RouteNames = routeNames;
+        }
+
         /// <summary>
         /// This stop tag is used to get ETAs for the stop from Connexionz.
         /// </summary>
         [JsonProperty("id")]
-        public int ID { get; set; }
+        public int Id { get; }
 
         /// <summary>
         /// The name of the stop, for example: "NW Monroe Ave & NW 7th St".
         /// </summary>
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string Name { get; }
 
         /// <summary>
         /// The angle in degrees between this bus stop and the road. This can be treated as
         /// the angle between the positive X axis and the direction of travel for buses at this stop.
         /// </summary>
         [JsonProperty("bearing")]
-        public double Bearing { get; set; }
+        public double Bearing { get; }
 
         /// <summary>
         /// The latitude value for the stop (between -90 and 90 degrees).
         /// </summary>
         [JsonProperty("lat")]
-        public double Lat { get; set; }
+        public double Lat { get; }
 
         /// <summary>
         /// The longitude value for the stop (between -180 and 180 degrees).
         /// </summary>
         [JsonProperty("lng")]
-        public double Long { get; set; }
+        public double Long { get; }
 
         /// <summary>
         /// List of route names which arrive at this stop.
         /// </summary>
         [JsonProperty("routeNames")]
-        public List<string> RouteNames { get; set; }
+        public List<string> RouteNames { get; }
     }
 }

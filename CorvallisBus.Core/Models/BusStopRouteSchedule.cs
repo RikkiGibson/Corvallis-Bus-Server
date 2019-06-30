@@ -7,7 +7,15 @@ namespace CorvallisBus.Core.Models
     /// </summary>
     public class BusStopRouteSchedule
     {
-        public string RouteNo { get; set; }
-        public List<BusStopRouteDaySchedule> DaySchedules { get; set; }
+        public string RouteNo { get; }
+        public List<BusStopRouteDaySchedule> DaySchedules { get; }
+
+        public BusStopRouteSchedule(
+            string routeNo,
+            List<BusStopRouteDaySchedule> daySchedules)
+        {
+            RouteNo = routeNo;
+            DaySchedules = daySchedules;
+        }
     }
 }

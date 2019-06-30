@@ -10,7 +10,7 @@ namespace CorvallisBus.Core.Models
             Lon = lon;
         }
 
-        public double Lat { get; private set; }
-        public double Lon { get; private set; }
+        public double Lat { get; }
+        public double Lon { get; }
     }
 }

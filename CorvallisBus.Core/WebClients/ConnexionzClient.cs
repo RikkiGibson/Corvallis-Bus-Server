@@ -32,7 +32,7 @@ namespace CorvallisBus.Core.WebClients
 
                 var reader = new StringReader(s);
 
-                return serializer.Deserialize(reader) as T;
+                return (T)serializer.Deserialize(reader);
             }
         }
         /// <summary>
@@ -51,7 +51,7 @@ namespace CorvallisBus.Core.WebClients
 
             var reader = new StringReader(s);
 
-            return serializer.Deserialize(reader) as T;
+            return (T)serializer.Deserialize(reader);
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace CorvallisBus.Core.WebClients
         {
             RoutePattern routePattern = GetEntity<RoutePattern>(BASE_URL + "&Name=RoutePattern.rxml");
 
-            var routePatternProject = routePattern.Items.Skip(1).FirstOrDefault() as RoutePatternProject;
+            var routePatternProject = (RoutePatternProject)routePattern.Items.Skip(1).FirstOrDefault();
 
             return routePatternProject.Route.Select(r => new ConnexionzRoute(r)).ToList();
         }
@@ -87,7 +87,7 @@ namespace CorvallisBus.Core.WebClients
         /// <summary>
         /// Gets the Connexionz-estimated time of arrival for a given stop.
         /// </summary>
-        public static async Task<ConnexionzPlatformET> GetPlatformEta(int platformTag)
+        public static async Task<ConnexionzPlatformET?> GetPlatformEta(int platformTag)
         {
             RoutePosition position = await GetEntityAsync<RoutePosition>(BASE_URL + "&Name=RoutePositionET.xml&PlatformTag=" + platformTag.ToString());
 

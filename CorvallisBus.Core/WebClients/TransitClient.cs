@@ -27,11 +27,10 @@ namespace CorvallisBus.Core.WebClients
             var routes = CreateRoutes(googleData.Routes, connexionzRoutes);
             var stops = CreateStops(connexionzPlatforms, connexionzRoutes);
             
-            var staticData = new BusStaticData
-            {
-                Routes = routes.ToDictionary(r => r.RouteNo),
-                Stops = stops.ToDictionary(s => s.ID)
-            };
+            var staticData = new BusStaticData(
+                routes: routes.ToDictionary(r => r.RouteNo),
+                stops: stops.ToDictionary(s => s.Id)
+            );
 
             var platformTagsLookup = connexionzPlatforms.ToDictionary(p => p.PlatformNo, p => p.PlatformTag);
             var schedule = CreateSchedule(googleData.Schedules, connexionzRoutes, connexionzPlatforms);
@@ -71,7 +70,7 @@ namespace CorvallisBus.Core.WebClients
             return routes.Select(r => new BusRoute(r, googleRoutesDict)).ToList();
         }
 
-        public async Task<ConnexionzPlatformET> GetEta(int platformTag) => await ConnexionzClient.GetPlatformEta(platformTag);
+        public async Task<ConnexionzPlatformET?> GetEta(int platformTag) => await ConnexionzClient.GetPlatformEta(platformTag);
 
         private static TimeSpan RoundToNearestMinute(TimeSpan source)
         {
@@ -148,17 +147,15 @@ namespace CorvallisBus.Core.WebClients
 
             // Now turn it on its head so it's easy to query from a stop-oriented way.
             var result = connexionzPlatforms.ToDictionary(p => p.PlatformNo,
-                p => routeSchedules.Select(r => new BusStopRouteSchedule
-                {
-                    RouteNo = r.routeNo,
-                    DaySchedules = r.daySchedules.Select(ds => new BusStopRouteDaySchedule
-                    {
-                        Days = ds.days,
-                        Times = ds.stopSchedules.FirstOrDefault(ss => ss.Item1 == p.PlatformNo)?.Item2
-                    })
+                p => routeSchedules.Select(r => new BusStopRouteSchedule(
+                    routeNo: r.routeNo,
+                    daySchedules: r.daySchedules.Select(ds => new BusStopRouteDaySchedule(
+                        days: ds.days,
+                        times: ds.stopSchedules.FirstOrDefault(ss => ss.Item1 == p.PlatformNo)?.Item2! // will be filtered out
+                    ))
                     .Where(ds => ds.Times != null)
                     .ToList()
-                })
+                ))
                 .Where(r => r.DaySchedules.Any())
             );
 
