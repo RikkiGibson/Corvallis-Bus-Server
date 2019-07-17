@@ -14,7 +14,6 @@ namespace CorvallisBus.Core.WebClients
         static readonly HttpClient httpClient = new HttpClient();
         public static async Task<List<ServiceAlert>> GetServiceAlerts()
         {
-#if false
             var responseStream = await httpClient.GetStreamAsync(FEED_URL);
             var htmlDocument = new HtmlDocument();
             htmlDocument.Load(responseStream);
@@ -23,11 +22,6 @@ namespace CorvallisBus.Core.WebClients
                 .Select(row => ParseRow(row))
                 .ToList();
             return alerts;
-#endif
-            return await Task.FromResult(new List<ServiceAlert>()
-            {
-                new ServiceAlert("Tap to view service alerts", "2018-11-4T00:00:00-07:00", "https://www.corvallisoregon.gov/news?field_microsite_tid=581")
-            });
         }
 
         private static ServiceAlert ParseRow(HtmlNode row)
