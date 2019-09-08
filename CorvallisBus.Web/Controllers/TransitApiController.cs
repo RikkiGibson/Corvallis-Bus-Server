@@ -23,7 +23,7 @@ namespace CorvallisBus.Controllers
         private readonly ITransitClient _client;
         private readonly Func<DateTimeOffset> _getCurrentTime;
 
-        public TransitApiController(IHostingEnvironment env)
+        public TransitApiController(IWebHostEnvironment env)
         {
             _repository = new MemoryTransitRepository(env.WebRootPath);
             _client = new TransitClient();
