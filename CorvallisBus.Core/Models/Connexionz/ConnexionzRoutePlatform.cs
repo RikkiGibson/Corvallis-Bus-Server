@@ -10,7 +10,7 @@ namespace CorvallisBus.Core.Models.Connexionz
     {
         public ConnexionzRoutePlatform(RoutePatternProjectRouteDestinationPatternPlatform platform)
         {
-            PlatformId = int.Parse(platform.PlatformNo);
+            PlatformId = platform.PlatformNo is null ? 0 : int.Parse(platform.PlatformNo);
 
             bool result;
             IsScheduleAdherancePoint = bool.TryParse(platform.ScheduleAdheranceTimepoint, out result) ? result : false;
@@ -45,7 +45,7 @@ namespace CorvallisBus.Core.Models.Connexionz
     {
         private ConnexionzRoutePlatformComparer() { }
 
-        private static ConnexionzRoutePlatformComparer m_singleton;
+        private static ConnexionzRoutePlatformComparer? m_singleton;
         public static ConnexionzRoutePlatformComparer Instance
         {
             get

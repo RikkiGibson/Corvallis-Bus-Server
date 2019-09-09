@@ -9,6 +9,8 @@ using CorvallisBus.Core.WebClients;
 using CorvallisBus.Core.Models;
 using Microsoft.AspNetCore.Hosting;
 using System.Runtime.InteropServices;
+using MimeKit;
+using MailKit.Net.Smtp;
 
 namespace CorvallisBus.Controllers
 {
@@ -228,8 +230,38 @@ namespace CorvallisBus.Controllers
                 }
             }
 
-            DataLoadJob();
-            return Ok("Init job successful.");
+            try
+            {
+                DataLoadJob();
+                return Ok("Init job successful.");
+            }
+            catch (Exception ex)
+            {
+                if (false && !string.IsNullOrEmpty(expectedAuth))
+                {
+                    SendErrorNotification(ex);
+                }
+
+                throw;
+            }
+        }
+
+        private static void SendErrorNotification(Exception ex)
+        {
+            string nl = Environment.NewLine;
+
+            // TODO: extract out recipient?
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("noreply@corvallisb.us"));
+            message.To.Add(new MailboxAddress("rikkigibson@gmail.com"));
+            message.Subject = "Error in Corvallis Bus init job";
+            message.Body = new TextPart("plain") { Text = "The following error occurred when running the init job:" + nl + ex.Message + nl + nl + ex.StackTrace };
+
+            using var client = new SmtpClient();
+            client.ServerCertificateValidationCallback = (_, __, ___, ____) => true;
+            client.Connect("smtp.gmail.com", 465);
+            client.Send(message);
+            client.Disconnect(quit: true);
         }
 
         void DataLoadJob()

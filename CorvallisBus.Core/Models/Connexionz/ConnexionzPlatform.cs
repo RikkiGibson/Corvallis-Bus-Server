@@ -10,12 +10,13 @@ namespace CorvallisBus.Core.Models.Connexionz
         public ConnexionzPlatform(XElement platform)
         {
             PlatformTag = int.Parse(platform.Attribute("PlatformTag").Value);
-            PlatformNo = int.Parse(platform.Attribute("PlatformNo").Value);
+
+            var platformNoAttr = platform.Attribute("PlatformNo");
+            PlatformNo = platformNoAttr is null ? 0 : int.Parse(platformNoAttr.Value);
 
             // Almost all stops except for places like HP and CVHS have this attribute.
             // It's reasonable to default to having those stops point in the positive X axis direction.
-            double bearing = 0.0;
-            double.TryParse(platform.Attribute("BearingToRoad")?.Value, out bearing);
+            double.TryParse(platform.Attribute("BearingToRoad")?.Value, out double bearing);
             BearingToRoad = bearing;
 
             Name = platform.Attribute("Name").Value;

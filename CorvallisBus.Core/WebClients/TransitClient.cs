@@ -7,6 +7,7 @@ using CorvallisBus.Core.Models.Connexionz;
 using CorvallisBus.Core.Models.GoogleTransit;
 using CorvallisBus.Core.DataAccess;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace CorvallisBus.Core.WebClients
 {
@@ -35,10 +36,83 @@ namespace CorvallisBus.Core.WebClients
             var platformTagsLookup = connexionzPlatforms.ToDictionary(p => p.PlatformNo, p => p.PlatformTag);
             var schedule = CreateSchedule(googleData.Schedules, connexionzRoutes, connexionzPlatforms);
 
-            return new BusSystemData(
+            var transitData = new BusSystemData(
                 staticData,
                 schedule,
                 platformTagsLookup);
+
+            ValidateTransitData(transitData);
+
+            return transitData;
+        }
+
+        public static void ValidateTransitData(BusSystemData data)
+        {
+            var errors = new List<string>();
+
+            // Validate schedule within each stop
+            foreach (var kvp in data.Schedule)
+            {
+                var (stopId, stopRouteSchedules) = (kvp.Key, kvp.Value);
+                foreach (var routeSchedule in stopRouteSchedules)
+                {
+                    foreach (var routeDaySchedule in routeSchedule.DaySchedules)
+                    {
+                        if (routeDaySchedule.Days == DaysOfWeek.None)
+                        {
+                            errors.Add($"Route {routeSchedule.RouteNo} at stop {stopId} has a day schedule for DaysOfWeek.None.");
+                        }
+
+                        var currentTime = TimeSpan.MinValue;
+                        foreach (var nextTime in routeDaySchedule.Times)
+                        {
+                            if (nextTime <= currentTime)
+                            {
+                                errors.Add($"Route {routeSchedule.RouteNo} at stop {stopId} has an ordering discrepancy in its schedule. Arrival time {currentTime} is followed by {nextTime}");
+                            }
+                            currentTime = nextTime;
+                        }
+                    }
+                }
+            }
+
+            // Validate schedule for each route
+            foreach (var route in data.StaticData.Routes.Values)
+            {
+                var firstStopId = route.Path[0];
+                var firstStopSchedules = data.Schedule[firstStopId].Single(rs => rs.RouteNo == route.RouteNo);
+
+                foreach (var firstStopDaySchedule in firstStopSchedules.DaySchedules)
+                {
+                    for (var arrivalNo = 0; arrivalNo < firstStopDaySchedule.Times.Count; arrivalNo++)
+                    {
+                        // get the i'th arrival for each stop in the path, ensure monotonically increasing
+                        var currentArrivalTime = TimeSpan.MinValue;
+
+                        for (var stopIdx = 0; stopIdx < route.Path.Count; stopIdx++)
+                        {
+                            var stopId = route.Path[stopIdx];
+                            var routeStopDayArrivalTimes = data
+                                .Schedule[stopId]
+                                .Single(rs => rs.RouteNo == route.RouteNo)
+                                .DaySchedules
+                                .Single(ds => ds.Days == firstStopDaySchedule.Days)
+                                .Times;
+
+                            var nextArrivalTime = routeStopDayArrivalTimes[arrivalNo];
+                            if (nextArrivalTime <= currentArrivalTime)
+                            {
+                                Debug.Assert(stopIdx > 0);
+                                errors.Add($"Route {route.RouteNo} has a schedule discrepancy in its schedule across stops {route.Path[stopIdx-1]} and {route.Path[stopIdx]}. Arrival time {currentArrivalTime} is followed by {nextArrivalTime}");
+                            }
+                        }
+
+                    }
+                }
+
+
+
+            }
         }
 
         private static bool ShouldAppendDirection(ConnexionzPlatform platform, List<ConnexionzPlatform> platforms)

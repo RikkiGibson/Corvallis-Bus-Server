@@ -24,9 +24,9 @@ namespace CorvallisBus.Core.Models.Connexionz
             Polyline = EncodePolyline(GetPoints(longestPattern.Mif));
 
             Path = longestPattern.Platform
-                   .Select(p => new ConnexionzRoutePlatform(p))
-                   .Distinct(ConnexionzRoutePlatformComparer.Instance)
-                   .ToList();
+                .Select(p => new ConnexionzRoutePlatform(p))
+                .Distinct(ConnexionzRoutePlatformComparer.Instance)
+                .ToList();
         }
 
         public ConnexionzRoute(
