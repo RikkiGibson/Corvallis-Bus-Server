@@ -9,8 +9,8 @@ using CorvallisBus.Core.WebClients;
 using CorvallisBus.Core.Models;
 using Microsoft.AspNetCore.Hosting;
 using System.Runtime.InteropServices;
-using MimeKit;
-using MailKit.Net.Smtp;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace CorvallisBus.Controllers
 {
@@ -237,31 +237,34 @@ namespace CorvallisBus.Controllers
             }
             catch (Exception ex)
             {
-                if (false && !string.IsNullOrEmpty(expectedAuth))
-                {
-                    SendErrorNotification(ex);
-                }
+                SendErrorNotification(ex).Wait();
 
                 throw;
             }
         }
 
-        private static void SendErrorNotification(Exception ex)
+        private async Task SendErrorNotification(Exception ex)
         {
-            string nl = Environment.NewLine;
+            var apiKey = Environment.GetEnvironmentVariable("CorvallisBusSendGridKey");
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                return;
+            }
 
-            // TODO: extract out recipient?
-            var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("noreply@corvallisb.us"));
-            message.To.Add(new MailboxAddress("rikkigibson@gmail.com"));
-            message.Subject = "Error in Corvallis Bus init job";
-            message.Body = new TextPart("plain") { Text = "The following error occurred when running the init job:" + nl + ex.Message + nl + nl + ex.StackTrace };
+            var client = new SendGridClient(apiKey);
+            var from = new EmailAddress("azure_78fe1edda7f051b6116e50e4617e08f1@azure.com", "corvallisb.us Notification");
+            var subject = "corvallisb.us init task failed";
+            var to = new EmailAddress("rikkigibson@gmail.com", "Rikki Gibson");
 
-            using var client = new SmtpClient();
-            client.ServerCertificateValidationCallback = (_, __, ___, ____) => true;
-            client.Connect("smtp.gmail.com", 465);
-            client.Send(message);
-            client.Disconnect(quit: true);
+            var lastWriteTime = System.IO.File.GetLastWriteTime(_repository.StaticDataPath);
+
+            var htmlContent =
+$@"<h2>Init job failed: {ex.Message}</h2>
+<pre>{ex.StackTrace}</pre>
+
+<p>Init files last updated on {lastWriteTime}</p>";
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent: ex.Message, htmlContent);
+            _ = await client.SendEmailAsync(msg);
         }
 
         void DataLoadJob()
