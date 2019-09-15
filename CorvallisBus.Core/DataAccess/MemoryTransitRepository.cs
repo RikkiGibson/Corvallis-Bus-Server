@@ -14,11 +14,11 @@ namespace CorvallisBus.Core.DataAccess
     /// </summary>
     public class MemoryTransitRepository : ITransitRepository
     {
-        private static Dictionary<int, int> s_platformTags;
-        private static Dictionary<int, IEnumerable<BusStopRouteSchedule>> s_schedule;
-        private static string s_serializedStaticData;
-        private static BusStaticData s_staticData;
-        
+        private static Dictionary<int, int>? s_platformTags;
+        private static Dictionary<int, IEnumerable<BusStopRouteSchedule>>? s_schedule;
+        private static string? s_serializedStaticData;
+        private static BusStaticData? s_staticData;
+
         private readonly string _platformTagsPath;
         private readonly string _schedulePath;
 
