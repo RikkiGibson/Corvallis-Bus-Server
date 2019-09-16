@@ -184,56 +184,6 @@ namespace CorvallisBus.Core.WebClients
         }
 
         public async Task<ConnexionzPlatformET?> GetEta(int platformTag) => await ConnexionzClient.GetPlatformEta(platformTag);
-
-        private static TimeSpan RoundToNearestMinute(TimeSpan source)
-        {
-            // there are 10,000 ticks per millisecond, and 1000 milliseconds per second, and 60 seconds per minute
-            const int TICKS_PER_MINUTE = 10000 * 1000 * 60;
-            var subMinutesComponent = source.Ticks % TICKS_PER_MINUTE;
-
-            return subMinutesComponent < TICKS_PER_MINUTE / 2
-                ? source.Subtract(TimeSpan.FromTicks(subMinutesComponent))
-                : source.Add(TimeSpan.FromTicks(TICKS_PER_MINUTE - subMinutesComponent));
-        }
-
-        /// <summary>
-        /// Fabricates a bunch of schedule information for a route on a particular day.
-        /// </summary>
-        private static List<Tuple<int, List<TimeSpan>>> InterpolateSchedule(ConnexionzRoute connexionzRoute, List<GoogleStopSchedule> schedule)
-        {
-            var adherencePoints = connexionzRoute.Path
-                .Select((val, idx) => new { value = val, index = idx })
-                .Where(a => a.value.IsScheduleAdherancePoint)
-                .ToList();
-
-            // some invariants we can rely on:
-            // the first stop is an adherence point.
-            // the last stop is not listed as an adherence point, even though it has a schedule in google.
-            // therefore, we're going to add the last stop in manually so we can use the last schedule and interpolate.
-            adherencePoints.Add(new { value = connexionzRoute.Path.Last(), index = connexionzRoute.Path.Count });
-            
-            var results = new List<Tuple<int, List<TimeSpan>>>();
-            for (int i = 0; i < adherencePoints.Count - 1; i++)
-            {
-                int sectionLength = adherencePoints[i + 1].index - adherencePoints[i].index;
-                var stopsInBetween = connexionzRoute.Path.GetRange(adherencePoints[i].index, sectionLength);
-                
-                var differences = schedule[i].Times.Zip(schedule[i + 1].Times,
-                    (startTime, endTime) => endTime.Subtract(startTime));
-
-                // we're simply going to add an even time span the schedules of consecutive stops.
-                // there doesn't appear to be a more reliable way of estimating than this.
-                var stepSizes = differences.Select(d => d.Ticks / sectionLength);
-                
-                results.AddRange(stopsInBetween.Select(
-                    (val, idx) => Tuple.Create(
-                        val.PlatformId,
-                        schedule[i].Times.Zip(stepSizes, (time, step) => RoundToNearestMinute(time.Add(TimeSpan.FromTicks(step * idx))))
-                                         .ToList())));
-            }
-
-            return results;
-        }
         
         /// <summary>
         /// Creates a bus schedule based on Google Transit data.

@@ -17,9 +17,9 @@ namespace CorvallisBus.Test
             _output = output;
         }
 
-        public sealed class OnlyLocalFact : FactAttribute
+        public sealed class IntegrationTest : FactAttribute
         {
-            public OnlyLocalFact()
+            public IntegrationTest()
             {
                 if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("TRAVIS")))
                 {
@@ -29,7 +29,7 @@ namespace CorvallisBus.Test
         }
 
 
-        [OnlyLocalFact]
+        [IntegrationTest]
         public void ValidateInitJob()
         {
             var client = new TransitClient();

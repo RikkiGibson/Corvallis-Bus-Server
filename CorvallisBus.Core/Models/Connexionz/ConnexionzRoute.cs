@@ -46,6 +46,7 @@ namespace CorvallisBus.Core.Models.Connexionz
             Polyline = EncodePolyline(points);
 
             Path = longestPattern.Platform
+                .Where(p => !string.IsNullOrEmpty(p.PlatformNo))
                 .Select(p => new ConnexionzRoutePlatform(p))
                 .Distinct(ConnexionzRoutePlatformComparer.Instance)
                 .ToList();

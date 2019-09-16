@@ -13,8 +13,7 @@ namespace CorvallisBus.Core.Models.Connexionz
 
             var platformNoAttr = platform.Attribute("PlatformNo");
 
-            // TODO: use a default PlatformNo or filter out such platforms?
-            PlatformNo = platformNoAttr is null ? 0 : int.Parse(platformNoAttr.Value);
+            PlatformNo = int.Parse(platformNoAttr.Value);
 
             // Almost all stops except for places like HP and CVHS have this attribute.
             // It's reasonable to default to having those stops point in the positive X axis direction.
