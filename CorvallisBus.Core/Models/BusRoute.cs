@@ -1,8 +1,11 @@
 ﻿using CorvallisBus.Core.Models.Connexionz;
 using CorvallisBus.Core.Models.GoogleTransit;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace CorvallisBus.Core.Models
 {
@@ -11,19 +14,6 @@ namespace CorvallisBus.Core.Models
     /// </summary>
     public class BusRoute
     {
-        public BusRoute(ConnexionzRoute connectionzRoute, Dictionary<string, GoogleRoute> googleRoute)
-        {
-            RouteNo = connectionzRoute.RouteNo;
-
-            Path = connectionzRoute.Path
-                .Select(platform => platform.PlatformId)
-                .ToList();
-
-            Color = googleRoute[RouteNo].Color;
-            Url = LookupUrl(RouteNo);
-            Polyline = connectionzRoute.Polyline;
-        }
-
         [JsonConstructor]
         public BusRoute(
             string routeNo,
@@ -39,19 +29,22 @@ namespace CorvallisBus.Core.Models
             Polyline = polyline;
         }
 
-        public static string LookupUrl(string routeName)
+        public static async Task<BusRoute> Create(ConnexionzRoute connectionzRoute, Dictionary<string, GoogleRoute> googleRoute, Func<string, Task<string>> urlResolver)
         {
-            string suffix;
-            if (routeName == "NON")
-                suffix = "night-owl-north";
-            else if (routeName == "NOSE")
-                suffix = "night-owl-southeast";
-            else if (routeName == "NOSW")
-                suffix = "night-owl-southwest";
-            else
-                suffix = routeName.ToLower();
+            var routeNo = connectionzRoute.RouteNo;
+            var url = await LookupUrl(routeNo, urlResolver);
+            var path = connectionzRoute.Path
+                .Select(platform => platform.PlatformId)
+                .ToList();
 
-            return "https://www.corvallisoregon.gov/cts/page/cts-route-" + suffix;
+            return new BusRoute(routeNo, path, googleRoute[routeNo].Color, url, connectionzRoute.Polyline);
+        }
+
+        public static async Task<string> LookupUrl(string routeName, Func<string, Task<string>> urlResolver)
+        {
+            var suffix = routeName.ToLower();
+            var url = "https://www.corvallisoregon.gov/cts/page/cts-route-" + suffix;
+            return await urlResolver(url);
         }
 
         /// <summary>

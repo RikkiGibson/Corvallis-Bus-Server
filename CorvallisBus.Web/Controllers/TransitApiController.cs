@@ -232,18 +232,45 @@ namespace CorvallisBus.Controllers
 
             try
             {
-                DataLoadJob();
+                var errors = DataLoadJob();
+                if (errors.Count != 0)
+                {
+                    var message = GetValidationErrorMessage(errors);
+                    SendNotification("corvallisb.us init job had validation errors", message).Wait();
+                    return Ok(message);
+                }
+
                 return Ok("Init job successful.");
             }
             catch (Exception ex)
             {
-                SendErrorNotification(ex).Wait();
-
+                SendExceptionNotification(ex).Wait();
                 throw;
             }
         }
 
-        private async Task SendErrorNotification(Exception ex)
+        private Task SendExceptionNotification(Exception ex)
+        {
+            var lastWriteTime = System.IO.File.GetLastWriteTime(_repository.StaticDataPath);
+            var htmlContent =
+$@"<h2>Init job failed: {ex.Message}</h2>
+<pre>{ex.StackTrace}</pre>
+
+<p>Init files last updated on {lastWriteTime}</p>";
+            return SendNotification(subject: "corvallisb.us init task threw an exception", htmlContent);
+        }
+
+        private string GetValidationErrorMessage(List<string> errors)
+        {
+            var lastWriteTime = System.IO.File.GetLastWriteTime(_repository.StaticDataPath);
+            return $@"<h2>Init job had {errors.Count} validation errors</h2>
+<pre>{string.Join('\n', errors)}</pre>
+
+<p>Init files last updated on {lastWriteTime}</p>";
+        }
+
+
+        private async Task SendNotification(string subject, string htmlContent)
         {
             var apiKey = Environment.GetEnvironmentVariable("CorvallisBusSendGridKey");
             if (string.IsNullOrEmpty(apiKey))
@@ -253,27 +280,21 @@ namespace CorvallisBus.Controllers
 
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress("azure_78fe1edda7f051b6116e50e4617e08f1@azure.com", "corvallisb.us Notification");
-            var subject = "corvallisb.us init task failed";
             var to = new EmailAddress("rikkigibson@gmail.com", "Rikki Gibson");
 
-            var lastWriteTime = System.IO.File.GetLastWriteTime(_repository.StaticDataPath);
-
-            var htmlContent =
-$@"<h2>Init job failed: {ex.Message}</h2>
-<pre>{ex.StackTrace}</pre>
-
-<p>Init files last updated on {lastWriteTime}</p>";
-            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent: ex.Message, htmlContent);
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent: subject, htmlContent);
             _ = await client.SendEmailAsync(msg);
         }
 
-        void DataLoadJob()
+        private List<string> DataLoadJob()
         {
-            var busSystemData = _client.LoadTransitData();
+            var (busSystemData, errors) = _client.LoadTransitData();
 
             _repository.SetStaticData(busSystemData.StaticData);
             _repository.SetPlatformTags(busSystemData.PlatformIdToPlatformTag);
             _repository.SetSchedule(busSystemData.Schedule);
+
+            return errors;
         }
     }
 }

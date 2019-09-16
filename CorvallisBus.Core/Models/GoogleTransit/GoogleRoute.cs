@@ -10,7 +10,7 @@ namespace CorvallisBus.Core.Models.GoogleTransit
         public GoogleRoute(string[] csv)
         {
             Name = csv[0].Replace("\"", string.Empty); ;
-            Color = csv[csv.Length - 2].Replace("\"", string.Empty);
+            Color = csv[csv.Length - 3].Replace("\"", string.Empty);
         }
 
         public GoogleRoute(string Name, string Color)

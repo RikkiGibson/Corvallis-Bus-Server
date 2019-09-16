@@ -12,6 +12,8 @@ namespace CorvallisBus.Core.Models.Connexionz
             PlatformTag = int.Parse(platform.Attribute("PlatformTag").Value);
 
             var platformNoAttr = platform.Attribute("PlatformNo");
+
+            // TODO: use a default PlatformNo or filter out such platforms?
             PlatformNo = platformNoAttr is null ? 0 : int.Parse(platformNoAttr.Value);
 
             // Almost all stops except for places like HP and CVHS have this attribute.

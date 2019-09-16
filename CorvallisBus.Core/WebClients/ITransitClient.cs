@@ -10,7 +10,7 @@ namespace CorvallisBus.Core.WebClients
 {
     public interface ITransitClient
     {
-        BusSystemData LoadTransitData();
+        (BusSystemData data, List<string> errors) LoadTransitData();
         Task<ConnexionzPlatformET?> GetEta(int platformTag);
         Task<List<ServiceAlert>> GetServiceAlerts();
     }
