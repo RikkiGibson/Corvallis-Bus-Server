@@ -24,7 +24,7 @@ namespace CorvallisBus.Core.WebClients
 
             alerts.Insert(0, new ServiceAlert(
                 title: "App Update for Upcoming CTS Schedule",
-                publishDate: "2019-09-09T00:00:00-07:00",
+                publishDate: "2019-09-15T00:00:00-07:00",
                 link: "https://rikkigibson.github.io/corvallisbus"));
 
             return alerts;
