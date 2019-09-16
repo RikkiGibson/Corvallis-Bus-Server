@@ -26,7 +26,7 @@ namespace CorvallisBus.Core.Models.Connexionz
 
         /// <summary>
         /// The 5-digit platform ID. This is what is displayed on bus stop signs.
-        /// </summary> 
+        /// </summary>
         public int PlatformId { get; }
 
         /// <summary>
@@ -45,18 +45,7 @@ namespace CorvallisBus.Core.Models.Connexionz
     {
         private ConnexionzRoutePlatformComparer() { }
 
-        private static ConnexionzRoutePlatformComparer? m_singleton;
-        public static ConnexionzRoutePlatformComparer Instance
-        {
-            get
-            {
-                if (m_singleton == null)
-                {
-                    m_singleton = new ConnexionzRoutePlatformComparer();
-                }
-                return m_singleton;
-            }
-        }
+        public static ConnexionzRoutePlatformComparer Instance { get; } = new ConnexionzRoutePlatformComparer();
 
         public bool Equals(ConnexionzRoutePlatform x, ConnexionzRoutePlatform y) =>
             x.PlatformId == y.PlatformId;

@@ -18,7 +18,7 @@ namespace CorvallisBus.Core.DataAccess
         private static Dictionary<int, IEnumerable<BusStopRouteSchedule>>? s_schedule;
         private static string? s_serializedStaticData;
         private static BusStaticData? s_staticData;
-        
+
         private readonly string _platformTagsPath;
         private readonly string _schedulePath;
 
