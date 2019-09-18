@@ -139,7 +139,7 @@ namespace CorvallisBus.Core.WebClients
             if (platform.Name == "Downtown Transit Center" || platform.Name == "Downtown Transit Centre")
                 return false;
 
-            bool existsSameNamedStop = platforms.Any(p => p.PlatformNo != platform.PlatformNo && p.Name == platform.Name);
+            bool existsSameNamedStop = platforms.Any(p => p.PlatformNo != platform.PlatformNo && p.CompactName == platform.CompactName);
             return existsSameNamedStop;
         }
 
