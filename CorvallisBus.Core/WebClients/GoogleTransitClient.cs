@@ -67,50 +67,14 @@ namespace CorvallisBus.Core.WebClients
         }
 
         /// <summary>
-        /// Reads a ZipArchive entry as the routes CSV and extracts the route colors.
+        /// Reads a ZipArchive entry as the routes CSV and extracts the route colors and URLs.
         /// </summary>
         private static List<GoogleRoute> ParseRouteCSV(ZipArchiveEntry entry)
         {
-            var routes = new List<GoogleRoute>();
-
-            using (var reader = new StreamReader(entry.Open()))
-            {
-                // Ignore the format line
-                reader.ReadLine();
-
-                while (!reader.EndOfStream)
-                {
-                    var parts = reader.ReadLine().Split(',');
-
-                    // Ignore all routes which aren't part of CTS and thus don't have any real-time data.
-                    if (parts[0].Contains("ATS") || parts[0].Contains("PC") || parts[0].Contains("LBL"))
-                    {
-                        continue;
-                    }
-
-                    routes.Add(new GoogleRoute(parts));
-                }
-            }
-
+            using var csv = new CsvReader(new StreamReader(entry.Open()));
+            var records = csv.GetRecords<GoogleRoute>();
+            var routes = records.ToList();
             return routes;
-        }
-
-        /// <summary>
-        /// This gives a time span even if it's over 24 hours-- requires HH:MM or HH:MM:00 format.
-        /// </summary>
-        /// <param name="time"></param>
-        /// <returns></returns>
-        private static TimeSpan ToTimeSpan(string time)
-        {
-            if (string.IsNullOrWhiteSpace(time))
-            {
-                return TimeSpan.Zero;
-            }
-
-            var components = time.Split(':');
-            return new TimeSpan(int.Parse(components[0]),
-                int.Parse(components[1]),
-                0);
         }
 
         private static List<GoogleRouteSchedule> ParseScheduleCSV(ZipArchiveEntry stopTimesTxt, ZipArchiveEntry tripsTxt, ZipArchiveEntry calendarTxt)

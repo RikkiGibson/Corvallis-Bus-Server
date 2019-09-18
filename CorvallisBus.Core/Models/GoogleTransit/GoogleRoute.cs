@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+﻿using CsvHelper.Configuration.Attributes;
 
 namespace CorvallisBus.Core.Models.GoogleTransit
 {
@@ -7,32 +7,21 @@ namespace CorvallisBus.Core.Models.GoogleTransit
     /// </summary>
     public class GoogleRoute
     {
-        public GoogleRoute(string[] csv)
-        {
-            Name = csv[0].Replace("\"", string.Empty); ;
-            Color = csv[csv.Length - 3].Replace("\"", string.Empty);
-        }
-
-        public GoogleRoute(string Name, string Color)
-        {
-            this.Name = Name;
-            this.Color = Color;
-        }
-
+#nullable disable warnings
         /// <summary>
-        /// A name from the Google Transit CSV e.g. "BB_N".
-        /// Must be converted to Connexionz format before merging.
+        /// A name from the Google Transit CSV
         /// </summary>
-        public string Name { get; }
-
-        public string ConnexionzName => ToConnexionzName(Name);
-
-        public static string ToConnexionzName(string googleRouteNo) =>
-            Regex.Replace(googleRouteNo.Replace("BB_", "NO"), "^R", "");
+        [Name("route_id")]
+        public string Name { get; set; }
 
         /// <summary>
         /// The color of the route as a hex string, e.g. "35EFA0".
         /// </summary>
-        public string Color { get; }
+        [Name("route_color")]
+        public string Color { get; set; }
+
+        [Name("route_url")]
+        public string Url { get; set; }
+#nullable enable warnings
     }
 }

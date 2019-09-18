@@ -29,22 +29,15 @@ namespace CorvallisBus.Core.Models
             Polyline = polyline;
         }
 
-        public static async Task<BusRoute> Create(ConnexionzRoute connectionzRoute, Dictionary<string, GoogleRoute> googleRoute, Func<string, Task<string>> urlResolver)
+        public static BusRoute Create(ConnexionzRoute connectionzRoute, Dictionary<string, GoogleRoute> googleRoutes)
         {
             var routeNo = connectionzRoute.RouteNo;
-            var url = await LookupUrl(routeNo, urlResolver);
+            var googleRoute = googleRoutes[routeNo];
             var path = connectionzRoute.Path
                 .Select(platform => platform.PlatformId)
                 .ToList();
 
-            return new BusRoute(routeNo, path, googleRoute[routeNo].Color, url, connectionzRoute.Polyline);
-        }
-
-        public static async Task<string> LookupUrl(string routeName, Func<string, Task<string>> urlResolver)
-        {
-            var suffix = routeName.ToLower();
-            var url = "https://www.corvallisoregon.gov/cts/page/cts-route-" + suffix;
-            return await urlResolver(url);
+            return new BusRoute(routeNo, path, googleRoute.Color, googleRoute.Url, connectionzRoute.Polyline);
         }
 
         /// <summary>

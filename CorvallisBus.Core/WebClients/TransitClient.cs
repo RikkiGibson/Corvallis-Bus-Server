@@ -156,31 +156,11 @@ namespace CorvallisBus.Core.WebClients
                 .ToList();
         }
 
-
-        private static readonly HttpClient _client = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false });
-        private static async Task<string> ResolveUrl(string url)
-        {
-            try
-            {
-                var response = await _client.GetAsync(url);
-                if (response.StatusCode == HttpStatusCode.Found)
-                {
-                    return response.Headers.GetValues("Location").FirstOrDefault() ?? url;
-                }
-            }
-            catch
-            {
-                // do nothing
-            }
-
-            return url;
-        }
-
         private static List<BusRoute> CreateRoutes(List<GoogleRoute> googleRoutes, List<ConnexionzRoute> connexionzRoutes)
         {
-            var googleRoutesDict = googleRoutes.ToDictionary(gr => gr.ConnexionzName);
+            var googleRoutesDict = googleRoutes.ToDictionary(gr => gr.Name);
             var routes = connexionzRoutes.Where(r => googleRoutesDict.ContainsKey(r.RouteNo));
-            return routes.Select(r => BusRoute.Create(r, googleRoutesDict, url => ResolveUrl(url)).Result).ToList();
+            return routes.Select(r => BusRoute.Create(r, googleRoutesDict)).ToList();
         }
 
         public async Task<ConnexionzPlatformET?> GetEta(int platformTag) => await ConnexionzClient.GetPlatformEta(platformTag);
@@ -193,7 +173,7 @@ namespace CorvallisBus.Core.WebClients
             List<ConnexionzRoute> connexionzRoutes,
             List<ConnexionzPlatform> connexionzPlatforms)
         {
-            var googleSchedulesDict = googleSchedules.ToDictionary(schedule => schedule.ConnexionzName);
+            var googleSchedulesDict = googleSchedules.ToDictionary(schedule => schedule.RouteNo);
             var routes = connexionzRoutes.Where(r => r.IsActive && googleSchedulesDict.ContainsKey(r.RouteNo));
 
             var routeSchedules = routes.Select(r => new
