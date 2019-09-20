@@ -37,7 +37,9 @@ namespace CorvallisBus.Core.Models
                 .Select(platform => platform.PlatformId)
                 .ToList();
 
-            return new BusRoute(routeNo, path, googleRoute.Color, googleRoute.Url, connectionzRoute.Polyline);
+            var url = "https://www.corvallisoregon.gov/cts/page/cts-route-" + routeNo;
+
+            return new BusRoute(routeNo, path, googleRoute.Color, url, connectionzRoute.Polyline);
         }
 
         /// <summary>
