@@ -7,7 +7,7 @@ namespace CorvallisBus.Core.Models.GoogleTransit
     /// </summary>
     public class GoogleRoute
     {
-#nullable disable warnings
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         /// <summary>
         /// A name from the Google Transit CSV
         /// </summary>
@@ -22,6 +22,6 @@ namespace CorvallisBus.Core.Models.GoogleTransit
 
         [Name("route_url")]
         public string Url { get; set; }
-#nullable enable warnings
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     }
 }
