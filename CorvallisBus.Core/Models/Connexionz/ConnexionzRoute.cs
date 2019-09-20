@@ -23,10 +23,33 @@ namespace CorvallisBus.Core.Models.Connexionz
 
             Polyline = EncodePolyline(GetPoints(longestPattern.Mif));
 
+            var points = GetPoints(longestPattern.Mif);
+            // TODO: get the actual data fixed
+            if (RouteNo == "4")
+            {
+                var pointsList = points.ToList();
+
+                // there's a weird point on philomath blvd messing up the route path. just filter it out.
+                var lowestIndex = 0;
+                for (var i = 1; i < pointsList.Count; i++)
+                {
+                    if (pointsList[i].Lat < pointsList[lowestIndex].Lat)
+                    {
+                        lowestIndex = i;
+                    }
+                }
+
+                pointsList.RemoveAt(lowestIndex);
+                points = pointsList;
+            }
+
+            Polyline = EncodePolyline(points);
+
             Path = longestPattern.Platform
-                   .Select(p => new ConnexionzRoutePlatform(p))
-                   .Distinct(ConnexionzRoutePlatformComparer.Instance)
-                   .ToList();
+                .Where(p => !string.IsNullOrEmpty(p.PlatformNo))
+                .Select(p => new ConnexionzRoutePlatform(p))
+                .Distinct(ConnexionzRoutePlatformComparer.Instance)
+                .ToList();
         }
 
         public ConnexionzRoute(

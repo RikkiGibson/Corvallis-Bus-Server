@@ -8,14 +8,14 @@ namespace CorvallisBus.Core.Models.GoogleTransit
     /// </summary>
     public class GoogleStopSchedule
     {
-        public string Name { get; }
+        public int PlatformTag { get; }
         public List<TimeSpan> Times { get; }
 
         public GoogleStopSchedule(
-            string name,
+            int platformTag,
             List<TimeSpan> times)
         {
-            Name = name;
+            PlatformTag = platformTag;
             Times = times;
         }
     }

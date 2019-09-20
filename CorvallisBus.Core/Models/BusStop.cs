@@ -39,7 +39,7 @@ namespace CorvallisBus.Core.Models
         {
             Id = platform.PlatformNo;
 
-            Name = platform.Name +
+            Name = platform.CompactName +
                 (appendDirection
                     ? " " + ToDirection(platform.BearingToRoad)
                     : string.Empty);

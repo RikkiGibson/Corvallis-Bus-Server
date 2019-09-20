@@ -1,6 +1,7 @@
 ﻿using CorvallisBus.Core.Models;
 using CorvallisBus.Core.Models.GoogleTransit;
 using CorvallisBus.Core.Properties;
+using CsvHelper;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,7 +26,7 @@ namespace CorvallisBus.Core.WebClients
     }
 
     /// <summary>
-    /// Contains the task for importing Route colors from Google Transit.  This task is run once per year(?).
+    /// Contains the task for importing route and schedule data from Google Transit. This task is run once every night.
     /// </summary>
     public static class GoogleTransitClient
     {
@@ -36,20 +37,20 @@ namespace CorvallisBus.Core.WebClients
         {
             using var archive = new ZipArchive(new MemoryStream(Resources.Google_Transit));
 
-            var routesEntry = archive.GetEntry("routes.txt");
-            if (routesEntry == null)
-            {
-                throw new FileNotFoundException("The Google Transit archive did not contain routes.txt.");
-            }
+            var routesEntry = archive.GetEntry("routes.txt")
+                ?? throw new FileNotFoundException("The Google Transit archive did not contain routes.txt.");
 
-            var scheduleEntry = archive.GetEntry("stop_times.txt");
-            if (scheduleEntry == null)
-            {
-                throw new FileNotFoundException("The Google Transit archive did not contain stop_times.txt.");
-            }
+            var scheduleEntry = archive.GetEntry("stop_times.txt")
+                ?? throw new FileNotFoundException("The Google Transit archive did not contain stop_times.txt.");
+
+            var tripsEntry = archive.GetEntry("trips.txt")
+                ?? throw new FileNotFoundException("The Google Transit archive did not contain trips.txt.");
+
+            var calendarEntry = archive.GetEntry("calendar.txt")
+                ?? throw new FileNotFoundException("The Google Transit archive did not contain calendar.txt.");
 
             var routes = ParseRouteCSV(routesEntry);
-            var schedules = ParseScheduleCSV(scheduleEntry);
+            var schedules = ParseScheduleCSV(scheduleEntry, tripsEntry, calendarEntry);
 
             return new GoogleTransitData(
                 routes: routes,
@@ -66,193 +67,52 @@ namespace CorvallisBus.Core.WebClients
         }
 
         /// <summary>
-        /// Reads a ZipArchive entry as the routes CSV and extracts the route colors.
+        /// Reads a ZipArchive entry as the routes CSV and extracts the route colors and URLs.
         /// </summary>
         private static List<GoogleRoute> ParseRouteCSV(ZipArchiveEntry entry)
         {
-            var routes = new List<GoogleRoute>();
-
-            using (var reader = new StreamReader(entry.Open()))
-            {
-                // Ignore the format line
-                reader.ReadLine();
-
-                while (!reader.EndOfStream)
-                {
-                    var parts = reader.ReadLine().Split(',');
-
-                    // Ignore all routes which aren't part of CTS and thus don't have any real-time data.
-                    if (parts[0].Contains("ATS") || parts[0].Contains("PC") || parts[0].Contains("LBL"))
-                    {
-                        continue;
-                    }
-
-                    routes.Add(new GoogleRoute(parts));
-                }
-            }
-
-            if(!routes.Any(x => x.Name == "C1R"))
-            {
-                routes.Add(new GoogleRoute("C1R", "9F8E7D"));
-            }
+            using var csv = new CsvReader(new StreamReader(entry.Open()));
+            var records = csv.GetRecords<GoogleRoute>();
+            var routes = records.ToList();
             return routes;
         }
 
-        private static Regex s_routePattern = new Regex("^\"((BB_)?[^_]+)_");
-
-        /// <summary>
-        /// This gives a time span even if it's over 24 hours-- requires HH:MM or HH:MM:00 format.
-        /// </summary>
-        /// <param name="time"></param>
-        /// <returns></returns>
-        private static TimeSpan ToTimeSpan(string time)
+        private static List<GoogleRouteSchedule> ParseScheduleCSV(ZipArchiveEntry stopTimesTxt, ZipArchiveEntry tripsTxt, ZipArchiveEntry calendarTxt)
         {
-            if (string.IsNullOrWhiteSpace(time))
-            {
-                return TimeSpan.Zero;
-            }
+            using var stopTimesCsv = new CsvReader(new StreamReader(stopTimesTxt.Open()));
+            var stopTimes = stopTimesCsv.GetRecords<StopTimesEntry>();
 
-            var components = time.Split(':');
-            return new TimeSpan(int.Parse(components[0]),
-                int.Parse(components[1]),
-                0);
-        }
+            using var tripsCsv = new CsvReader(new StreamReader(tripsTxt.Open()));
+            var trips = tripsCsv.GetRecords<TripsEntry>();
 
-        private static List<GoogleRouteSchedule> ParseScheduleCSV(ZipArchiveEntry entry)
-        {
-            using (var reader = new StreamReader(entry.Open()))
-            {
-                // skip format line
-                reader.ReadLine();
-                var lines = ReadLines(reader).ToList();
+            using var calendarCsv = new CsvReader(new StreamReader(calendarTxt.Open()));
+            var calendars = calendarCsv.GetRecords<CalendarEntry>().ToList();
 
-                var flatSchedule = lines.Select(line => line.Split(','))
-                    .Where(line => !string.IsNullOrWhiteSpace(line[1]))
-                    .Select(line => new
-                    {
-                        route = s_routePattern.Match(line[0]).Groups[1].Value,
-                        stop = line[3],
-                        order = int.Parse(line[4]),
-                        days = DaysOfWeekUtils.GetDaysOfWeek(line[0]),
-                        time = ToTimeSpan(line[1].Replace("\"", string.Empty))
-                    });
+            var joinedEntries = stopTimes
+                .Join(trips, st => st.TripId, t => t.TripId, (stopTime, trip) => (stopTime, trip))
+                .Join(calendars, entry => entry.trip.ServiceId, cal => cal.ServiceId, (entry, calendar) => (entry.stopTime, entry.trip, calendar));
 
-                // Time to turn some totally flat data into totally structured data.
-                var routeDayStopSchedules = flatSchedule.GroupBy(line => new
-                    {
-                        route = line.route,
-                        stop = line.stop,
-                        // stops can appear more than once in a route (particularly at the very beginning and very end)
-                        // we want to separate each section of the schedule in which the same stop appears.
-                        order = line.order,
-                        days = line.days
-                    })
-                    .OrderBy(line => line.Key.order)
-                    .Select(grouping => grouping.Aggregate(new List<TimeSpan>(),
-                        (times, time) => { times.Add(time.time); return times; },
-                        times => new
-                        {
-                            route = grouping.Key.route,
-                            days = grouping.Key.days,
-                            stopSchedules = new GoogleStopSchedule(
-                                name: grouping.Key.stop,
-                                times: times.Distinct().OrderBy(time => time).ToList()
-                            )
-                        }));
+            var aggTimesAtStop = joinedEntries
+                .GroupBy(t => new { routeNo = t.trip.RouteId, platformTag = t.stopTime.PlatformTag, stopSequence = t.stopTime.StopSequence, days = t.calendar.DaysOfWeek })
+                .Select(g => g.OrderBy(t => t.stopTime.ArrivalTime)
+                    .Aggregate(new List<TimeSpan>(),
+                        (times, t) => { times.Add(t.stopTime.ArrivalTime); return times; },
+                        times => new { g.Key.routeNo, g.Key.days, stopSchedule = new GoogleStopSchedule(g.Key.platformTag, times) }));
 
-                var routeDaySchedules = routeDayStopSchedules
-                    .GroupBy(line => new { route = line.route, days = line.days })
-                    .Select(grouping => grouping.Aggregate(new
-                    {
-                        route = grouping.Key.route,
-                        daySchedule = new GoogleDaySchedule(
-                            days: grouping.Key.days,
-                            stopSchedules: new List<GoogleStopSchedule>()
-                        )
-                    }, (result, line) => { result.daySchedule.StopSchedules.Add(line.stopSchedules); return result; }));
+            var aggStopsForRoute = aggTimesAtStop
+                .GroupBy(t => new { t.routeNo, t.days })
+                .Select(g => g.Aggregate(new List<GoogleStopSchedule>(),
+                    (list, t) => { list.Add(t.stopSchedule); return list; },
+                    list => new { g.Key.routeNo, g.Key.days, stopSchedules = list }));
 
-                // the aristocrats!
-                IList<GoogleRouteSchedule> routeSchedules = routeDaySchedules
-                    .GroupBy(line => line.route)
-                    .Select(grouping => grouping.Aggregate(new GoogleRouteSchedule(
-                        routeNo: grouping.Key,
-                        days: new List<GoogleDaySchedule>()
-                    ), (result, line) => { result.Days.Add(line.daySchedule); return result; })).ToList();
+            var aggDaysForRoute = aggStopsForRoute
+                .GroupBy(t => t.routeNo)
+                .Select(g => g.Aggregate(new List<GoogleDaySchedule>(),
+                    (list, t) => { list.Add(new GoogleDaySchedule(t.days, t.stopSchedules)); return list; },
+                    list => new GoogleRouteSchedule(g.Key, list)))
+                .ToList();
 
-                if(!routeSchedules.Any(x => x.RouteNo == "C1R"))
-                {
-                    routeSchedules.Add(GetC1RSchedule());
-                }
-                return routeSchedules.ToList();
-            }
-        }
-
-        private static GoogleRouteSchedule GetC1RSchedule()
-        {
-            return new GoogleRouteSchedule(
-                routeNo: "C1R",
-                days: new List<GoogleDaySchedule>{
-                        new GoogleDaySchedule(days: DaysOfWeek.Weekdays,
-                                stopSchedules: new List<GoogleStopSchedule>
-                                {
-                                    new GoogleStopSchedule(
-                                        name: "MonroeAve_S_5thSt",
-                                        times: new List<TimeSpan>
-                                        {
-                                            new TimeSpan(15,35,0),
-                                            new TimeSpan(16,35,0),
-                                            new TimeSpan(17,35,0),
-                                        }
-                                    ),
-                                    new GoogleStopSchedule(
-                                        name: "ArnoldWay_N_26thSt",
-                                        times: new List<TimeSpan>
-                                        {
-                                            new TimeSpan(15,40,0),
-                                            new TimeSpan(16,40,0),
-                                            new TimeSpan(17,40,0),
-                                        }
-                                    ),
-                                    new GoogleStopSchedule(
-                                        name: "WithamHillDr_E_UniversityPl",
-                                        times: new List<TimeSpan>
-                                        {
-                                            new TimeSpan(15,45,0),
-                                            new TimeSpan(16,45,0),
-                                            new TimeSpan(17,45,0),
-                                        }
-                                    ),
-                                    new GoogleStopSchedule(
-                                        name: "WithamHillDr_W_ElmwoodDr",
-                                        times: new List<TimeSpan>
-                                        {
-                                            new TimeSpan(15,50,0),
-                                            new TimeSpan(16,50,0),
-                                            new TimeSpan(17,50,0),
-                                        }
-                                    ),
-                                    new GoogleStopSchedule(
-                                        name: "KingsBlvd_E_MonroeAve",
-                                        times: new List<TimeSpan>
-                                        {
-                                            new TimeSpan(15,55,0),
-                                            new TimeSpan(16,55,0),
-                                            new TimeSpan(17,55,0),
-                                        }
-                                    ),
-                                    new GoogleStopSchedule(
-                                        name: "MonroeAve_S_7thSt",
-                                        times: new List<TimeSpan>
-                                        {
-                                            new TimeSpan(16,0,0),
-                                            new TimeSpan(17,0,0),
-                                            new TimeSpan(18,0,0),
-                                        }
-                                    )
-                                }
-                            )
-                        }
-                    );
+            return aggDaysForRoute;
         }
     }
 }

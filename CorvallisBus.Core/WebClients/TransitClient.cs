@@ -7,6 +7,9 @@ using CorvallisBus.Core.Models.Connexionz;
 using CorvallisBus.Core.Models.GoogleTransit;
 using CorvallisBus.Core.DataAccess;
 using Newtonsoft.Json;
+using System.Diagnostics;
+using System.Net.Http;
+using System.Net;
 
 namespace CorvallisBus.Core.WebClients
 {
@@ -18,7 +21,7 @@ namespace CorvallisBus.Core.WebClients
     /// </summary>
     public class TransitClient : ITransitClient
     {
-        public BusSystemData LoadTransitData()
+        public (BusSystemData data, List<string> errors) LoadTransitData()
         {
             var connexionzPlatforms = ConnexionzClient.LoadPlatforms();
             var connexionzRoutes = ConnexionzClient.LoadRoutes();
@@ -35,18 +38,108 @@ namespace CorvallisBus.Core.WebClients
             var platformTagsLookup = connexionzPlatforms.ToDictionary(p => p.PlatformNo, p => p.PlatformTag);
             var schedule = CreateSchedule(googleData.Schedules, connexionzRoutes, connexionzPlatforms);
 
-            return new BusSystemData(
+            var transitData = new BusSystemData(
                 staticData,
                 schedule,
                 platformTagsLookup);
+
+            var errors = ValidateTransitData(transitData);
+
+            return (transitData, errors);
+        }
+
+        public static List<string> ValidateTransitData(BusSystemData data)
+        {
+            var errors = new List<string>();
+
+            // Validate schedule within each stop
+            foreach (var kvp in data.Schedule)
+            {
+                var (stopId, stopRouteSchedules) = (kvp.Key, kvp.Value);
+                foreach (var routeSchedule in stopRouteSchedules)
+                {
+                    foreach (var routeDaySchedule in routeSchedule.DaySchedules)
+                    {
+                        if (routeDaySchedule.Days == DaysOfWeek.None)
+                        {
+                            errors.Add($"Route {routeSchedule.RouteNo} at stop {stopId} has a day schedule for DaysOfWeek.None.");
+                        }
+
+                        var currentTime = TimeSpan.MinValue;
+                        foreach (var nextTime in routeDaySchedule.Times)
+                        {
+                            if (nextTime <= currentTime)
+                            {
+                                errors.Add($"Route {routeSchedule.RouteNo} at stop {stopId} has an ordering discrepancy in its schedule. Arrival time {currentTime} is followed by {nextTime}");
+                            }
+                            currentTime = nextTime;
+                        }
+                    }
+                }
+            }
+
+            // Validate schedule for each route
+            foreach (var route in data.StaticData.Routes.Values)
+            {
+                var firstStopId = route.Path[0];
+                var firstStopSchedules = data.Schedule[firstStopId].Single(rs => rs.RouteNo == route.RouteNo);
+
+                foreach (var firstStopDaySchedule in firstStopSchedules.DaySchedules)
+                {
+                    for (var arrivalNo = 0; arrivalNo < firstStopDaySchedule.Times.Count; arrivalNo++)
+                    {
+                        // get the i'th arrival for each stop in the path, ensure monotonically increasing
+                        var currentArrivalTime = TimeSpan.MinValue;
+
+                        for (var stopIdx = 0; stopIdx < route.Path.Count; stopIdx++)
+                        {
+                            var stopId = route.Path[stopIdx];
+                            if (stopId == 0)
+                            {
+                                errors.Add($"Route {route.RouteNo} has a missing stop in its path at index {stopIdx}");
+                                continue;
+                            }
+                            else if (stopId < 1000)
+                            {
+                                errors.Add($"Route {route.RouteNo} is using platform tag {stopId} as an ID because it has no stop ID");
+                                continue;
+                            }
+                            else if (!data.Schedule.ContainsKey(stopId))
+                            {
+                                errors.Add($"Route {route.RouteNo} is using stop ID {stopId} which has no schedule");
+                                continue;
+                            }
+
+                            var routeStopDayArrivalTimes = data
+                                .Schedule[stopId]
+                                .Single(rs => rs.RouteNo == route.RouteNo)
+                                .DaySchedules
+                                .Single(ds => ds.Days == firstStopDaySchedule.Days)
+                                .Times;
+
+                            var nextArrivalTime = routeStopDayArrivalTimes[arrivalNo];
+                            if (nextArrivalTime <= currentArrivalTime)
+                            {
+                                Debug.Assert(stopIdx > 0);
+                                errors.Add($"Route {route.RouteNo} has a schedule discrepancy across stops {route.Path[stopIdx - 1]} and {route.Path[stopIdx]}. Arrival time {currentArrivalTime} is followed by {nextArrivalTime}");
+                            }
+
+                            currentArrivalTime = nextArrivalTime;
+                        }
+
+                    }
+                }
+            }
+
+            return errors.Distinct().ToList();
         }
 
         private static bool ShouldAppendDirection(ConnexionzPlatform platform, List<ConnexionzPlatform> platforms)
         {
-            if (platform.Name == "Downtown Transit Center")
+            if (platform.Name == "Downtown Transit Center" || platform.Name == "Downtown Transit Centre")
                 return false;
 
-            bool existsSameNamedStop = platforms.Any(p => p.PlatformNo != platform.PlatformNo && p.Name == platform.Name);
+            bool existsSameNamedStop = platforms.Any(p => p.PlatformNo != platform.PlatformNo && p.CompactName == platform.CompactName);
             return existsSameNamedStop;
         }
 
@@ -65,62 +158,12 @@ namespace CorvallisBus.Core.WebClients
 
         private static List<BusRoute> CreateRoutes(List<GoogleRoute> googleRoutes, List<ConnexionzRoute> connexionzRoutes)
         {
-            var googleRoutesDict = googleRoutes.ToDictionary(gr => gr.ConnexionzName);
+            var googleRoutesDict = googleRoutes.ToDictionary(gr => gr.Name);
             var routes = connexionzRoutes.Where(r => googleRoutesDict.ContainsKey(r.RouteNo));
-            return routes.Select(r => new BusRoute(r, googleRoutesDict)).ToList();
+            return routes.Select(r => BusRoute.Create(r, googleRoutesDict)).ToList();
         }
 
         public async Task<ConnexionzPlatformET?> GetEta(int platformTag) => await ConnexionzClient.GetPlatformEta(platformTag);
-
-        private static TimeSpan RoundToNearestMinute(TimeSpan source)
-        {
-            // there are 10,000 ticks per millisecond, and 1000 milliseconds per second, and 60 seconds per minute
-            const int TICKS_PER_MINUTE = 10000 * 1000 * 60;
-            var subMinutesComponent = source.Ticks % TICKS_PER_MINUTE;
-
-            return subMinutesComponent < TICKS_PER_MINUTE / 2
-                ? source.Subtract(TimeSpan.FromTicks(subMinutesComponent))
-                : source.Add(TimeSpan.FromTicks(TICKS_PER_MINUTE - subMinutesComponent));
-        }
-
-        /// <summary>
-        /// Fabricates a bunch of schedule information for a route on a particular day.
-        /// </summary>
-        private static List<Tuple<int, List<TimeSpan>>> InterpolateSchedule(ConnexionzRoute connexionzRoute, List<GoogleStopSchedule> schedule)
-        {
-            var adherencePoints = connexionzRoute.Path
-                .Select((val, idx) => new { value = val, index = idx })
-                .Where(a => a.value.IsScheduleAdherancePoint)
-                .ToList();
-
-            // some invariants we can rely on:
-            // the first stop is an adherence point.
-            // the last stop is not listed as an adherence point, even though it has a schedule in google.
-            // therefore, we're going to add the last stop in manually so we can use the last schedule and interpolate.
-            adherencePoints.Add(new { value = connexionzRoute.Path.Last(), index = connexionzRoute.Path.Count });
-            
-            var results = new List<Tuple<int, List<TimeSpan>>>();
-            for (int i = 0; i < adherencePoints.Count - 1; i++)
-            {
-                int sectionLength = adherencePoints[i + 1].index - adherencePoints[i].index;
-                var stopsInBetween = connexionzRoute.Path.GetRange(adherencePoints[i].index, sectionLength);
-                
-                var differences = schedule[i].Times.Zip(schedule[i + 1].Times,
-                    (startTime, endTime) => endTime.Subtract(startTime));
-
-                // we're simply going to add an even time span the schedules of consecutive stops.
-                // there doesn't appear to be a more reliable way of estimating than this.
-                var stepSizes = differences.Select(d => d.Ticks / sectionLength);
-                
-                results.AddRange(stopsInBetween.Select(
-                    (val, idx) => Tuple.Create(
-                        val.PlatformId,
-                        schedule[i].Times.Zip(stepSizes, (time, step) => RoundToNearestMinute(time.Add(TimeSpan.FromTicks(step * idx))))
-                                         .ToList())));
-            }
-
-            return results;
-        }
         
         /// <summary>
         /// Creates a bus schedule based on Google Transit data.
@@ -130,10 +173,9 @@ namespace CorvallisBus.Core.WebClients
             List<ConnexionzRoute> connexionzRoutes,
             List<ConnexionzPlatform> connexionzPlatforms)
         {
-            var googleSchedulesDict = googleSchedules.ToDictionary(schedule => schedule.ConnexionzName);
+            var googleSchedulesDict = googleSchedules.ToDictionary(schedule => schedule.RouteNo);
             var routes = connexionzRoutes.Where(r => r.IsActive && googleSchedulesDict.ContainsKey(r.RouteNo));
 
-            // Build all the schedule data for intermediate stops.
             var routeSchedules = routes.Select(r => new
             {
                 routeNo = r.RouteNo,
@@ -141,17 +183,18 @@ namespace CorvallisBus.Core.WebClients
                     d => new
                     {
                         days = d.Days,
-                        stopSchedules = InterpolateSchedule(r, d.StopSchedules)
+                        stopSchedules = d.StopSchedules.Zip(r.Path, (ss, stop) => (stop.PlatformId, ss.Times))
                     })
             });
 
             // Now turn it on its head so it's easy to query from a stop-oriented way.
             var result = connexionzPlatforms.ToDictionary(p => p.PlatformNo,
+                // TODO: change type to List?
                 p => routeSchedules.Select(r => new BusStopRouteSchedule(
                     routeNo: r.routeNo,
                     daySchedules: r.daySchedules.Select(ds => new BusStopRouteDaySchedule(
                         days: ds.days,
-                        times: ds.stopSchedules.FirstOrDefault(ss => ss.Item1 == p.PlatformNo)?.Item2! // will be filtered out
+                        times: ds.stopSchedules.FirstOrDefault(ss => ss.PlatformId == p.PlatformNo || ss.PlatformId == p.PlatformTag).Times
                     ))
                     .Where(ds => ds.Times != null)
                     .ToList()

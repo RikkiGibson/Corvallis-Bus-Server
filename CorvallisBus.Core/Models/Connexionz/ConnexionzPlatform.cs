@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace CorvallisBus.Core.Models.Connexionz
 {
@@ -10,15 +11,18 @@ namespace CorvallisBus.Core.Models.Connexionz
         public ConnexionzPlatform(XElement platform)
         {
             PlatformTag = int.Parse(platform.Attribute("PlatformTag").Value);
-            PlatformNo = int.Parse(platform.Attribute("PlatformNo").Value);
+
+            var platformNoAttr = platform.Attribute("PlatformNo");
+
+            PlatformNo = int.Parse(platformNoAttr.Value);
 
             // Almost all stops except for places like HP and CVHS have this attribute.
             // It's reasonable to default to having those stops point in the positive X axis direction.
-            double bearing = 0.0;
-            double.TryParse(platform.Attribute("BearingToRoad")?.Value, out bearing);
+            double.TryParse(platform.Attribute("BearingToRoad")?.Value, out double bearing);
             BearingToRoad = bearing;
 
             Name = platform.Attribute("Name").Value;
+            CompactName = GetCompactName(Name);
 
             XElement position = platform.Element("Position");
             Lat = double.Parse(position.Attribute("Lat").Value);
@@ -30,6 +34,7 @@ namespace CorvallisBus.Core.Models.Connexionz
             int platformNo,
             double bearingToRoad,
             string name,
+            string compactName,
             double lat,
             double @long)
         {
@@ -37,6 +42,7 @@ namespace CorvallisBus.Core.Models.Connexionz
             PlatformNo = platformNo;
             BearingToRoad = bearingToRoad;
             Name = name;
+            CompactName = compactName;
             Lat = lat;
             Long = @long;
         }
@@ -58,6 +64,31 @@ namespace CorvallisBus.Core.Models.Connexionz
         public double BearingToRoad { get; }
 
         public string Name { get; }
+        
+        public string CompactName { get; }
+
+        private static string GetCompactName(string name)
+        {
+            var compactName = name;
+            compactName = Regex.Replace(input: compactName, pattern: @"\bSouthwest\b", "SW");
+            compactName = Regex.Replace(input: compactName, pattern: @"\bSouthwest\b", "SW");
+            compactName = Regex.Replace(input: compactName, pattern: @"\bNorthwest\b", "NW");
+            compactName = Regex.Replace(input: compactName, pattern: @"\bSoutheast\b", "SE");
+            compactName = Regex.Replace(input: compactName, pattern: @"\bNortheast\b", "NE");
+            compactName = Regex.Replace(input: compactName, pattern: @"\bBoulevard\b", "Blvd");
+            compactName = Regex.Replace(input: compactName, pattern: @"\bBoulevar\b", "Blvd");
+            compactName = Regex.Replace(input: compactName, pattern: @"\bBoulev\b", "Blvd");
+            compactName = Regex.Replace(input: compactName, pattern: @"\bBo\b", "Blvd");
+            compactName = Regex.Replace(input: compactName, pattern: @"\bDrive\b", "Dr");
+            compactName = Regex.Replace(input: compactName, pattern: @"\bDriv\b", "Dr");
+            compactName = Regex.Replace(input: compactName, pattern: @"\bD\b", "Dr");
+            compactName = Regex.Replace(input: compactName, pattern: @"\bStreet\b", "St");
+            compactName = Regex.Replace(input: compactName, pattern: @"\bStre\b", "St");
+            compactName = Regex.Replace(input: compactName, pattern: @"\bAvenue\b", "Ave");
+            compactName = Regex.Replace(input: compactName, pattern: @"\bApartments\b", "Apts");
+
+            return compactName;
+        }
 
         public double Lat { get; }
 

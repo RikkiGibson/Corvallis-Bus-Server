@@ -81,7 +81,7 @@ namespace CorvallisBus.Core.Models
 
         public static string ToScheduleSummary(List<BusArrivalTime> arrivals, DateTimeOffset currentTime)
         {
-            if (arrivals.Count >= 0 && arrivals.Count <= 2)
+            if (arrivals.Count <= 2)
             {
                 return string.Empty;
             }
@@ -96,16 +96,22 @@ namespace CorvallisBus.Core.Models
 
             // Check for whether there's a regular half-hourly or hourly arrival pattern.
             // If not, exit the loop early.
+            bool isTwoHourly = true;
             bool isHourly = true;
             bool isHalfHourly = true;
-            for (int i = 1; i < arrivals.Count - 1 && (isHourly || isHalfHourly); i++)
+            for (int i = 1; i < arrivals.Count - 1 && (isTwoHourly || isHourly || isHalfHourly); i++)
             {
                 int difference = arrivals[i + 1].MinutesFromNow - arrivals[i].MinutesFromNow;
+                isTwoHourly = isTwoHourly && difference >= 110 && difference <= 130;
                 isHourly = isHourly && difference >= 50 && difference <= 70;
                 isHalfHourly = isHalfHourly && difference >= 20 && difference <= 40;
             }
 
-            if (isHourly)
+            if (isTwoHourly)
+            {
+                return "Every 2 hours until " + lastTimeDescription;
+            }
+            else if (isHourly)
             {
                 return "Hourly until " + lastTimeDescription;
             }
