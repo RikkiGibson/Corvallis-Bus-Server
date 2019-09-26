@@ -544,7 +544,10 @@ namespace CorvallisBus.Test
             mockRepo.Setup(repo => repo.GetStaticDataAsync()).Returns(
                 Task.FromResult(
                     new BusStaticData(
-                        routes: new Dictionary<string, BusRoute>(),
+                        routes: new Dictionary<string, BusRoute> {
+                            ["TEST1"] = new BusRoute("TEST1", new List<int> { 12345 }, color: "", url: "", polyline: ""),
+                            ["TEST2"] = new BusRoute("TEST2", new List<int> { 12345 }, color: "", url: "", polyline: "")
+                        },
                         stops: new Dictionary<int, BusStop> {
                             [12345] = new BusStop(0, "", 0, 0, 0, routeNames: new List<string> { "TEST1", "TEST2" })
                         }
