@@ -58,14 +58,6 @@ namespace CorvallisBus.Core.WebClients
             );
         }
 
-        private static IEnumerable<string> ReadLines(StreamReader reader)
-        {
-            while (!reader.EndOfStream)
-            {
-                yield return reader.ReadLine();
-            }
-        }
-
         /// <summary>
         /// Reads a ZipArchive entry as the routes CSV and extracts the route colors and URLs.
         /// </summary>

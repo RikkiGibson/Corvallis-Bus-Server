@@ -81,22 +81,6 @@ namespace CorvallisBus.Core.Models.Connexionz
         {
             var str = new StringBuilder();
 
-            Action<int> encodeDiff = diff =>
-            {
-                int shifted = diff << 1;
-                if (diff < 0)
-                    shifted = ~shifted;
-
-                int rem = shifted;
-                while (rem >= 0x20)
-                {
-                    str.Append((char)((0x20 | (rem & 0x1f)) + 63));
-                    rem >>= 5;
-                }
-
-                str.Append((char)(rem + 63));
-            };
-
             int lastLat = 0;
             int lastLng = 0;
             foreach (var point in points)
@@ -112,6 +96,22 @@ namespace CorvallisBus.Core.Models.Connexionz
             }
 
             return str.ToString();
+
+            void encodeDiff(int diff)
+            {
+                int shifted = diff << 1;
+                if (diff < 0)
+                    shifted = ~shifted;
+
+                int rem = shifted;
+                while (rem >= 0x20)
+                {
+                    str.Append((char)((0x20 | (rem & 0x1f)) + 63));
+                    rem >>= 5;
+                }
+
+                str.Append((char)(rem + 63));
+            }
         }
 
         /// <summary>

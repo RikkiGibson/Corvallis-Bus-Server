@@ -45,8 +45,13 @@ namespace CorvallisBus
 
             var schedule = await schedulesTask;
             var estimates = await estimatesTask;
-            
-            Func<int, Dictionary<string, List<BusArrivalTime>>> makePlatformSchedule = platformNo =>
+
+            var todaySchedule = stopIds.Where(schedule.ContainsKey)
+                                       .ToDictionary(platformNo => platformNo, makePlatformSchedule);
+
+            return todaySchedule;
+
+            Dictionary<string, List<BusArrivalTime>> makePlatformSchedule(int platformNo) =>
                 schedule[platformNo].ToDictionary(routeSchedule => routeSchedule.RouteNo,
                     routeSchedule => InterleaveRouteScheduleAndEstimates(
                         routeSchedule,
@@ -54,11 +59,6 @@ namespace CorvallisBus
                             ? estimates[platformNo]
                             : new Dictionary<string, List<int>>(),
                         currentTime));
-
-            var todaySchedule = stopIds.Where(schedule.ContainsKey)
-                                       .ToDictionary(platformNo => platformNo, makePlatformSchedule);
-
-            return todaySchedule;
         }
 
         private static List<BusArrivalTime> InterleaveRouteScheduleAndEstimates(BusStopRouteSchedule routeSchedule,
@@ -224,9 +224,6 @@ namespace CorvallisBus
         public static async Task<BusArrivalEstimates> GetEtas(ITransitRepository repository, ITransitClient client, IEnumerable<int> stopIds)
         {
             var toPlatformTag = await repository.GetPlatformTagsAsync();
-            
-            Func<int, Task<(int stopId, ConnexionzPlatformET? platformET)>> getEtaIfTagExists =
-                async id => (id, toPlatformTag.TryGetValue(id, out int tag) ? await client.GetEta(tag) : null);
 
             var tasks = stopIds.Select(getEtaIfTagExists);
             var results = await Task.WhenAll(tasks);
@@ -236,6 +233,9 @@ namespace CorvallisBus
                                 ?.ToDictionary(routeEta => routeEta.RouteNo,
                                                routeEta => routeEta.EstimatedArrivalTime)
                        ?? new Dictionary<string, List<int>>());
+
+            async Task<(int stopId, ConnexionzPlatformET? platformET)> getEtaIfTagExists(int id)
+                => (id, toPlatformTag.TryGetValue(id, out int tag) ? await client.GetEta(tag) : null);
         }
 
         /// <summary>

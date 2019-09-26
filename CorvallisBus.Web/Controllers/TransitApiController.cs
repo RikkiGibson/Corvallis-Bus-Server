@@ -17,7 +17,7 @@ namespace CorvallisBus.Controllers
     [Route("api")]
     public class TransitApiController : Controller
     {
-        private static string _destinationTimeZoneId = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+        private static readonly string _destinationTimeZoneId = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
                 ? "Pacific Standard Time"
                 : "America/Los_Angeles";
 
