@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 
 namespace CorvallisBus.Core.WebClients
@@ -35,7 +36,8 @@ namespace CorvallisBus.Core.WebClients
         /// </summary>
         public static GoogleTransitData LoadData()
         {
-            using var archive = new ZipArchive(new MemoryStream(Resources.Google_Transit));
+            var stream = new HttpClient().GetStreamAsync("http://www.corvallistransit.com/rtt/public/utility/gtfs.aspx").Result;
+            using var archive = new ZipArchive(stream);
 
             var routesEntry = archive.GetEntry("routes.txt")
                 ?? throw new FileNotFoundException("The Google Transit archive did not contain routes.txt.");

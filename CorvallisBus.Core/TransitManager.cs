@@ -249,12 +249,12 @@ namespace CorvallisBus
 
             var matchingStopIds = stopIds.Where(staticData.Stops.ContainsKey);
             var arrivalsSummaries = matchingStopIds.ToDictionary(stopId => stopId,
-                stopId => ToRouteArrivalsSummaries(staticData.Stops[stopId].RouteNames, schedule[stopId], currentTime));
+                stopId => ToRouteArrivalsSummaries(staticData.Stops[stopId].RouteNames, schedule[stopId], currentTime, staticData));
             return arrivalsSummaries;
         }
 
         private static List<RouteArrivalsSummary> ToRouteArrivalsSummaries(List<string> routeNames,
-            Dictionary<string, List<BusArrivalTime>> stopArrivals, DateTimeOffset currentTime)
+            Dictionary<string, List<BusArrivalTime>> stopArrivals, DateTimeOffset currentTime, BusStaticData staticData)
         {
             var arrivalsSummaries =
                 routeNames.Select(routeName =>
@@ -263,6 +263,7 @@ namespace CorvallisBus
                           .OrderBy(kvp => kvp.Value.DefaultIfEmpty(ARRIVAL_TIME_SEED).Min())
                           .Select(kvp => new RouteArrivalsSummary(routeName: kvp.Key,
                                 routeArrivalTimes: kvp.Value, currentTime: currentTime))
+                          .Where(ras => staticData.Routes.ContainsKey(ras.RouteName))
                           .ToList();
 
             return arrivalsSummaries;
