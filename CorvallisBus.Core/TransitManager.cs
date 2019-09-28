@@ -66,7 +66,7 @@ namespace CorvallisBus
         {
             var arrivalTimes = Enumerable.Empty<BusArrivalTime>();
 
-            var daySchedule = routeSchedule.DaySchedules.FirstOrDefault(ds => DaysOfWeekUtils.IsToday(ds.Days, currentTime));
+            var daySchedule = routeSchedule.DaySchedules.FirstOrDefault(ds => DaysOfWeekUtils.IsToday(ds.Days, ds.Times.Last(), currentTime));
             if (daySchedule != null)
             {
                 var relativeSchedule = MakeRelativeScheduleWithinCutoff(daySchedule, currentTime);
@@ -90,16 +90,16 @@ namespace CorvallisBus
 
         private static IEnumerable<int> MakeRelativeScheduleWithinCutoff(BusStopRouteDaySchedule daySchedule, DateTimeOffset currentTime)
         {
-            // Is there a better condition for this, i.e. involving a check whether there are 24hr+ time spans in the schedule?
-            var timeOfDay = daySchedule.Days == DaysOfWeek.NightOwl &&
-                currentTime.TimeOfDay.Hours < 4
-                ? currentTime.TimeOfDay.Add(TimeSpan.FromDays(1))
+            var oneDay = TimeSpan.FromDays(1);
+            var latestTime = daySchedule.Times.Last();
+            var timeOfDay = latestTime.Days == 1 && currentTime.TimeOfDay < latestTime - oneDay
+                ? currentTime.TimeOfDay + oneDay
                 : currentTime.TimeOfDay;
 
-            var scheduleCutoff = timeOfDay.Add(TimeSpan.FromMinutes(20));
+            var scheduleCutoff = timeOfDay + TimeSpan.FromMinutes(20);
 
             return daySchedule.Times.Where(ts => ts > scheduleCutoff)
-                .Select(ts => (int)ts.Subtract(timeOfDay).TotalMinutes);
+                .Select(ts => (int)(ts - timeOfDay).TotalMinutes);
         }
 
         /// <summary>

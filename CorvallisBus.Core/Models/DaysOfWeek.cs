@@ -81,15 +81,15 @@ namespace CorvallisBus.Core.Models
         /// <summary>
         /// Returns a value indicating whether the provided DaysOfWeek value is applicable today.
         /// </summary>
-        public static bool IsToday(DaysOfWeek days, DateTimeOffset currentTime)
+        public static bool IsToday(DaysOfWeek days, TimeSpan lastArrivalTime, DateTimeOffset currentTime)
         {
-            // special handling for Night Owl so that its schedule is visible after midnight
-            // i.e., if it's 2AM on Sunday, we still consider "today" to be Saturday.
-            var time = (days == DaysOfWeek.NightOwl)
-                ? currentTime.AddHours(-4)
-                : currentTime;
+            var normalizedArrivalTime = lastArrivalTime.Days == 1 ? lastArrivalTime - TimeSpan.FromDays(1) : lastArrivalTime;
 
-            return (ToDaysOfWeek(time.DayOfWeek) & days) != DaysOfWeek.None;
+            // if the last arrival time is later than the current time, this pushes the "effective day" back by one.
+            // For example Sunday at 1 AM will have an "effective day" of Saturday when looking for the right Night Owl schedule.
+            var effectiveDay = currentTime - normalizedArrivalTime;
+
+            return (ToDaysOfWeek(effectiveDay.DayOfWeek) & days) != DaysOfWeek.None;
         }
     }
 }
