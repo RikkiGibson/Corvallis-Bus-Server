@@ -37,7 +37,14 @@ namespace CorvallisBus.Core.Models
                 .Select(platform => platform.PlatformId)
                 .ToList();
 
-            var url = "https://www.corvallisoregon.gov/cts/page/cts-route-" + routeNo;
+            var routeUrlSuffix = routeNo switch
+            {
+                "NON" => "night-owl-north",
+                "NOSE" => "night-owl-southeast",
+                "NOSW" => "night-owl-southwest",
+                _ => routeNo
+            };
+            var url = "https://www.corvallisoregon.gov/cts/page/cts-route-" + routeUrlSuffix;
 
             return new BusRoute(routeNo, path, googleRoute.Color, url, connectionzRoute.Polyline);
         }
