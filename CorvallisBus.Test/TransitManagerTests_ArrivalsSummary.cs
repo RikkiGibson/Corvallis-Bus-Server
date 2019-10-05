@@ -180,5 +180,67 @@ namespace CorvallisBus.Test
                 Assert.Equal(expected[i].ScheduleSummary, actual[12345][i].ScheduleSummary);
             }
         }
+
+        [Theory]
+        [InlineData(30, 30)]
+        [InlineData(30, 10)]
+        [InlineData(29, 50)]
+        public void TestScheduledTimesNoRoundingErrors(int minute, int second)
+        {
+            // Tuesday
+            DateTimeOffset testTime = new DateTime(year: 2015, month: 10, day: 6, hour: 7, minute, second);
+
+            var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>>
+            {
+                [12345] = new List<BusStopRouteSchedule>
+                {
+                    new BusStopRouteSchedule(
+                        routeNo: "TEST",
+                        daySchedules: new List<BusStopRouteDaySchedule>
+                        {
+                            new BusStopRouteDaySchedule(
+                                days: DaysOfWeek.Weekdays,
+                                times: new List<TimeSpan>
+                                {
+                                    new TimeSpan(hours: 10, minutes: 30, seconds: 15)
+                                }
+                            )
+                        }
+                    )
+                }
+            };
+
+            var mockRepo = new Mock<ITransitRepository>();
+            mockRepo.Setup(repo => repo.GetStaticDataAsync()).Returns(
+                Task.FromResult(
+                    new BusStaticData(
+                        routes: new Dictionary<string, BusRoute> {
+                            ["TEST"] = new BusRoute("TEST", new List<int> { 12345 }, color: "", url: "", polyline: "")
+                        },
+                        stops: new Dictionary<int, BusStop> {
+                            [12345] = new BusStop(0, "", 0, 0, 0, routeNames: new List<string> { "TEST" })
+                        }
+                    )));
+            mockRepo.Setup(repo => repo.GetScheduleAsync()).Returns(Task.FromResult(testSchedule));
+            mockRepo.Setup(repo => repo.GetPlatformTagsAsync()).Returns(Task.FromResult(new Dictionary<int, int> { { 12345, 123 } }));
+
+            var testEstimate = new ConnexionzPlatformET(
+                platformTag: 123,
+                routeEstimatedArrivals: new List<ConnexionzRouteET>());
+
+            var mockClient = new Mock<ITransitClient>();
+            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult<ConnexionzPlatformET?>(testEstimate));
+
+            var expected = new List<RouteArrivalsSummary> {
+                new RouteArrivalsSummary(
+                    routeName: "TEST",
+                    arrivalsSummary: "10:30 AM",
+                    scheduleSummary: ""
+                )
+            };
+
+            var actual = TransitManager.GetArrivalsSummary(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
+            Assert.Equal(expected, actual[12345]);
+        }
     }
 }

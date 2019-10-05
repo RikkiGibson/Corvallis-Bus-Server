@@ -96,6 +96,10 @@ namespace CorvallisBus
                 ? currentTime.TimeOfDay + oneDay
                 : currentTime.TimeOfDay;
 
+            // Truncate any seconds on timeOfDay so that we don't get off-by-one errors
+            // when converting a scheduled time with a seconds component to minutesFromNow and back.
+            timeOfDay -= TimeSpan.FromSeconds(timeOfDay.Seconds);
+
             var scheduleCutoff = timeOfDay + TimeSpan.FromMinutes(20);
 
             return daySchedule.Times.Where(ts => ts > scheduleCutoff)
