@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CorvallisBus.Core.Models
 {
-    public class RouteArrivalsSummary
+    public class RouteArrivalsSummary : IEquatable<RouteArrivalsSummary>
     {
         [JsonProperty("routeName")]
         public string RouteName { get; }
@@ -123,6 +123,28 @@ namespace CorvallisBus.Core.Models
             {
                 return "Last arrival at " + lastTimeDescription;
             }
+        }
+
+        public override bool Equals(object obj) => obj is RouteArrivalsSummary other && Equals(other);
+
+        public bool Equals(RouteArrivalsSummary? other)
+        {
+            if (other is null) { return false; }
+
+            return RouteName == other.RouteName
+                && ArrivalsSummary == other.ArrivalsSummary
+                && ScheduleSummary == other.ScheduleSummary;
+        }
+
+        public override int GetHashCode()
+        {
+            // TODO: System.HashCode.Combine in .NET Core 3
+            return 0;
+        }
+
+        public override string ToString()
+        {
+            return $@"{{ RouteName = ""{RouteName}"", ArrivalsSummary = ""{ArrivalsSummary}"", ScheduleSummary = ""{ScheduleSummary}"" }}";
         }
     }
 }
