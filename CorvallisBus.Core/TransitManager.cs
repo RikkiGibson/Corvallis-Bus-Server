@@ -66,7 +66,7 @@ namespace CorvallisBus
         {
             var arrivalTimes = Enumerable.Empty<BusArrivalTime>();
 
-            var daySchedule = routeSchedule.DaySchedules.FirstOrDefault(ds => DaysOfWeekUtils.IsToday(ds.Days, ds.Times.Last(), currentTime));
+            var daySchedule = routeSchedule.DaySchedules.FirstOrDefault(ds => DaysOfWeekUtils.IsToday(ds.Days, routeSchedule.RouteNo, currentTime));
             if (daySchedule != null)
             {
                 var relativeSchedule = MakeRelativeScheduleWithinCutoff(daySchedule, currentTime);
