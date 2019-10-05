@@ -82,7 +82,12 @@ namespace CorvallisBus.Core.WebClients
             foreach (var route in data.StaticData.Routes.Values)
             {
                 var firstStopId = route.Path[0];
-                var firstStopSchedules = data.Schedule[firstStopId].Single(rs => rs.RouteNo == route.RouteNo);
+                var firstStopSchedules = data.Schedule[firstStopId].FirstOrDefault(rs => rs.RouteNo == route.RouteNo);
+                if (firstStopSchedules == null)
+                {
+                    errors.Add($"Route {route.RouteNo} has no schedule for stop ID {firstStopId}");
+                    continue;
+                }
 
                 foreach (var firstStopDaySchedule in firstStopSchedules.DaySchedules)
                 {
@@ -159,7 +164,7 @@ namespace CorvallisBus.Core.WebClients
         private static List<BusRoute> CreateRoutes(List<GoogleRoute> googleRoutes, List<ConnexionzRoute> connexionzRoutes)
         {
             var googleRoutesDict = googleRoutes.ToDictionary(gr => gr.Name);
-            var routes = connexionzRoutes.Where(r => googleRoutesDict.ContainsKey(r.RouteNo));
+            var routes = connexionzRoutes.Where(r => r.IsActive && googleRoutesDict.ContainsKey(r.RouteNo));
             return routes.Select(r => BusRoute.Create(r, googleRoutesDict)).ToList();
         }
 

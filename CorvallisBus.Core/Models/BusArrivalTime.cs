@@ -40,5 +40,7 @@ namespace CorvallisBus.Core.Models
         
         [JsonProperty("isEstimate")]
         public bool IsEstimate { get; }
+
+        public override string ToString() => $"{{ MinutesFromNow = {MinutesFromNow}, IsEstimate = {IsEstimate} }}";
     }
 }

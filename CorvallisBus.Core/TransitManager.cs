@@ -45,8 +45,13 @@ namespace CorvallisBus
 
             var schedule = await schedulesTask;
             var estimates = await estimatesTask;
-            
-            Func<int, Dictionary<string, List<BusArrivalTime>>> makePlatformSchedule = platformNo =>
+
+            var todaySchedule = stopIds.Where(schedule.ContainsKey)
+                                       .ToDictionary(platformNo => platformNo, makePlatformSchedule);
+
+            return todaySchedule;
+
+            Dictionary<string, List<BusArrivalTime>> makePlatformSchedule(int platformNo) =>
                 schedule[platformNo].ToDictionary(routeSchedule => routeSchedule.RouteNo,
                     routeSchedule => InterleaveRouteScheduleAndEstimates(
                         routeSchedule,
@@ -54,11 +59,6 @@ namespace CorvallisBus
                             ? estimates[platformNo]
                             : new Dictionary<string, List<int>>(),
                         currentTime));
-
-            var todaySchedule = stopIds.Where(schedule.ContainsKey)
-                                       .ToDictionary(platformNo => platformNo, makePlatformSchedule);
-
-            return todaySchedule;
         }
 
         private static List<BusArrivalTime> InterleaveRouteScheduleAndEstimates(BusStopRouteSchedule routeSchedule,
@@ -66,7 +66,7 @@ namespace CorvallisBus
         {
             var arrivalTimes = Enumerable.Empty<BusArrivalTime>();
 
-            var daySchedule = routeSchedule.DaySchedules.FirstOrDefault(ds => DaysOfWeekUtils.IsToday(ds.Days, currentTime));
+            var daySchedule = routeSchedule.DaySchedules.FirstOrDefault(ds => DaysOfWeekUtils.IsToday(ds.Days, ds.Times.Last(), currentTime));
             if (daySchedule != null)
             {
                 var relativeSchedule = MakeRelativeScheduleWithinCutoff(daySchedule, currentTime);
@@ -90,16 +90,16 @@ namespace CorvallisBus
 
         private static IEnumerable<int> MakeRelativeScheduleWithinCutoff(BusStopRouteDaySchedule daySchedule, DateTimeOffset currentTime)
         {
-            // Is there a better condition for this, i.e. involving a check whether there are 24hr+ time spans in the schedule?
-            var timeOfDay = daySchedule.Days == DaysOfWeek.NightOwl &&
-                currentTime.TimeOfDay.Hours < 4
-                ? currentTime.TimeOfDay.Add(TimeSpan.FromDays(1))
+            var oneDay = TimeSpan.FromDays(1);
+            var latestTime = daySchedule.Times.Last();
+            var timeOfDay = latestTime.Days == 1 && currentTime.TimeOfDay < latestTime - oneDay
+                ? currentTime.TimeOfDay + oneDay
                 : currentTime.TimeOfDay;
 
-            var scheduleCutoff = timeOfDay.Add(TimeSpan.FromMinutes(20));
+            var scheduleCutoff = timeOfDay + TimeSpan.FromMinutes(20);
 
             return daySchedule.Times.Where(ts => ts > scheduleCutoff)
-                .Select(ts => (int)ts.Subtract(timeOfDay).TotalMinutes);
+                .Select(ts => (int)(ts - timeOfDay).TotalMinutes);
         }
 
         /// <summary>
@@ -224,9 +224,6 @@ namespace CorvallisBus
         public static async Task<BusArrivalEstimates> GetEtas(ITransitRepository repository, ITransitClient client, IEnumerable<int> stopIds)
         {
             var toPlatformTag = await repository.GetPlatformTagsAsync();
-            
-            Func<int, Task<(int stopId, ConnexionzPlatformET? platformET)>> getEtaIfTagExists =
-                async id => (id, toPlatformTag.TryGetValue(id, out int tag) ? await client.GetEta(tag) : null);
 
             var tasks = stopIds.Select(getEtaIfTagExists);
             var results = await Task.WhenAll(tasks);
@@ -236,6 +233,9 @@ namespace CorvallisBus
                                 ?.ToDictionary(routeEta => routeEta.RouteNo,
                                                routeEta => routeEta.EstimatedArrivalTime)
                        ?? new Dictionary<string, List<int>>());
+
+            async Task<(int stopId, ConnexionzPlatformET? platformET)> getEtaIfTagExists(int id)
+                => (id, toPlatformTag.TryGetValue(id, out int tag) ? await client.GetEta(tag) : null);
         }
 
         /// <summary>
@@ -249,12 +249,12 @@ namespace CorvallisBus
 
             var matchingStopIds = stopIds.Where(staticData.Stops.ContainsKey);
             var arrivalsSummaries = matchingStopIds.ToDictionary(stopId => stopId,
-                stopId => ToRouteArrivalsSummaries(staticData.Stops[stopId].RouteNames, schedule[stopId], currentTime));
+                stopId => ToRouteArrivalsSummaries(staticData.Stops[stopId].RouteNames, schedule[stopId], currentTime, staticData));
             return arrivalsSummaries;
         }
 
         private static List<RouteArrivalsSummary> ToRouteArrivalsSummaries(List<string> routeNames,
-            Dictionary<string, List<BusArrivalTime>> stopArrivals, DateTimeOffset currentTime)
+            Dictionary<string, List<BusArrivalTime>> stopArrivals, DateTimeOffset currentTime, BusStaticData staticData)
         {
             var arrivalsSummaries =
                 routeNames.Select(routeName =>
@@ -263,6 +263,7 @@ namespace CorvallisBus
                           .OrderBy(kvp => kvp.Value.DefaultIfEmpty(ARRIVAL_TIME_SEED).Min())
                           .Select(kvp => new RouteArrivalsSummary(routeName: kvp.Key,
                                 routeArrivalTimes: kvp.Value, currentTime: currentTime))
+                          .Where(ras => staticData.Routes.ContainsKey(ras.RouteName))
                           .ToList();
 
             return arrivalsSummaries;

@@ -1,0 +1,943 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Platforms>
+  <Content Expires="2019-09-26T03:30:00-07:00" />
+  <Platform PlatformTag="363" PlatformNo="14339" Name="CVHS Park &amp; Ride" BearingToRoad="1.0561655e+002">
+    <Position Lat="4.461608600000000e+001" Long="-1.232652700000000e+002" />
+  </Platform>
+  <Platform PlatformTag="73" PlatformNo="11036" Name="Circle &amp; 9th" BearingToRoad="1.7731805e+002" RoadName="NW Circle Blvd">
+    <Position Lat="4.458891487000000e+001" Long="-1.232552497000000e+002" />
+  </Platform>
+  <Platform PlatformTag="388" PlatformNo="11690" Name="Circle &amp; Dale" BearingToRoad="2.8582648e+002">
+    <Position Lat="4.457854400000000e+001" Long="-1.232975020000000e+002" />
+  </Platform>
+  <Platform PlatformTag="182" PlatformNo="10969" Name="Corvallis Clinic" BearingToRoad="1.2708838e+002">
+    <Position Lat="4.460234600000000e+001" Long="-1.232554720000000e+002" />
+  </Platform>
+  <Platform PlatformTag="225" PlatformNo="13573" Name="Crescent Valley High School">
+    <Position Lat="4.461491458000000e+001" Long="-1.232649362000000e+002" />
+  </Platform>
+  <Platform PlatformTag="317" PlatformNo="10312" Name="Downtown Transit Center" BearingToRoad="1.9581078e+001" RoadName="NW Monroe Ave">
+    <Position Lat="4.456490241000000e+001" Long="-1.232633407000000e+002" />
+  </Platform>
+  <Platform PlatformTag="356" PlatformNo="14244" Name="Downtown Transit Center" BearingToRoad="1.9494305e+001" RoadName="Downtown Transit Center">
+    <Position Lat="4.456462800000000e+001" Long="-1.232633210000000e+002" />
+  </Platform>
+  <Platform PlatformTag="358" PlatformNo="14228" Name="Downtown Transit Center" BearingToRoad="1.9494305e+001" RoadName="Downtown Transit Center">
+    <Position Lat="4.456466100000000e+001" Long="-1.232635370000000e+002" />
+  </Platform>
+  <Platform PlatformTag="359" PlatformNo="14271" Name="Downtown Transit Center" BearingToRoad="8.0956490e+001" RoadName="Downtown Transit Center">
+    <Position Lat="4.456475800000000e+001" Long="-1.232637380000000e+002" />
+  </Platform>
+  <Platform PlatformTag="361" PlatformNo="14341" Name="Downtown Transit Center" BearingToRoad="1.8366896e+001" RoadName="Downtown Transit Center">
+    <Position Lat="4.456477000000000e+001" Long="-1.232634590000000e+002" />
+  </Platform>
+  <Platform PlatformTag="418" PlatformNo="14872" Name="Downtown Transit Centre" BearingToRoad="1.8794207e+001">
+    <Position Lat="4.456465025129688e+001" Long="-1.232634284154154e+002" />
+  </Platform>
+  <Platform PlatformTag="419" PlatformNo="14864" Name="Downtown Transit Centre" BearingToRoad="1.8867643e+001">
+    <Position Lat="4.456475188202096e+001" Long="-1.232633685264910e+002" />
+  </Platform>
+  <Platform PlatformTag="105" PlatformNo="10562" Name="Hewlett-Packard">
+    <Position Lat="4.458499775000000e+001" Long="-1.232436766000000e+002" />
+  </Platform>
+  <Platform PlatformTag="69" PlatformNo="11070" Name="NE Circle Blvd &amp; Capri Villa Mobile Home Park" BearingToRoad="3.5825616e+002" RoadName="NE Circle Blvd">
+    <Position Lat="4.458879811000000e+001" Long="-1.232499655000000e+002" />
+  </Platform>
+  <Platform PlatformTag="71" PlatformNo="11058" Name="NE Circle Blvd &amp; NE Belvue St" BearingToRoad="1.7883800e+002" RoadName="NE Circle Blvd">
+    <Position Lat="4.458900964000000e+001" Long="-1.232482902000000e+002" />
+  </Platform>
+  <Platform PlatformTag="72" PlatformNo="11043" Name="NE Circle Blvd &amp; NE Four Acre St" BearingToRoad="1.7862555e+002" RoadName="NE Circle Blvd">
+    <Position Lat="4.458895022000000e+001" Long="-1.232515705000000e+002" />
+  </Platform>
+  <Platform PlatformTag="70" PlatformNo="11062" Name="NE Circle Blvd &amp; NE Jack London St" BearingToRoad="3.5883798e+002" RoadName="NE Circle Blvd">
+    <Position Lat="4.458883401000000e+001" Long="-1.232472245000000e+002" />
+  </Platform>
+  <Platform PlatformTag="253" PlatformNo="10377" Name="NE Conifer Blvd &amp; Meadow Park Mobile Home Park" BearingToRoad="1.6649126e+002" RoadName="NE Conifer Blvd">
+    <Position Lat="4.459991678000000e+001" Long="-1.232449808000000e+002" />
+  </Platform>
+  <Platform PlatformTag="252" PlatformNo="10897" Name="NE Conifer Blvd &amp; NE Cambridge Cir" BearingToRoad="1.0604073e+002" RoadName="NE Conifer Blvd">
+    <Position Lat="4.459829647000000e+001" Long="-1.232461176000000e+002" />
+  </Platform>
+  <Platform PlatformTag="254" PlatformNo="10383" Name="NE Conifer Blvd &amp; NE Canterbury Cir" BearingToRoad="1.8016989e+002" RoadName="NE Conifer Blvd">
+    <Position Lat="4.459995866000000e+001" Long="-1.232413400000000e+002" />
+  </Platform>
+  <Platform PlatformTag="255" PlatformNo="10884" Name="NE Conifer Blvd &amp; NE Dorchester Way" BearingToRoad="1.8655647e+002" RoadName="NE Conifer Blvd">
+    <Position Lat="4.460011610000000e+001" Long="-1.232386010000000e+002" />
+  </Platform>
+  <Platform PlatformTag="256" PlatformNo="10878" Name="NE Conifer Blvd &amp; NE Glacier Way" BearingToRoad="2.2185605e+002" RoadName="NE Conifer Blvd">
+    <Position Lat="4.459940457000000e+001" Long="-1.232349051000000e+002" />
+  </Platform>
+  <Platform PlatformTag="251" PlatformNo="10907" Name="NE Conifer Blvd &amp; Pacific Hwy West" BearingToRoad="1.7777672e+002" RoadName="NE Conifer Blvd">
+    <Position Lat="4.459691364000000e+001" Long="-1.232483994000000e+002" />
+  </Platform>
+  <Platform PlatformTag="208" PlatformNo="13064" Name="NE Conser St" BearingToRoad="2.8326202e+002" RoadName="NE Conser St">
+    <Position Lat="4.459627932000000e+001" Long="-1.232368187000000e+002" />
+  </Platform>
+  <Platform PlatformTag="209" PlatformNo="13732" Name="NE Conser St &amp; NE Burke Pl" BearingToRoad="3.1925848e+002" RoadName="NE Conser St">
+    <Position Lat="4.459723874000000e+001" Long="-1.232344365000000e+002" />
+  </Platform>
+  <Platform PlatformTag="206" PlatformNo="13086" Name="NE Conser St &amp; NE Jasper St" BearingToRoad="1.6889687e-001" RoadName="NE Conser St">
+    <Position Lat="4.459306523000000e+001" Long="-1.232402159000000e+002" />
+  </Platform>
+  <Platform PlatformTag="207" PlatformNo="13072" Name="NE Conser St &amp; NE Kirsten Pl" BearingToRoad="2.9673947e+002" RoadName="NE Conser St">
+    <Position Lat="4.459444124000000e+001" Long="-1.232373980000000e+002" />
+  </Platform>
+  <Platform PlatformTag="205" PlatformNo="13093" Name="NE Conser St &amp; NE Seavy Ave" BearingToRoad="2.5570139e+002" RoadName="NE Conser St">
+    <Position Lat="4.459187961000000e+001" Long="-1.232421298000000e+002" />
+  </Platform>
+  <Platform PlatformTag="48" PlatformNo="10464" Name="NE Walnut Blvd &amp; NE Conser St" BearingToRoad="3.7526649e+001" RoadName="NE Walnut Blvd">
+    <Position Lat="4.459142507000000e+001" Long="-1.232430117000000e+002" />
+  </Platform>
+  <Platform PlatformTag="47" PlatformNo="10472" Name="NE Walnut Blvd &amp; NE Jack London St" BearingToRoad="1.7448742e+001" RoadName="NE Walnut Blvd">
+    <Position Lat="4.459301324000000e+001" Long="-1.232465407000000e+002" />
+  </Platform>
+  <Platform PlatformTag="212" PlatformNo="13709" Name="NW 10th St &amp; NW Beca Ave" BearingToRoad="2.9305200e+002" RoadName="NW 10th St">
+    <Position Lat="4.457735006000000e+001" Long="-1.232625580000000e+002" />
+  </Platform>
+  <Platform PlatformTag="213" PlatformNo="13692" Name="NW 10th St &amp; NW Beca Ave" BearingToRoad="9.0184265e+001" RoadName="NW 10th St">
+    <Position Lat="4.457797801000000e+001" Long="-1.232626315000000e+002" />
+  </Platform>
+  <Platform PlatformTag="211" PlatformNo="13713" Name="NW 10th St &amp; NW Buchanan Ave" BearingToRoad="2.9305200e+002" RoadName="NW 10th St">
+    <Position Lat="4.457605234000000e+001" Long="-1.232633040000000e+002" />
+  </Platform>
+  <Platform PlatformTag="214" PlatformNo="13685" Name="NW 10th St &amp; NW Grant Ave" BearingToRoad="2.6959082e+002" RoadName="NW 10th St">
+    <Position Lat="4.457920363000000e+001" Long="-1.232624924000000e+002" />
+  </Platform>
+  <Platform PlatformTag="86" PlatformNo="12630" Name="NW 29th St &amp; NW Circle Blvd" BearingToRoad="9.0198723e+001" RoadName="NW 29th St">
+    <Position Lat="4.458616562800000e+001" Long="-1.232832187760000e+002" />
+  </Platform>
+  <Platform PlatformTag="91" PlatformNo="12598" Name="NW 29th St &amp; NW Fillmore Ave" BearingToRoad="9.2447830e+001" RoadName="NW 29th St">
+    <Position Lat="4.457535013000000e+001" Long="-1.232833373000000e+002" />
+  </Platform>
+  <Platform PlatformTag="98" PlatformNo="12676" Name="NW 29th St &amp; NW Fillmore Ave" BearingToRoad="2.7280539e+002" RoadName="NW 29th St">
+    <Position Lat="4.457578007000000e+001" Long="-1.232831912000000e+002" />
+  </Platform>
+  <Platform PlatformTag="87" PlatformNo="12624" Name="NW 29th St &amp; NW Garfield Ave" BearingToRoad="8.9908295e+001" RoadName="NW 29th St">
+    <Position Lat="4.458279243000000e+001" Long="-1.232831962000000e+002" />
+  </Platform>
+  <Platform PlatformTag="101" PlatformNo="12546" Name="NW 29th St &amp; NW Garfield Ave" BearingToRoad="2.6990625e+002" RoadName="NW 29th St">
+    <Position Lat="4.458337453000000e+001" Long="-1.232830310000000e+002" />
+  </Platform>
+  <Platform PlatformTag="89" PlatformNo="12611" Name="NW 29th St &amp; NW Grant Ave" BearingToRoad="9.0198669e+001" RoadName="NW 29th St">
+    <Position Lat="4.457899382300000e+001" Long="-1.232831544380000e+002" />
+  </Platform>
+  <Platform PlatformTag="99" PlatformNo="12567" Name="NW 29th St &amp; NW Grant Ave" BearingToRoad="2.7019867e+002" RoadName="NW 29th St">
+    <Position Lat="4.457905183500000e+001" Long="-1.232829929330000e+002" />
+  </Platform>
+  <Platform PlatformTag="90" PlatformNo="12607" Name="NW 29th St &amp; NW Lincoln Ave" BearingToRoad="9.2788780e+001" RoadName="NW 29th St">
+    <Position Lat="4.457728129000000e+001" Long="-1.232832173000000e+002" />
+  </Platform>
+  <Platform PlatformTag="100" PlatformNo="12551" Name="NW 29th St &amp; NW Mulkey Ave" BearingToRoad="2.6984262e+002" RoadName="NW 29th St">
+    <Position Lat="4.458095269000000e+001" Long="-1.232830133000000e+002" />
+  </Platform>
+  <Platform PlatformTag="92" PlatformNo="12579" Name="NW 29th St &amp; NW Tyler Ave" BearingToRoad="9.2287537e+001" RoadName="NW 29th St">
+    <Position Lat="4.457241032000000e+001" Long="-1.232834950000000e+002" />
+  </Platform>
+  <Platform PlatformTag="97" PlatformNo="12682" Name="NW 29th St &amp; NW Tyler Ave" BearingToRoad="2.7233093e+002" RoadName="NW 29th St">
+    <Position Lat="4.457320261000000e+001" Long="-1.232833238000000e+002" />
+  </Platform>
+  <Platform PlatformTag="242" PlatformNo="13404" Name="NW 2nd St &amp; NW Monroe Ave" BearingToRoad="1.1078209e+002" RoadName="NW 2nd St">
+    <Position Lat="4.456421502000000e+001" Long="-1.232598890000000e+002" />
+  </Platform>
+  <Platform PlatformTag="283" PlatformNo="12505" Name="NW 33rd St &amp; NW Harrison Blvd" BearingToRoad="8.9374664e+001" RoadName="NW 33rd St">
+    <Position Lat="4.457176244000000e+001" Long="-1.232878018000000e+002" />
+  </Platform>
+  <Platform PlatformTag="115" PlatformNo="12800" Name="NW 5th St &amp; NW Buchanan Ave" BearingToRoad="1.0771905e+002" RoadName="NW 5th St">
+    <Position Lat="4.457309906000000e+001" Long="-1.232589450000000e+002" />
+  </Platform>
+  <Platform PlatformTag="210" PlatformNo="13721" Name="NW 5th St &amp; NW Buchanan Ave" BearingToRoad="2.8771906e+002" RoadName="NW 5th St">
+    <Position Lat="4.457267875000000e+001" Long="-1.232589605000000e+002" />
+  </Platform>
+  <Platform PlatformTag="118" PlatformNo="12844" Name="NW 5th St &amp; NW Harrison Blvd" BearingToRoad="2.9057458e+002" RoadName="NW 5th St">
+    <Position Lat="4.456816663000000e+001" Long="-1.232612743000000e+002" />
+  </Platform>
+  <Platform PlatformTag="119" PlatformNo="12837" Name="NW 5th St &amp; NW Harrison Blvd" BearingToRoad="1.1057458e+002" RoadName="NW 5th St">
+    <Position Lat="4.456825292000000e+001" Long="-1.232613753000000e+002" />
+  </Platform>
+  <Platform PlatformTag="117" PlatformNo="12828" Name="NW 5th St &amp; NW Polk Ave" BearingToRoad="2.9033392e+002" RoadName="NW 5th St">
+    <Position Lat="4.457007575000000e+001" Long="-1.232602789000000e+002" />
+  </Platform>
+  <Platform PlatformTag="10" PlatformNo="10694" Name="NW 9th St &amp; NW Beca Ave" BearingToRoad="1.1123218e+002" RoadName="NW 9th St">
+    <Position Lat="4.457850706000000e+001" Long="-1.232607407000000e+002" />
+  </Platform>
+  <Platform PlatformTag="11" PlatformNo="10706" Name="NW 9th St &amp; NW Buchanan Ave" BearingToRoad="1.1208715e+002" RoadName="NW 9th St">
+    <Position Lat="4.457499568000000e+001" Long="-1.232626824000000e+002" />
+  </Platform>
+  <Platform PlatformTag="247" PlatformNo="10396" Name="NW 9th St &amp; NW Circle Blvd" BearingToRoad="2.9216071e+002" RoadName="NW 9th St">
+    <Position Lat="4.458912189000000e+001" Long="-1.232545952000000e+002" />
+  </Platform>
+  <Platform PlatformTag="19" PlatformNo="10781" Name="NW 9th St &amp; NW Cornell Ave" BearingToRoad="2.9171481e+002" RoadName="NW 9th St">
+    <Position Lat="4.457681448000000e+001" Long="-1.232614094000000e+002" />
+  </Platform>
+  <Platform PlatformTag="16" PlatformNo="10752" Name="NW 9th St &amp; NW Fremont Ave" BearingToRoad="2.9216739e+002" RoadName="NW 9th St">
+    <Position Lat="4.457170194000000e+001" Long="-1.232642512000000e+002" />
+  </Platform>
+  <Platform PlatformTag="260" PlatformNo="10417" Name="NW 9th St &amp; NW Garfield Ave" BearingToRoad="2.9121338e+002" RoadName="NW 9th St">
+    <Position Lat="4.458335103000000e+001" Long="-1.232578052000000e+002" />
+  </Platform>
+  <Platform PlatformTag="261" PlatformNo="10673" Name="NW 9th St &amp; NW Garfield Ave" BearingToRoad="1.1186269e+002" RoadName="NW 9th St">
+    <Position Lat="4.458257791400000e+001" Long="-1.232584592940000e+002" />
+  </Platform>
+  <Platform PlatformTag="264" PlatformNo="10438" Name="NW 9th St &amp; NW Grant Ave" BearingToRoad="2.9171497e+002" RoadName="NW 9th St">
+    <Position Lat="4.457991362000000e+001" Long="-1.232596927000000e+002" />
+  </Platform>
+  <Platform PlatformTag="8" PlatformNo="11015" Name="NW 9th St &amp; NW Hobart Ave" BearingToRoad="1.1184848e+002" RoadName="NW 9th St">
+    <Position Lat="4.458607273000000e+001" Long="-1.232565698000000e+002" />
+  </Platform>
+  <Platform PlatformTag="5" PlatformNo="10976" Name="NW 9th St &amp; NW Maxine Ave" BearingToRoad="1.1256165e+002" RoadName="NW 9th St">
+    <Position Lat="4.459746423000000e+001" Long="-1.232501764000000e+002" />
+  </Platform>
+  <Platform PlatformTag="250" PlatformNo="10911" Name="NW 9th St &amp; NW Maxine Ave" BearingToRoad="2.9256165e+002" RoadName="NW 9th St">
+    <Position Lat="4.459756945000000e+001" Long="-1.232499313000000e+002" />
+  </Platform>
+  <Platform PlatformTag="26" PlatformNo="10982" Name="NW 9th St &amp; NW Ponderosa Ave" BearingToRoad="1.1283991e+002" RoadName="NW 9th St">
+    <Position Lat="4.459611026000000e+001" Long="-1.232509379000000e+002" />
+  </Platform>
+  <Platform PlatformTag="17" PlatformNo="10768" Name="NW 9th St &amp; NW Reiman St" BearingToRoad="2.9175992e+002" RoadName="NW 9th St">
+    <Position Lat="4.457320197000000e+001" Long="-1.232633692000000e+002" />
+  </Platform>
+  <Platform PlatformTag="266" PlatformNo="10455" Name="NW 9th St &amp; NW Reiman St" BearingToRoad="1.1175991e+002" RoadName="NW 9th St">
+    <Position Lat="4.457325742000000e+001" Long="-1.232636448000000e+002" />
+  </Platform>
+  <Platform PlatformTag="6" PlatformNo="10995" Name="NW 9th St &amp; NW Sequoia Ave" BearingToRoad="1.1190614e+002" RoadName="NW 9th St">
+    <Position Lat="4.459097041000000e+001" Long="-1.232538280000000e+002" />
+  </Platform>
+  <Platform PlatformTag="20" PlatformNo="10799" Name="NW 9th St &amp; NW Sequoia Ave" BearingToRoad="2.9165308e+002" RoadName="NW 9th St">
+    <Position Lat="4.459155177000000e+001" Long="-1.232532297000000e+002" />
+  </Platform>
+  <Platform PlatformTag="248" PlatformNo="10401" Name="NW 9th St &amp; NW Spruce Ave" BearingToRoad="2.9184848e+002" RoadName="NW 9th St">
+    <Position Lat="4.458633758000000e+001" Long="-1.232561547000000e+002" />
+  </Platform>
+  <Platform PlatformTag="12" PlatformNo="10710" Name="NW 9th St &amp; NW Van Buren Ave" BearingToRoad="1.1155709e+002" RoadName="NW 9th St">
+    <Position Lat="4.456768472000000e+001" Long="-1.232665180000000e+002" />
+  </Platform>
+  <Platform PlatformTag="21" PlatformNo="10809" Name="NW 9th St &amp; NW Walnut Blvd" BearingToRoad="1.1213013e+002" RoadName="NW 9th St">
+    <Position Lat="4.459368778000000e+001" Long="-1.232523294000000e+002" />
+  </Platform>
+  <Platform PlatformTag="249" PlatformNo="10365" Name="NW 9th St &amp; NW Walnut Blvd" BearingToRoad="2.9124457e+002" RoadName="NW 9th St">
+    <Position Lat="4.459442912000000e+001" Long="-1.232516435000000e+002" />
+  </Platform>
+  <Platform PlatformTag="7" PlatformNo="11004" Name="NW 9th St and Circle Blvd" BearingToRoad="1.1255502e+002" RoadName="NW 9th St">
+    <Position Lat="4.458831593000000e+001" Long="-1.232553161000000e+002" />
+  </Platform>
+  <Platform PlatformTag="279" PlatformNo="12412" Name="NW Arnold Way &amp; NW 26th St" BearingToRoad="2.3060735e+002" RoadName="NW Arnold Way">
+    <Position Lat="4.456935610000000e+001" Long="-1.232803743000000e+002" />
+  </Platform>
+  <Platform PlatformTag="280" PlatformNo="12408" Name="NW Arnold Way &amp; NW Short Ave" BearingToRoad="2.3037166e+002" RoadName="NW Arnold Way">
+    <Position Lat="4.457095786000000e+001" Long="-1.232823536000000e+002" />
+  </Platform>
+  <Platform PlatformTag="281" PlatformNo="12393" Name="NW Arnold Way &amp; NW Van Buren Ave" BearingToRoad="5.0371658e+001" RoadName="NW Arnold Way">
+    <Position Lat="4.457094082000000e+001" Long="-1.232824648000000e+002" />
+  </Platform>
+  <Platform PlatformTag="113" PlatformNo="12788" Name="NW Buchanan Ave &amp; NW 9th St" BearingToRoad="1.6760601e+001" RoadName="NW Buchanan Ave">
+    <Position Lat="4.457528601000000e+001" Long="-1.232615555000000e+002" />
+  </Platform>
+  <Platform PlatformTag="114" PlatformNo="12790" Name="NW Buchanan Ave &amp; NW 9th St" BearingToRoad="2.0118367e+002" RoadName="NW Buchanan Ave">
+    <Position Lat="4.457518731000000e+001" Long="-1.232604863000000e+002" />
+  </Platform>
+  <Platform PlatformTag="68" PlatformNo="11164" Name="NW Circle Blvd" BearingToRoad="3.5727966e+002" RoadName="NW Circle Blvd">
+    <Position Lat="4.458870887000000e+001" Long="-1.232562980000000e+002" />
+  </Platform>
+  <Platform PlatformTag="75" PlatformNo="11155" Name="NW Circle Blvd &amp; NW 11th St" BearingToRoad="1.7855995e+002" RoadName="NW Circle Blvd">
+    <Position Lat="4.458881150000000e+001" Long="-1.232645574000000e+002" />
+  </Platform>
+  <Platform PlatformTag="85" PlatformNo="12648" Name="NW Circle Blvd &amp; NW 11th St" BearingToRoad="3.5855994e+002" RoadName="NW Circle Blvd">
+    <Position Lat="4.458864625000000e+001" Long="-1.232639239000000e+002" />
+  </Platform>
+  <Platform PlatformTag="76" PlatformNo="11140" Name="NW Circle Blvd &amp; NW 13th St" BearingToRoad="1.7878159e+002" RoadName="NW Circle Blvd">
+    <Position Lat="4.458876130000000e+001" Long="-1.232675503000000e+002" />
+  </Platform>
+  <Platform PlatformTag="77" PlatformNo="11138" Name="NW Circle Blvd &amp; NW 17th St" BearingToRoad="1.3883609e+002" RoadName="NW Circle Blvd">
+    <Position Lat="4.458750820000000e+001" Long="-1.232727596000000e+002" />
+  </Platform>
+  <Platform PlatformTag="83" PlatformNo="12669" Name="NW Circle Blvd &amp; NW 17th St" BearingToRoad="3.2278320e+002" RoadName="NW Circle Blvd">
+    <Position Lat="4.458781128000000e+001" Long="-1.232718717000000e+002" />
+  </Platform>
+  <Platform PlatformTag="80" PlatformNo="11101" Name="NW Circle Blvd &amp; NW 29th St" BearingToRoad="1.0248817e+000" RoadName="NW Circle Blvd">
+    <Position Lat="4.458633964000000e+001" Long="-1.232827501000000e+002" />
+  </Platform>
+  <Platform PlatformTag="84" PlatformNo="12653" Name="NW Circle Blvd &amp; NW Garryanna St" BearingToRoad="3.5794186e+002" RoadName="NW Circle Blvd">
+    <Position Lat="4.458858094000000e+001" Long="-1.232690124000000e+002" />
+  </Platform>
+  <Platform PlatformTag="66" PlatformNo="11186" Name="NW Circle Blvd &amp; NW Highland Dr" BearingToRoad="3.5872662e+002" RoadName="NW Circle Blvd">
+    <Position Lat="4.458866986000000e+001" Long="-1.232620969000000e+002" />
+  </Platform>
+  <Platform PlatformTag="67" PlatformNo="11172" Name="NW Circle Blvd &amp; NW Janssen St" BearingToRoad="3.5727966e+002" RoadName="NW Circle Blvd">
+    <Position Lat="4.458863434000000e+001" Long="-1.232585099000000e+002" />
+  </Platform>
+  <Platform PlatformTag="74" PlatformNo="11027" Name="NW Circle Blvd &amp; NW Janssen St" BearingToRoad="1.7727968e+002" RoadName="NW Circle Blvd">
+    <Position Lat="4.458879126000000e+001" Long="-1.232589581000000e+002" />
+  </Platform>
+  <Platform PlatformTag="82" PlatformNo="11089" Name="NW Circle Blvd &amp; NW Kings Blvd" BearingToRoad="1.9327782e-001" RoadName="NW Circle Blvd">
+    <Position Lat="4.458626111000000e+001" Long="-1.232753814000000e+002" />
+  </Platform>
+  <Platform PlatformTag="81" PlatformNo="11091" Name="NW Circle Blvd &amp; NW Pendleton Pl" BearingToRoad="1.2379299e+000" RoadName="NW Circle Blvd">
+    <Position Lat="4.458630443000000e+001" Long="-1.232796314000000e+002" />
+  </Platform>
+  <Platform PlatformTag="176" PlatformNo="13375" Name="NW Elks Dr &amp; NW Coronado St" BearingToRoad="3.5921265e+002" RoadName="NW Elks Dr">
+    <Position Lat="4.460131272000000e+001" Long="-1.232545926000000e+002" />
+  </Platform>
+  <Platform PlatformTag="181" PlatformNo="13310" Name="NW Elks Dr &amp; NW Samaritan Dr" BearingToRoad="7.4274526e+000" RoadName="NW Elks Dr">
+    <Position Lat="4.460086068000000e+001" Long="-1.232504514000000e+002" />
+  </Platform>
+  <Platform PlatformTag="204" PlatformNo="13103" Name="NW Forestgreen Ave &amp; NW 17th St" BearingToRoad="4.6070213e+001" RoadName="NW Forestgreen Ave">
+    <Position Lat="4.459007277000000e+001" Long="-1.232727631000000e+002" />
+  </Platform>
+  <Platform PlatformTag="216" PlatformNo="13663" Name="NW Garfield Ave &amp; NW 9th St" BearingToRoad="3.5968484e+002" RoadName="NW Garfield Ave">
+    <Position Lat="4.458308602000000e+001" Long="-1.232597406000000e+002" />
+  </Platform>
+  <Platform PlatformTag="215" PlatformNo="13671" Name="NW Garfield Ave &amp; NW Highland Dr" BearingToRoad="3.5957648e+002" RoadName="NW Garfield Ave">
+    <Position Lat="4.458307091000000e+001" Long="-1.232621923000000e+002" />
+  </Platform>
+  <Platform PlatformTag="221" PlatformNo="13967" Name="NW Grant Ave &amp; NW 23rd St" BearingToRoad="8.3678657e-001" RoadName="Northwest Grant Avenue">
+    <Position Lat="4.457853500000000e+001" Long="-1.232763770000000e+002" />
+  </Platform>
+  <Platform PlatformTag="223" PlatformNo="13594" Name="NW Grant Ave &amp; NW 29th St" BearingToRoad="8.8417602e-001" RoadName="Northwest Grant Avenue">
+    <Position Lat="4.457863100000000e+001" Long="-1.232824790000000e+002" />
+  </Platform>
+  <Platform PlatformTag="224" PlatformNo="13784" Name="NW Grant Ave &amp; NW Alta Vista Dr" BearingToRoad="2.0263690e-001" RoadName="Northwest Grant Avenue">
+    <Position Lat="4.457869700000000e+001" Long="-1.232886000000000e+002" />
+  </Platform>
+  <Platform PlatformTag="239" PlatformNo="13436" Name="NW Harrison Blvd &amp; NW 21st St" BearingToRoad="1.0189141e+001" RoadName="NW Harrison Blvd">
+    <Position Lat="4.457139873000000e+001" Long="-1.232762491000000e+002" />
+  </Platform>
+  <Platform PlatformTag="238" PlatformNo="13443" Name="NW Harrison Blvd &amp; NW 25th St" BearingToRoad="9.7251034e+000" RoadName="NW Harrison Blvd">
+    <Position Lat="4.457168337000000e+001" Long="-1.232786128000000e+002" />
+  </Platform>
+  <Platform PlatformTag="351" PlatformNo="14356" Name="NW Harrison Blvd &amp; NW 27th St" BearingToRoad="3.5949811e+002" RoadName="NW Harrison Blvd">
+    <Position Lat="4.457173279000000e+001" Long="-1.232818140000000e+002" />
+  </Platform>
+  <Platform PlatformTag="282" PlatformNo="12386" Name="NW Harrison Blvd &amp; NW 30th St" BearingToRoad="1.8019945e+002" RoadName="NW Harrison Blvd">
+    <Position Lat="4.457182299000000e+001" Long="-1.232842967000000e+002" />
+  </Platform>
+  <Platform PlatformTag="308" PlatformNo="10233" Name="NW Harrison Blvd &amp; NW 31st St" BearingToRoad="3.5937393e+002" RoadName="NW Harrison Blvd">
+    <Position Lat="4.457169902000000e+001" Long="-1.232855200000000e+002" />
+  </Platform>
+  <Platform PlatformTag="307" PlatformNo="10222" Name="NW Harrison Blvd &amp; NW 33rd St" BearingToRoad="3.5938376e+002" RoadName="NW Harrison Blvd">
+    <Position Lat="4.457170232000000e+001" Long="-1.232874822000000e+002" />
+  </Platform>
+  <Platform PlatformTag="306" PlatformNo="10214" Name="NW Harrison Blvd &amp; NW 34th St" BearingToRoad="4.4142275e+000" RoadName="NW Harrison Blvd">
+    <Position Lat="4.457168123000000e+001" Long="-1.232892082000000e+002" />
+  </Platform>
+  <Platform PlatformTag="353" PlatformNo="12496" Name="NW Harrison Blvd &amp; NW 35th St" BearingToRoad="1.8441423e+002" RoadName="NW Harrison Blvd">
+    <Position Lat="4.457175200000000e+001" Long="-1.232891640000000e+002" />
+  </Platform>
+  <Platform PlatformTag="284" PlatformNo="12483" Name="NW Harrison Blvd &amp; NW 36th St" BearingToRoad="1.8133420e+002" RoadName="NW Harrison Blvd">
+    <Position Lat="4.457181054000000e+001" Long="-1.232914071000000e+002" />
+  </Platform>
+  <Platform PlatformTag="285" PlatformNo="10003" Name="NW Harrison Blvd &amp; NW Witham Dr" BearingToRoad="1.7874979e+002" RoadName="NW Harrison Blvd">
+    <Position Lat="4.457182854000000e+001" Long="-1.232948305000000e+002" />
+  </Platform>
+  <Platform PlatformTag="56" PlatformNo="11281" Name="NW Highland Dr &amp; NW Angelica Dr" BearingToRoad="9.0184357e+001" RoadName="NW Highland Dr">
+    <Position Lat="4.459495080000000e+001" Long="-1.232626934000000e+002" />
+  </Platform>
+  <Platform PlatformTag="53" PlatformNo="11313" Name="NW Highland Dr &amp; NW Anjni Cir" BearingToRoad="2.6886401e+002" RoadName="NW Highland Dr">
+    <Position Lat="4.459590761000000e+001" Long="-1.232625082000000e+002" />
+  </Platform>
+  <Platform PlatformTag="49" PlatformNo="11350" Name="NW Highland Dr &amp; NW Circle Blvd" BearingToRoad="2.6902298e+002" RoadName="NW Highland Dr">
+    <Position Lat="4.458904974000000e+001" Long="-1.232624777000000e+002" />
+  </Platform>
+  <Platform PlatformTag="60" PlatformNo="11247" Name="NW Highland Dr &amp; NW Cleveland Ave" BearingToRoad="9.0332108e+001" RoadName="NW Highland Dr">
+    <Position Lat="4.458561094000000e+001" Long="-1.232626544000000e+002" />
+  </Platform>
+  <Platform PlatformTag="64" PlatformNo="11206" Name="NW Highland Dr &amp; NW Cleveland Ave" BearingToRoad="2.6963474e+002" RoadName="NW Highland Dr">
+    <Position Lat="4.458609077000000e+001" Long="-1.232624824000000e+002" />
+  </Platform>
+  <Platform PlatformTag="63" PlatformNo="11210" Name="NW Highland Dr &amp; NW Garfield Ave" BearingToRoad="2.7033212e+002" RoadName="NW Highland Dr">
+    <Position Lat="4.458340174000000e+001" Long="-1.232624729000000e+002" />
+  </Platform>
+  <Platform PlatformTag="61" PlatformNo="11234" Name="NW Highland Dr &amp; NW Hayes Ave" BearingToRoad="9.0184288e+001" RoadName="NW Highland Dr">
+    <Position Lat="4.458162130300000e+001" Long="-1.232626482010000e+002" />
+  </Platform>
+  <Platform PlatformTag="62" PlatformNo="11223" Name="NW Highland Dr &amp; NW Hayes Ave" BearingToRoad="2.7018430e+002" RoadName="NW Highland Dr">
+    <Position Lat="4.458175449300000e+001" Long="-1.232624755950000e+002" />
+  </Platform>
+  <Platform PlatformTag="55" PlatformNo="11299" Name="NW Highland Dr &amp; NW Highland Dell Dr" BearingToRoad="5.6867733e+001" RoadName="NW Highland Dr">
+    <Position Lat="4.460042077000000e+001" Long="-1.232628949000000e+002" />
+  </Platform>
+  <Platform PlatformTag="54" PlatformNo="11309" Name="NW Highland Dr &amp; NW Meadow Ridge Pl" BearingToRoad="2.3686774e+002" RoadName="NW Highland Dr">
+    <Position Lat="4.460044119000000e+001" Long="-1.232626793000000e+002" />
+  </Platform>
+  <Platform PlatformTag="51" PlatformNo="11332" Name="NW Highland Dr &amp; NW Oak Ave" BearingToRoad="2.7039215e+002" RoadName="NW Highland Dr">
+    <Position Lat="4.459277019000000e+001" Long="-1.232624802000000e+002" />
+  </Platform>
+  <Platform PlatformTag="50" PlatformNo="11345" Name="NW Highland Dr &amp; NW Sequoia Ave" BearingToRoad="2.7039215e+002" RoadName="NW Highland Dr">
+    <Position Lat="4.459126904000000e+001" Long="-1.232624770000000e+002" />
+  </Platform>
+  <Platform PlatformTag="59" PlatformNo="11252" Name="NW Highland Dr &amp; NW Spruce Ave" BearingToRoad="8.9634720e+001" RoadName="NW Highland Dr">
+    <Position Lat="4.458701307000000e+001" Long="-1.232626508000000e+002" />
+  </Platform>
+  <Platform PlatformTag="65" PlatformNo="11193" Name="NW Highland Dr &amp; NW Spruce Ave" BearingToRoad="2.7078201e+002" RoadName="NW Highland Dr">
+    <Position Lat="4.458765007000000e+001" Long="-1.232624855000000e+002" />
+  </Platform>
+  <Platform PlatformTag="58" PlatformNo="11268" Name="NW Highland Dr &amp; NW Sycamore Ave" BearingToRoad="8.9022972e+001" RoadName="NW Highland Dr">
+    <Position Lat="4.458957278000000e+001" Long="-1.232626578000000e+002" />
+  </Platform>
+  <Platform PlatformTag="52" PlatformNo="11321" Name="NW Highland Dr &amp; NW Walnut Blvd" BearingToRoad="2.7018436e+002" RoadName="NW Highland Dr">
+    <Position Lat="4.459408894000000e+001" Long="-1.232625029000000e+002" />
+  </Platform>
+  <Platform PlatformTag="57" PlatformNo="11275" Name="NW Highland Dr &amp; NW Walnut Blvd" BearingToRoad="8.9713768e+001" RoadName="NW Highland Dr">
+    <Position Lat="4.459339303000000e+001" Long="-1.232626588000000e+002" />
+  </Platform>
+  <Platform PlatformTag="333" PlatformNo="14575" Name="NW Kings Blvd &amp; NW Arthur Pl" BearingToRoad="2.7019373e+002" RoadName="NW Kings Blvd">
+    <Position Lat="4.458406438000000e+001" Long="-1.232759218000000e+002" />
+  </Platform>
+  <Platform PlatformTag="330" PlatformNo="14547" Name="NW Kings Blvd &amp; NW Beca Ave" BearingToRoad="2.6855563e+002" RoadName="NW Kings Blvd">
+    <Position Lat="4.457775162000000e+001" Long="-1.232752283000000e+002" />
+  </Platform>
+  <Platform PlatformTag="320" PlatformNo="14445" Name="NW Kings Blvd &amp; NW Circle Blvd" BearingToRoad="9.0193748e+001" RoadName="NW Kings Blvd">
+    <Position Lat="4.458558730000000e+001" Long="-1.232761061000000e+002" />
+  </Platform>
+  <Platform PlatformTag="334" PlatformNo="14581" Name="NW Kings Blvd &amp; NW Circle Blvd" BearingToRoad="2.7019376e+002" RoadName="NW Kings Blvd">
+    <Position Lat="4.458556585000000e+001" Long="-1.232759209000000e+002" />
+  </Platform>
+  <Platform PlatformTag="318" PlatformNo="14421" Name="NW Kings Blvd &amp; NW Elmwood Dr" BearingToRoad="2.6931644e+002" RoadName="NW Kings Blvd">
+    <Position Lat="4.458769729000000e+001" Long="-1.232759402000000e+002" />
+  </Platform>
+  <Platform PlatformTag="372" PlatformNo="14285" Name="NW Kings Blvd &amp; NW Elmwood Dr" BearingToRoad="8.9316444e+001" RoadName="NW Kings Blvd">
+    <Position Lat="4.458769609796372e+001" Long="-1.232761101200745e+002" />
+  </Platform>
+  <Platform PlatformTag="323" PlatformNo="14478" Name="NW Kings Blvd &amp; NW Fillmore Ave" BearingToRoad="8.8730911e+001" RoadName="NW Kings Blvd">
+    <Position Lat="4.457568182000000e+001" Long="-1.232753498000000e+002" />
+  </Platform>
+  <Platform PlatformTag="329" PlatformNo="14534" Name="NW Kings Blvd &amp; NW Fillmore Ave" BearingToRoad="2.6943481e+002" RoadName="NW Kings Blvd">
+    <Position Lat="4.457515334000000e+001" Long="-1.232751563000000e+002" />
+  </Platform>
+  <Platform PlatformTag="321" PlatformNo="14450" Name="NW Kings Blvd &amp; NW Garfield Ave" BearingToRoad="8.9182777e+001" RoadName="NW Kings Blvd">
+    <Position Lat="4.458274262000000e+001" Long="-1.232760873000000e+002" />
+  </Platform>
+  <Platform PlatformTag="332" PlatformNo="14568" Name="NW Kings Blvd &amp; NW Hayes Ave" BearingToRoad="2.6878198e+002" RoadName="NW Kings Blvd">
+    <Position Lat="4.458175097000000e+001" Long="-1.232758982000000e+002" />
+  </Platform>
+  <Platform PlatformTag="326" PlatformNo="14506" Name="NW Kings Blvd &amp; NW Jackson Ave" BearingToRoad="8.9441597e+001" RoadName="NW Kings Blvd">
+    <Position Lat="4.456948981000000e+001" Long="-1.232751749000000e+002" />
+  </Platform>
+  <Platform PlatformTag="327" PlatformNo="14510" Name="NW Kings Blvd &amp; NW Jackson Ave" BearingToRoad="2.6944159e+002" RoadName="NW Kings Blvd">
+    <Position Lat="4.456958285000000e+001" Long="-1.232750507000000e+002" />
+  </Platform>
+  <Platform PlatformTag="331" PlatformNo="14552" Name="NW Kings Blvd &amp; NW Kings Pl" BearingToRoad="2.7061584e+002" RoadName="NW Kings Blvd">
+    <Position Lat="4.457982464000000e+001" Long="-1.232758824000000e+002" />
+  </Platform>
+  <Platform PlatformTag="335" PlatformNo="14599" Name="NW Kings Blvd &amp; NW Monroe Ave" BearingToRoad="2.6942029e+002" RoadName="NW Kings Blvd">
+    <Position Lat="4.456823199000000e+001" Long="-1.232749992000000e+002" />
+  </Platform>
+  <Platform PlatformTag="322" PlatformNo="14466" Name="NW Kings Blvd &amp; NW Mulkey Ave" BearingToRoad="9.0615852e+001" RoadName="NW Kings Blvd">
+    <Position Lat="4.458028443000000e+001" Long="-1.232760678000000e+002" />
+  </Platform>
+  <Platform PlatformTag="324" PlatformNo="14484" Name="NW Kings Blvd &amp; NW Taylor Ave" BearingToRoad="8.9590904e+001" RoadName="NW Kings Blvd">
+    <Position Lat="4.457406441000000e+001" Long="-1.232752698000000e+002" />
+  </Platform>
+  <Platform PlatformTag="325" PlatformNo="14497" Name="NW Kings Blvd &amp; NW Tyler Ave" BearingToRoad="8.9779457e+001" RoadName="NW Kings Blvd">
+    <Position Lat="4.457276817000000e+001" Long="-1.232752449000000e+002" />
+  </Platform>
+  <Platform PlatformTag="328" PlatformNo="14523" Name="NW Kings Blvd &amp; NW Tyler Ave" BearingToRoad="2.6977945e+002" RoadName="NW Kings Blvd">
+    <Position Lat="4.457265467000000e+001" Long="-1.232751198000000e+002" />
+  </Platform>
+  <Platform PlatformTag="313" PlatformNo="10280" Name="NW Monroe Ave &amp; NW 10th St" BearingToRoad="1.8241783e+001" RoadName="NW Monroe Ave">
+    <Position Lat="4.456623432000000e+001" Long="-1.232685299000000e+002" />
+  </Platform>
+  <Platform PlatformTag="275" PlatformNo="12465" Name="NW Monroe Ave &amp; NW 11th St" BearingToRoad="1.9908401e+002" RoadName="NW Monroe Ave">
+    <Position Lat="4.456663989000000e+001" Long="-1.232696009000000e+002" />
+  </Platform>
+  <Platform PlatformTag="276" PlatformNo="12454" Name="NW Monroe Ave &amp; NW 15th St" BearingToRoad="1.9908621e+002" RoadName="NW Monroe Ave">
+    <Position Lat="4.456740743000000e+001" Long="-1.232727211000000e+002" />
+  </Platform>
+  <Platform PlatformTag="310" PlatformNo="10251" Name="NW Monroe Ave &amp; NW 23rd St" BearingToRoad="1.7909550e+001" RoadName="NW Monroe Ave">
+    <Position Lat="4.456837262000000e+001" Long="-1.232773788000000e+002" />
+  </Platform>
+  <Platform PlatformTag="315" PlatformNo="10308" Name="NW Monroe Ave &amp; NW 7th St" BearingToRoad="1.8743483e+001" RoadName="NW Monroe Ave">
+    <Position Lat="4.456533603000000e+001" Long="-1.232650340000000e+002" />
+  </Platform>
+  <Platform PlatformTag="274" PlatformNo="12477" Name="NW Monroe Ave &amp; NW 9th St" BearingToRoad="1.9914915e+002" RoadName="NW Monroe Ave">
+    <Position Lat="4.456616010000000e+001" Long="-1.232676794000000e+002" />
+  </Platform>
+  <Platform PlatformTag="277" PlatformNo="12449" Name="NW Monroe Ave &amp; NW Kings Blvd" BearingToRoad="1.9910327e+002" RoadName="NW Monroe Ave">
+    <Position Lat="4.456795864000000e+001" Long="-1.232749396000000e+002" />
+  </Platform>
+  <Platform PlatformTag="311" PlatformNo="10267" Name="NW Monroe Ave &amp; NW Kings Blvd" BearingToRoad="1.9103273e+001" RoadName="NW Monroe Ave">
+    <Position Lat="4.456777752000000e+001" Long="-1.232747184000000e+002" />
+  </Platform>
+  <Platform PlatformTag="312" PlatformNo="10279" Name="NW Monroe Ave &amp; SW 14th St" BearingToRoad="1.9466223e+001" RoadName="NW Monroe Ave">
+    <Position Lat="4.456706542000000e+001" Long="-1.232718587000000e+002" />
+  </Platform>
+  <Platform PlatformTag="309" PlatformNo="10246" Name="NW Monroe Ave &amp; SW 26th St" BearingToRoad="1.8087502e+001" RoadName="NW Monroe Ave">
+    <Position Lat="4.456889360000000e+001" Long="-1.232797248000000e+002" />
+  </Platform>
+  <Platform PlatformTag="314" PlatformNo="10298" Name="NW Monroe Ave &amp; SW 9th St" BearingToRoad="1.9798498e+001" RoadName="NW Monroe Ave">
+    <Position Lat="4.456583555000000e+001" Long="-1.232670069000000e+002" />
+  </Platform>
+  <Platform PlatformTag="278" PlatformNo="12420" Name="NW Monroe Avenue and NW 23rd Street" BearingToRoad="1.9446521e+002" RoadName="NW Monroe Ave">
+    <Position Lat="4.456860822000000e+001" Long="-1.232777692000000e+002" />
+  </Platform>
+  <Platform PlatformTag="371" PlatformNo="14292" Name="NW Professional Dr &amp; NW Kings Blvd" BearingToRoad="1.7354205e+002" RoadName="NW Professional Dr">
+    <Position Lat="4.459136114359951e+001" Long="-1.232761978749585e+002" />
+  </Platform>
+  <Platform PlatformTag="184" PlatformNo="13306" Name="NW Rolling Green Dr" BearingToRoad="9.5140793e+001" RoadName="NW Rolling Green Dr">
+    <Position Lat="4.459255899000000e+001" Long="-1.232715757000000e+002" />
+  </Platform>
+  <Platform PlatformTag="185" PlatformNo="13296" Name="NW Rolling Green Dr &amp; NW Forestgreen Ave" BearingToRoad="1.1308318e+002" RoadName="NW Rolling Green Dr">
+    <Position Lat="4.459079429000000e+001" Long="-1.232726132000000e+002" />
+  </Platform>
+  <Platform PlatformTag="257" PlatformNo="10924" Name="NW Samaritan Dr" BearingToRoad="2.5166061e+002" RoadName="NW Samaritan Dr">
+    <Position Lat="4.460326310200000e+001" Long="-1.232497585550000e+002" />
+  </Platform>
+  <Platform PlatformTag="259" PlatformNo="10930" Name="NW Samaritan Dr" BearingToRoad="1.1203199e+002" RoadName="NW Samaritan Dr">
+    <Position Lat="4.460376151000000e+001" Long="-1.232531433000000e+002" />
+  </Platform>
+  <Platform PlatformTag="171" PlatformNo="11724" Name="NW Satinwood St" BearingToRoad="9.0180725e+001" RoadName="NW Satinwood St">
+    <Position Lat="4.459509439000000e+001" Long="-1.232575116000000e+002" />
+  </Platform>
+  <Platform PlatformTag="173" PlatformNo="11707" Name="NW Satinwood St &amp; NW Maxine Cir" BearingToRoad="8.9783302e+001" RoadName="NW Satinwood St">
+    <Position Lat="4.459760427000000e+001" Long="-1.232575305000000e+002" />
+  </Platform>
+  <Platform PlatformTag="175" PlatformNo="13381" Name="NW Satinwood St &amp; NW Maxine Cir" BearingToRoad="9.0765533e+001" RoadName="NW Satinwood St">
+    <Position Lat="4.460121772000000e+001" Long="-1.232575390000000e+002" />
+  </Platform>
+  <Platform PlatformTag="28" PlatformNo="10850" Name="NW Walnut Blvd &amp; NW 25th St" BearingToRoad="1.8019685e+002" RoadName="NW Walnut Blvd">
+    <Position Lat="4.459318275000000e+001" Long="-1.232804195000000e+002" />
+  </Platform>
+  <Platform PlatformTag="40" PlatformNo="10536" Name="NW Walnut Blvd &amp; NW 25th St" BearingToRoad="2.5827991e+001" RoadName="NW Walnut Blvd">
+    <Position Lat="4.459254813000000e+001" Long="-1.232782586000000e+002" />
+  </Platform>
+  <Platform PlatformTag="29" PlatformNo="10660" Name="NW Walnut Blvd &amp; NW 29th St" BearingToRoad="1.8634470e+002" RoadName="NW Walnut Blvd">
+    <Position Lat="4.459335618000000e+001" Long="-1.232855854000000e+002" />
+  </Platform>
+  <Platform PlatformTag="39" PlatformNo="10543" Name="NW Walnut Blvd &amp; NW 29th St" BearingToRoad="2.2278223e+000" RoadName="NW Walnut Blvd">
+    <Position Lat="4.459302602000000e+001" Long="-1.232827565000000e+002" />
+  </Platform>
+  <Platform PlatformTag="46" PlatformNo="10486" Name="NW Walnut Blvd &amp; NW 9th St" BearingToRoad="1.3306858e+001" RoadName="NW Walnut Blvd">
+    <Position Lat="4.459393451000000e+001" Long="-1.232525186000000e+002" />
+  </Platform>
+  <Platform PlatformTag="31" PlatformNo="10641" Name="NW Walnut Blvd &amp; NW Aspen St" BearingToRoad="1.8020697e+002" RoadName="NW Walnut Blvd">
+    <Position Lat="4.459324573000000e+001" Long="-1.232948563000000e+002" />
+  </Platform>
+  <Platform PlatformTag="36" PlatformNo="10618" Name="NW Walnut Blvd &amp; NW Aspen St" BearingToRoad="5.9118563e-001" RoadName="NW Walnut Blvd">
+    <Position Lat="4.459309059000000e+001" Long="-1.232935968000000e+002" />
+  </Platform>
+  <Platform PlatformTag="41" PlatformNo="10527" Name="NW Walnut Blvd &amp; NW Kings Blvd" BearingToRoad="3.4841974e+002" RoadName="NW Walnut Blvd">
+    <Position Lat="4.459222838000000e+001" Long="-1.232757464000000e+002" />
+  </Platform>
+  <Platform PlatformTag="44" PlatformNo="10504" Name="NW Walnut Blvd &amp; NW Oak Ave" BearingToRoad="1.0023130e+000" RoadName="NW Walnut Blvd">
+    <Position Lat="4.459350005000000e+001" Long="-1.232606314000000e+002" />
+  </Platform>
+  <Platform PlatformTag="32" PlatformNo="10639" Name="NW Walnut Blvd &amp; NW Princess St" BearingToRoad="1.9926158e+002" RoadName="NW Walnut Blvd">
+    <Position Lat="4.459351100000000e+001" Long="-1.232993748000000e+002" />
+  </Platform>
+  <Platform PlatformTag="34" PlatformNo="10558" Name="NW Walnut Blvd &amp; NW Princess St" BearingToRoad="1.9261581e+001" RoadName="NW Walnut Blvd">
+    <Position Lat="4.459330555000000e+001" Long="-1.232992041000000e+002" />
+  </Platform>
+  <Platform PlatformTag="27" PlatformNo="10845" Name="NW Walnut Blvd &amp; NW Professional Dr" BearingToRoad="1.9244670e+002" RoadName="NW Walnut Blvd">
+    <Position Lat="4.459244749000000e+001" Long="-1.232770221000000e+002" />
+  </Platform>
+  <Platform PlatformTag="23" PlatformNo="10821" Name="NW Walnut Blvd &amp; NW Satinwood St" BearingToRoad="1.6661548e+002" RoadName="NW Walnut Blvd">
+    <Position Lat="4.459398648000000e+001" Long="-1.232583412000000e+002" />
+  </Platform>
+  <Platform PlatformTag="45" PlatformNo="10493" Name="NW Walnut Blvd &amp; NW Satinwood St" BearingToRoad="3.5777548e+002" RoadName="NW Walnut Blvd">
+    <Position Lat="4.459395060000000e+001" Long="-1.232563536000000e+002" />
+  </Platform>
+  <Platform PlatformTag="35" PlatformNo="10625" Name="NW Walnut Blvd &amp; NW Walnut Pl" BearingToRoad="5.8829904e-001" RoadName="NW Walnut Blvd">
+    <Position Lat="4.459310084000000e+001" Long="-1.232960635000000e+002" />
+  </Platform>
+  <Platform PlatformTag="33" PlatformNo="10570" Name="NW Walnut Blvd &amp; NW Witham Hill Dr" BearingToRoad="6.8637791e+000" RoadName="NW Walnut Blvd">
+    <Position Lat="4.459380054000000e+001" Long="-1.233013888000000e+002" />
+  </Platform>
+  <Platform PlatformTag="30" PlatformNo="10656" Name="NW Walnut Blvd &amp; Timberhill Townhouses" BearingToRoad="1.7478331e+002" RoadName="NW Walnut Blvd">
+    <Position Lat="4.459324816000000e+001" Long="-1.232899591000000e+002" />
+  </Platform>
+  <Platform PlatformTag="37" PlatformNo="10602" Name="NW Walnut Blvd &amp; Timberhill Townhouses" BearingToRoad="3.5478329e+002" RoadName="NW Walnut Blvd">
+    <Position Lat="4.459313196000000e+001" Long="-1.232894400000000e+002" />
+  </Platform>
+  <Platform PlatformTag="38" PlatformNo="10591" Name="NW Walnut Blvd &amp; Timberhill Townhouses" BearingToRoad="6.3446960e+000" RoadName="NW Walnut Blvd">
+    <Position Lat="4.459319223000000e+001" Long="-1.232855411000000e+002" />
+  </Platform>
+  <Platform PlatformTag="339" PlatformNo="14631" Name="NW Witham Hill Dr &amp; NW Circle Blvd" BearingToRoad="2.2629834e+002" RoadName="NW Witham Hill Dr">
+    <Position Lat="4.458168829000000e+001" Long="-1.232955236000000e+002" />
+  </Platform>
+  <Platform PlatformTag="344" PlatformNo="14683" Name="NW Witham Hill Dr &amp; NW Douglas Ave" BearingToRoad="5.4268253e+001" RoadName="NW Witham Hill Dr">
+    <Position Lat="4.458553017000000e+001" Long="-1.232998395000000e+002" />
+  </Platform>
+  <Platform PlatformTag="342" PlatformNo="14665" Name="NW Witham Hill Dr &amp; NW Elmwood Dr" BearingToRoad="2.7957632e+002" RoadName="NW Witham Hill Dr">
+    <Position Lat="4.458913390000000e+001" Long="-1.233021374000000e+002" />
+  </Platform>
+  <Platform PlatformTag="343" PlatformNo="14677" Name="NW Witham Hill Dr &amp; NW Elmwood Dr" BearingToRoad="8.9008133e+001" RoadName="NW Witham Hill Dr">
+    <Position Lat="4.458871977000000e+001" Long="-1.233023076000000e+002" />
+  </Platform>
+  <Platform PlatformTag="347" PlatformNo="14715" Name="NW Witham Hill Dr &amp; NW Fernwood Cir" BearingToRoad="4.4670311e+001" RoadName="NW Witham Hill Dr">
+    <Position Lat="4.457903649000000e+001" Long="-1.232919393000000e+002" />
+  </Platform>
+  <Platform PlatformTag="345" PlatformNo="14696" Name="NW Witham Hill Dr &amp; NW Pinecone Way" BearingToRoad="5.3879116e+001" RoadName="NW Witham Hill Dr">
+    <Position Lat="4.458347108000000e+001" Long="-1.232978399000000e+002" />
+  </Platform>
+  <Platform PlatformTag="245" PlatformNo="14394" Name="NW Witham Hill Dr &amp; NW Walnut Blvd" BearingToRoad="7.7812462e+001" RoadName="NW Witham Hill Dr">
+    <Position Lat="4.459344868000000e+001" Long="-1.233022806000000e+002" />
+  </Platform>
+  <Platform PlatformTag="341" PlatformNo="14654" Name="NW Witham Hill Dr &amp; NW Westview Pl" BearingToRoad="2.3487614e+002" RoadName="NW Witham Hill Dr">
+    <Position Lat="4.458596711000000e+001" Long="-1.233001164000000e+002" />
+  </Platform>
+  <Platform PlatformTag="346" PlatformNo="14704" Name="NW Witham Hill Dr &amp; NW Woodland Dr" BearingToRoad="4.6298347e+001" RoadName="NW Witham Hill Dr">
+    <Position Lat="4.458185754000000e+001" Long="-1.232960220000000e+002" />
+  </Platform>
+  <Platform PlatformTag="340" PlatformNo="14649" Name="NW Witham Hill Dr at Witham Oaks" BearingToRoad="2.3465782e+002" RoadName="NW Witham Hill Dr">
+    <Position Lat="4.458394363000000e+001" Long="-1.232981054000000e+002" />
+  </Platform>
+  <Platform PlatformTag="397" PlatformNo="11418" Name="Northwest 29th Street &amp; Northwest Ashwood Drive" BearingToRoad="2.6762439e+002" RoadName="Northwest 29th Street">
+    <Position Lat="4.458863710719236e+001" Long="-1.232831354457255e+002" />
+  </Platform>
+  <Platform PlatformTag="417" PlatformNo="14840" Name="Northwest 29th Street &amp; Northwest Ashwood Drive" BearingToRoad="8.7624397e+001" RoadName="Northwest 29th Street">
+    <Position Lat="4.458864360578085e+001" Long="-1.232832749819031e+002" />
+  </Platform>
+  <Platform PlatformTag="398" PlatformNo="14886" Name="Northwest 29th Street &amp; Northwest Roosevelt Drive" BearingToRoad="2.6911212e+002" RoadName="Northwest 29th Street">
+    <Position Lat="4.459133730171615e+001" Long="-1.232832877232434e+002" />
+  </Platform>
+  <Platform PlatformTag="396" PlatformNo="12816" Name="Northwest 5th Street &amp; Northwest Polk Avenue" BearingToRoad="1.1070741e+002" RoadName="Northwest 5th Street">
+    <Position Lat="4.456938505068660e+001" Long="-1.232608526981836e+002" />
+  </Platform>
+  <Platform PlatformTag="395" PlatformNo="11402" Name="Northwest 9th Street &amp; Northwest Harrison Boulevar" BearingToRoad="2.8902542e+002" RoadName="Northwest 9th Street">
+    <Position Lat="4.456902454982219e+001" Long="-1.232656493727112e+002" />
+  </Platform>
+  <Platform PlatformTag="406" PlatformNo="14069" Name="Northwest Buchanan Avenue &amp; Northwest 13th Street" BearingToRoad="1.7942825e+002" RoadName="Northwest Buchanan Avenue">
+    <Position Lat="4.457617814090418e+001" Long="-1.232674264132463e+002" />
+  </Platform>
+  <Platform PlatformTag="415" PlatformNo="14053" Name="Northwest Buchanan Avenue &amp; Northwest 13th Street" BearingToRoad="3.5942825e+002" RoadName="Northwest Buchanan Avenue">
+    <Position Lat="4.457606278967496e+001" Long="-1.232674228504956e+002" />
+  </Platform>
+  <Platform PlatformTag="407" PlatformNo="14076" Name="Northwest Buchanan Avenue &amp; Northwest 17th Street" BearingToRoad="1.7965619e+002" RoadName="Northwest Buchanan Avenue">
+    <Position Lat="4.457613220746840e+001" Long="-1.232711965997008e+002" />
+  </Platform>
+  <Platform PlatformTag="414" PlatformNo="13979" Name="Northwest Buchanan Avenue &amp; Northwest 17th Street" BearingToRoad="3.5965619e+002" RoadName="Northwest Buchanan Avenue">
+    <Position Lat="4.457603001086358e+001" Long="-1.232711963247158e+002" />
+  </Platform>
+  <Platform PlatformTag="390" PlatformNo="11397" Name="Northwest Circle Boulevard &amp; Northwest Dale Drive" BearingToRoad="1.0290291e+002" RoadName="Northwest Circle Boulevard">
+    <Position Lat="4.457858438999186e+001" Long="-1.232976980532875e+002" />
+  </Platform>
+  <Platform PlatformTag="391" PlatformNo="13998" Name="Northwest Circle Boulevard &amp; Northwest Dale Drive" BearingToRoad="1.0221848e+002" RoadName="Northwest Circle Boulevard">
+    <Position Lat="4.457648760674140e+001" Long="-1.232984196218672e+002" />
+  </Platform>
+  <Platform PlatformTag="420" PlatformNo="11425" Name="Northwest Circle Boulevard &amp; Northwest Dale Drive" BearingToRoad="2.8221848e+002" RoadName="Northwest Circle Boulevard">
+    <Position Lat="4.457653498833627e+001" Long="-1.232981675519886e+002" />
+  </Platform>
+  <Platform PlatformTag="413" PlatformNo="13914" Name="Northwest Elmwood Drive &amp; Northwest Kinderman Driv" BearingToRoad="8.3927946e+000" RoadName="Northwest Elmwood Drive">
+    <Position Lat="4.458898349869178e+001" Long="-1.233051300542636e+002" />
+  </Platform>
+  <Platform PlatformTag="409" PlatformNo="13933" Name="Northwest Grant Avenue &amp; Northwest 29th Street" BearingToRoad="1.8141530e+002" RoadName="Northwest Grant Avenue">
+    <Position Lat="4.457874223815291e+001" Long="-1.232832719501755e+002" />
+  </Platform>
+  <Platform PlatformTag="410" PlatformNo="13946" Name="Northwest Grant Avenue &amp; Northwest Alta Vista Driv" BearingToRoad="1.8202998e+002" RoadName="Northwest Grant Avenue">
+    <Position Lat="4.457881864660318e+001" Long="-1.232882660595539e+002" />
+  </Platform>
+  <Platform PlatformTag="408" PlatformNo="13922" Name="Northwest Grant Avenue &amp; Northwest Kings Boulevard" BearingToRoad="1.8083679e+002" RoadName="Northwest Grant Avenue">
+    <Position Lat="4.457866700000000e+001" Long="-1.232763720000000e+002" />
+  </Platform>
+  <Platform PlatformTag="394" PlatformNo="11657" Name="Northwest Harrison Boulevard &amp; Northwest 36th Stre" BearingToRoad="3.3880420e+000" RoadName="Northwest Harrison Boulevard">
+    <Position Lat="4.457165216735020e+001" Long="-1.232914239026122e+002" />
+  </Platform>
+  <Platform PlatformTag="389" PlatformNo="11688" Name="Northwest Harrison Boulevard &amp; Northwest Circle Bo" BearingToRoad="1.7946126e+002" RoadName="Northwest Harrison Boulevard">
+    <Position Lat="4.457186168191119e+001" Long="-1.232981769879649e+002" />
+  </Platform>
+  <Platform PlatformTag="392" PlatformNo="11674" Name="Northwest Harrison Boulevard &amp; Northwest Circle Bo" BearingToRoad="3.5946127e+002" RoadName="Northwest Harrison Boulevard">
+    <Position Lat="4.457165636907500e+001" Long="-1.232981534958493e+002" />
+  </Platform>
+  <Platform PlatformTag="393" PlatformNo="11661" Name="Northwest Harrison Boulevard &amp; Northwest Witham Dr" BearingToRoad="3.5919598e+002" RoadName="Northwest Harrison Boulevard">
+    <Position Lat="4.457166498636426e+001" Long="-1.232948340194480e+002" />
+  </Platform>
+  <Platform PlatformTag="412" PlatformNo="13905" Name="Northwest Maser Drive &amp; Northwest Walnut Boulevard" BearingToRoad="3.3454926e+000" RoadName="Northwest Maser Drive">
+    <Position Lat="4.459137826811557e+001" Long="-1.233072327852683e+002" />
+  </Platform>
+  <Platform PlatformTag="416" PlatformNo="14903" Name="Northwest Roosevelt Drive &amp; Northwest 29th Street" BearingToRoad="6.7221332e-001" RoadName="Northwest Roosevelt Drive">
+    <Position Lat="4.459127274825232e+001" Long="-1.232834443457160e+002" />
+  </Platform>
+  <Platform PlatformTag="411" PlatformNo="13951" Name="Northwest Walnut Boulevard &amp; Northwest Glenridge D" BearingToRoad="1.7471037e+002" RoadName="Northwest Walnut Boulevard">
+    <Position Lat="4.459403138015897e+001" Long="-1.233024876069214e+002" />
+  </Platform>
+  <Platform PlatformTag="145" PlatformNo="11983" Name="SE Bethel St &amp; SE Lilly Ave" BearingToRoad="2.7274054e+002" RoadName="SE Bethel St">
+    <Position Lat="4.454803521000000e+001" Long="-1.232586247000000e+002" />
+  </Platform>
+  <Platform PlatformTag="147" PlatformNo="11965" Name="SE Crystal Lake Dr &amp; SE Bethel St" BearingToRoad="2.2839076e+002" RoadName="SE Crystal Lake Dr">
+    <Position Lat="4.455207500000000e+001" Long="-1.232585940000000e+002" />
+  </Platform>
+  <Platform PlatformTag="378" PlatformNo="14216" Name="SE Crystal Lake Dr &amp; SW 3rd St" BearingToRoad="1.8156686e+002" RoadName="SE Crystal Lake Dr">
+    <Position Lat="4.455193238613354e+001" Long="-1.232640452434225e+002" />
+  </Platform>
+  <Platform PlatformTag="138" PlatformNo="13040" Name="SE Goodnight Ave &amp; SE Glenn St" BearingToRoad="3.5875595e+002" RoadName="SE Goodnight Ave">
+    <Position Lat="4.453666614000000e+001" Long="-1.232649811000000e+002" />
+  </Platform>
+  <Platform PlatformTag="136" PlatformNo="13029" Name="SE Goodnight Ave &amp; SE Goodpark St" BearingToRoad="3.5888297e+002" RoadName="SE Goodnight Ave">
+    <Position Lat="4.453672719000000e+001" Long="-1.232587980000000e+002" />
+  </Platform>
+  <Platform PlatformTag="137" PlatformNo="13038" Name="SE Goodnight Ave &amp; Summerset Vlg" BearingToRoad="3.5908093e+002" RoadName="SE Goodnight Ave">
+    <Position Lat="4.453669972000000e+001" Long="-1.232621415000000e+002" />
+  </Platform>
+  <Platform PlatformTag="133" PlatformNo="12960" Name="SE Midvale Dr &amp; Mountain View Apartments" BearingToRoad="8.9092033e+001" RoadName="SE Midvale Dr">
+    <Position Lat="4.453317027000000e+001" Long="-1.232567127000000e+002" />
+  </Platform>
+  <Platform PlatformTag="134" PlatformNo="12973" Name="SE Midvale Dr &amp; Mountain View Apartments" BearingToRoad="8.9292999e+001" RoadName="SE Midvale Dr">
+    <Position Lat="4.453441521000000e+001" Long="-1.232567405000000e+002" />
+  </Platform>
+  <Platform PlatformTag="132" PlatformNo="12956" Name="SE Midvale Dr &amp; SE Brookside Way" BearingToRoad="1.0359103e+002" RoadName="SE Midvale Dr">
+    <Position Lat="4.453135539000000e+001" Long="-1.232568751000000e+002" />
+  </Platform>
+  <Platform PlatformTag="135" PlatformNo="12987" Name="SE Midvale Dr &amp; SE Goodnight Ave" BearingToRoad="8.8742401e+001" RoadName="SE Midvale Dr">
+    <Position Lat="4.453646363000000e+001" Long="-1.232567837000000e+002" />
+  </Platform>
+  <Platform PlatformTag="139" PlatformNo="13055" Name="SE Park Ave &amp; SE Glenn St" BearingToRoad="3.5915384e+002" RoadName="SE Park Ave">
+    <Position Lat="4.453856142000000e+001" Long="-1.232655861000000e+002" />
+  </Platform>
+  <Platform PlatformTag="140" PlatformNo="12034" Name="SE Park Ave &amp; SE Park Pl" BearingToRoad="3.5915384e+002" RoadName="SE Park Ave">
+    <Position Lat="4.453862936000000e+001" Long="-1.232607997000000e+002" />
+  </Platform>
+  <Platform PlatformTag="130" PlatformNo="12939" Name="SE Rivergreen Ave &amp; Mountain View Apartments" BearingToRoad="1.9231967e+002" RoadName="SE Rivergreen Ave">
+    <Position Lat="4.453091187000000e+001" Long="-1.232588790000000e+002" />
+  </Platform>
+  <Platform PlatformTag="131" PlatformNo="12941" Name="SE Rivergreen Ave &amp; SE Hathaway Dr" BearingToRoad="1.7884174e+002" RoadName="SE Rivergreen Ave">
+    <Position Lat="4.453113454000000e+001" Long="-1.232626735000000e+002" />
+  </Platform>
+  <Platform PlatformTag="129" PlatformNo="12925" Name="SE Rivergreen Ave &amp; SE Villa Dr" BearingToRoad="1.8018680e+002" RoadName="SE Rivergreen Ave">
+    <Position Lat="4.453111773000000e+001" Long="-1.232657979000000e+002" />
+  </Platform>
+  <Platform PlatformTag="143" PlatformNo="12006" Name="SE Ryan St &amp; SE Alexander Ave" BearingToRoad="2.7018140e+002" RoadName="SE Ryan St">
+    <Position Lat="4.454501652000000e+001" Long="-1.232585509000000e+002" />
+  </Platform>
+  <Platform PlatformTag="141" PlatformNo="12023" Name="SE Ryan St &amp; SE Powell Ave" BearingToRoad="2.6937796e+002" RoadName="SE Ryan St">
+    <Position Lat="4.454080230000000e+001" Long="-1.232585512000000e+002" />
+  </Platform>
+  <Platform PlatformTag="142" PlatformNo="12010" Name="SE Ryan St &amp; SE Richland Ave" BearingToRoad="2.7018140e+002" RoadName="SE Ryan St">
+    <Position Lat="4.454272437000000e+001" Long="-1.232585538000000e+002" />
+  </Platform>
+  <Platform PlatformTag="194" PlatformNo="13208" Name="SW 14th St &amp; SW Jefferson Ave" BearingToRoad="3.0645984e+002" RoadName="SW 14th St">
+    <Position Lat="4.456508390000000e+001" Long="-1.232734994000000e+002" />
+  </Platform>
+  <Platform PlatformTag="192" PlatformNo="13212" Name="SW 15th St &amp; SW Jefferson Ave" BearingToRoad="2.6997678e+002" RoadName="SW 15th St">
+    <Position Lat="4.456386673000000e+001" Long="-1.232740693000000e+002" />
+  </Platform>
+  <Platform PlatformTag="193" PlatformNo="13220" Name="SW 15th St &amp; SW Jefferson Way" BearingToRoad="8.9976768e+001" RoadName="SW 15th St">
+    <Position Lat="4.456420892000000e+001" Long="-1.232742034000000e+002" />
+  </Platform>
+  <Platform PlatformTag="195" PlatformNo="13190" Name="SW 15th St &amp; SW Washington Way" BearingToRoad="8.3001656e+001" RoadName="SW 15th St">
+    <Position Lat="4.456146475000000e+001" Long="-1.232743809000000e+002" />
+  </Platform>
+  <Platform PlatformTag="196" PlatformNo="13188" Name="SW 15th St &amp; SW Western Blvd" BearingToRoad="2.6245657e+002" RoadName="SW 15th St">
+    <Position Lat="4.456032606000000e+001" Long="-1.232740156000000e+002" />
+  </Platform>
+  <Platform PlatformTag="94" PlatformNo="12719" Name="SW 26th St &amp; Dixon Recreation Ctr" BearingToRoad="2.5201247e+002" RoadName="SW 26th St">
+    <Position Lat="4.456365439000000e+001" Long="-1.232797016000000e+002" />
+  </Platform>
+  <Platform PlatformTag="93" PlatformNo="12431" Name="SW 26th St &amp; SW A Ave" BearingToRoad="2.6980417e+002" RoadName="SW 26th St">
+    <Position Lat="4.455928582000000e+001" Long="-1.232795194000000e+002" />
+  </Platform>
+  <Platform PlatformTag="96" PlatformNo="12703" Name="SW 26th St &amp; SW Campus Way" BearingToRoad="2.6984637e+002" RoadName="SW 26th St">
+    <Position Lat="4.456697024000000e+001" Long="-1.232799016000000e+002" />
+  </Platform>
+  <Platform PlatformTag="95" PlatformNo="12695" Name="SW 26th St &amp; SW Jefferson Way" BearingToRoad="2.7019644e+002" RoadName="SW 26th St">
+    <Position Lat="4.456485604000000e+001" Long="-1.232799088000000e+002" />
+  </Platform>
+  <Platform PlatformTag="352" PlatformNo="14360" Name="SW 26th St &amp; SW Washington Way" BearingToRoad="2.7019623e+002" RoadName="SW 26th St">
+    <Position Lat="4.456154150000000e+001" Long="-1.232795557000000e+002" />
+  </Platform>
+  <Platform PlatformTag="243" PlatformNo="14413" Name="SW 2nd St &amp; SW Jefferson Ave" BearingToRoad="1.1076475e+002" RoadName="SW 2nd St">
+    <Position Lat="4.456251775000000e+001" Long="-1.232607186000000e+002" />
+  </Platform>
+  <Platform PlatformTag="244" PlatformNo="14409" Name="SW 2nd St &amp; SW Washington Ave" BearingToRoad="1.0948335e+002" RoadName="SW 2nd St">
+    <Position Lat="4.455968602000000e+001" Long="-1.232622157000000e+002" />
+  </Platform>
+  <Platform PlatformTag="164" PlatformNo="11795" Name="SW 35th St &amp; SW Birdie Dr" BearingToRoad="2.7039551e+002" RoadName="SW 35th St">
+    <Position Lat="4.455254806000000e+001" Long="-1.232895055000000e+002" />
+  </Platform>
+  <Platform PlatformTag="165" PlatformNo="11782" Name="SW 35th St &amp; SW Hil-Wood Pl" BearingToRoad="2.7020319e+002" RoadName="SW 35th St">
+    <Position Lat="4.455535428000000e+001" Long="-1.232895441000000e+002" />
+  </Platform>
+  <Platform PlatformTag="163" PlatformNo="11805" Name="SW 35th St &amp; SW Knollbrook Ave" BearingToRoad="2.7115222e+002" RoadName="SW 35th St">
+    <Position Lat="4.454894714000000e+001" Long="-1.232895695000000e+002" />
+  </Platform>
+  <Platform PlatformTag="127" PlatformNo="12892" Name="SW 3rd St &amp; SE Alexander Ave" BearingToRoad="9.4642776e+001" RoadName="SW 3rd St">
+    <Position Lat="4.454477674000000e+001" Long="-1.232660878000000e+002" />
+  </Platform>
+  <Platform PlatformTag="124" PlatformNo="12871" Name="SW 3rd St &amp; SE Bridgeway Ave" BearingToRoad="9.5424171e+001" RoadName="SW 3rd St">
+    <Position Lat="4.455017532000000e+001" Long="-1.232654998000000e+002" />
+  </Platform>
+  <Platform PlatformTag="229" PlatformNo="13556" Name="SW 3rd St &amp; SE Lilly Ave" BearingToRoad="2.7461606e+002" RoadName="SW 3rd St">
+    <Position Lat="4.454833193000000e+001" Long="-1.232654132000000e+002" />
+  </Platform>
+  <Platform PlatformTag="126" PlatformNo="12885" Name="SW 3rd St &amp; SE Mayberry Ave" BearingToRoad="9.4402840e+001" RoadName="SW 3rd St">
+    <Position Lat="4.454667779000000e+001" Long="-1.232658879000000e+002" />
+  </Platform>
+  <Platform PlatformTag="228" PlatformNo="13560" Name="SW 3rd St &amp; SE Mayberry Ave" BearingToRoad="2.7440283e+002" RoadName="SW 3rd St">
+    <Position Lat="4.454674582000000e+001" Long="-1.232655795000000e+002" />
+  </Platform>
+  <Platform PlatformTag="183" PlatformNo="12918" Name="SW 3rd St &amp; SE Park Ave" BearingToRoad="9.4483894e+001" RoadName="SW 3rd St">
+    <Position Lat="4.453938743000000e+001" Long="-1.232666294000000e+002" />
+  </Platform>
+  <Platform PlatformTag="226" PlatformNo="13539" Name="SW 3rd St &amp; SE Park Ave" BearingToRoad="2.7448389e+002" RoadName="SW 3rd St">
+    <Position Lat="4.453916663000000e+001" Long="-1.232663474000000e+002" />
+  </Platform>
+  <Platform PlatformTag="128" PlatformNo="12902" Name="SW 3rd St &amp; SE Richland Ave" BearingToRoad="9.4509399e+001" RoadName="SW 3rd St">
+    <Position Lat="4.454173300000000e+001" Long="-1.232663110000000e+002" />
+  </Platform>
+  <Platform PlatformTag="227" PlatformNo="13525" Name="SW 3rd St &amp; SE Richland Ave" BearingToRoad="2.7378421e+002" RoadName="SW 3rd St">
+    <Position Lat="4.454273728000000e+001" Long="-1.232659940000000e+002" />
+  </Platform>
+  <Platform PlatformTag="123" PlatformNo="13001" Name="SW 3rd St &amp; SW Avery Ave" BearingToRoad="9.4276108e+001" RoadName="SW 3rd St">
+    <Position Lat="4.455157196000000e+001" Long="-1.232653462000000e+002" />
+  </Platform>
+  <Platform PlatformTag="125" PlatformNo="13017" Name="SW 3rd St &amp; SW Cummings Ave" BearingToRoad="9.4616066e+001" RoadName="SW 3rd St">
+    <Position Lat="4.454851334000000e+001" Long="-1.232656832000000e+002" />
+  </Platform>
+  <Platform PlatformTag="122" PlatformNo="12994" Name="SW 3rd St &amp; SW Twin Oaks Cir" BearingToRoad="9.5401436e+001" RoadName="SW 3rd St">
+    <Position Lat="4.455374753000000e+001" Long="-1.232651079000000e+002" />
+  </Platform>
+  <Platform PlatformTag="148" PlatformNo="11954" Name="SW 3rd St &amp; SW Twin Oaks Cir" BearingToRoad="2.7540143e+002" RoadName="SW 3rd St">
+    <Position Lat="4.455376888000000e+001" Long="-1.232648142000000e+002" />
+  </Platform>
+  <Platform PlatformTag="299" PlatformNo="10144" Name="SW 49th St &amp; SW Aster St" BearingToRoad="8.9304718e+001" RoadName="SW 49th St">
+    <Position Lat="4.454601455000000e+001" Long="-1.233068237000000e+002" />
+  </Platform>
+  <Platform PlatformTag="301" PlatformNo="10159" Name="SW 49th St &amp; SW Roseberry St" BearingToRoad="9.0215195e+001" RoadName="SW 49th St">
+    <Position Lat="4.454711707000000e+001" Long="-1.233068174000000e+002" />
+  </Platform>
+  <Platform PlatformTag="302" PlatformNo="10171" Name="SW 49th St &amp; Spring Creek Apartments" BearingToRoad="9.0216286e+001" RoadName="SW 49th St">
+    <Position Lat="4.454850140000000e+001" Long="-1.233083761000000e+002" />
+  </Platform>
+  <Platform PlatformTag="120" PlatformNo="12859" Name="SW 4th St &amp; SW Washington Ave" BearingToRoad="1.1022527e+002" RoadName="SW 4th St">
+    <Position Lat="4.456092732000000e+001" Long="-1.232640003000000e+002" />
+  </Platform>
+  <Platform PlatformTag="121" PlatformNo="12863" Name="SW 4th St &amp; SW Western Blvd" BearingToRoad="1.0985681e+002" RoadName="SW 4th St">
+    <Position Lat="4.455944381000000e+001" Long="-1.232647201000000e+002" />
+  </Platform>
+  <Platform PlatformTag="293" PlatformNo="10088" Name="SW 53rd St &amp; SW Helen Ave" BearingToRoad="9.0218872e+001" RoadName="SW 53rd St">
+    <Position Lat="4.455268783000000e+001" Long="-1.233120931000000e+002" />
+  </Platform>
+  <Platform PlatformTag="305" PlatformNo="10205" Name="SW 53rd St &amp; SW Helen Ave" BearingToRoad="2.7021887e+002" RoadName="SW 53rd St">
+    <Position Lat="4.455254600000000e+001" Long="-1.233119350000000e+002" />
+  </Platform>
+  <Platform PlatformTag="232" PlatformNo="13502" Name="SW 53rd St &amp; SW Meadow Flower Dr" BearingToRoad="2.7021890e+002" RoadName="SW 53rd St">
+    <Position Lat="4.454653369000000e+001" Long="-1.233119644000000e+002" />
+  </Platform>
+  <Platform PlatformTag="304" PlatformNo="10192" Name="SW 53rd St &amp; SW Technology Loop" BearingToRoad="2.7055750e+002" RoadName="SW 53rd St">
+    <Position Lat="4.454999525000000e+001" Long="-1.233119056000000e+002" />
+  </Platform>
+  <Platform PlatformTag="231" PlatformNo="13518" Name="SW 53rd St &amp; SW Windflower Dr" BearingToRoad="2.7021890e+002" RoadName="SW 53rd St">
+    <Position Lat="4.454890493000000e+001" Long="-1.233119577000000e+002" />
+  </Platform>
+  <Platform PlatformTag="377" PlatformNo="14263" Name="SW 5th St &amp; SW Adams Ave" BearingToRoad="2.9057858e+002" RoadName="SW 5th St">
+    <Position Lat="4.456197568496026e+001" Long="-1.232644777955399e+002" />
+  </Platform>
+  <Platform PlatformTag="13" PlatformNo="10723" Name="SW 9th St &amp; SW Madison Ave" BearingToRoad="2.9039438e+002" RoadName="SW 9th St">
+    <Position Lat="4.456519693000000e+001" Long="-1.232676078000000e+002" />
+  </Platform>
+  <Platform PlatformTag="162" PlatformNo="11814" Name="SW Country Club Dr &amp; SW Country Club Pl" BearingToRoad="5.7962408e+000" RoadName="SW Country Club Dr">
+    <Position Lat="4.454833209000000e+001" Long="-1.232925244000000e+002" />
+  </Platform>
+  <Platform PlatformTag="237" PlatformNo="13458" Name="SW Grand Oaks Dr &amp; Grand Oaks Apartments" BearingToRoad="8.9681152e+001" RoadName="SW Grand Oaks Dr">
+    <Position Lat="4.455773671000000e+001" Long="-1.233240755000000e+002" />
+  </Platform>
+  <Platform PlatformTag="234" PlatformNo="13489" Name="SW Grand Oaks Dr &amp; SW Banyon Cir" BearingToRoad="2.6394702e+002" RoadName="SW Grand Oaks Dr">
+    <Position Lat="4.455872886000000e+001" Long="-1.233192835000000e+002" />
+  </Platform>
+  <Platform PlatformTag="235" PlatformNo="13470" Name="SW Grand Oaks Dr &amp; SW Delwood Ave" BearingToRoad="2.5055347e+002" RoadName="SW Grand Oaks Dr">
+    <Position Lat="4.456129437000000e+001" Long="-1.233190272000000e+002" />
+  </Platform>
+  <Platform PlatformTag="236" PlatformNo="13462" Name="SW Grand Oaks Dr &amp; SW Timber Ridge Dr" BearingToRoad="1.0823087e+002" RoadName="SW Grand Oaks Dr">
+    <Position Lat="4.456002178000000e+001" Long="-1.233246774000000e+002" />
+  </Platform>
+  <Platform PlatformTag="190" PlatformNo="13231" Name="SW Jefferson Ave &amp; SW 11th St" BearingToRoad="3.5953952e+002" RoadName="SW Jefferson Ave">
+    <Position Lat="4.456454059000000e+001" Long="-1.232713771000000e+002" />
+  </Platform>
+  <Platform PlatformTag="191" PlatformNo="13249" Name="SW Jefferson Ave &amp; SW 11th St" BearingToRoad="1.7953954e+002" RoadName="SW Jefferson Ave">
+    <Position Lat="4.456464728000000e+001" Long="-1.232722157000000e+002" />
+  </Platform>
+  <Platform PlatformTag="188" PlatformNo="13265" Name="SW Jefferson Ave &amp; SW 7th St" BearingToRoad="2.0119206e+002" RoadName="SW Jefferson Ave">
+    <Position Lat="4.456342241000000e+001" Long="-1.232657771000000e+002" />
+  </Platform>
+  <Platform PlatformTag="189" PlatformNo="13254" Name="SW Jefferson Ave &amp; SW 8th St" BearingToRoad="1.9995233e+002" RoadName="SW Jefferson Ave">
+    <Position Lat="4.456387996000000e+001" Long="-1.232675789000000e+002" />
+  </Platform>
+  <Platform PlatformTag="203" PlatformNo="13119" Name="SW Philomath Blvd" BearingToRoad="3.5109314e+002" RoadName="SW Philomath Blvd">
+    <Position Lat="4.455425871000000e+001" Long="-1.233006604000000e+002" />
+  </Platform>
+  <Platform PlatformTag="197" PlatformNo="13174" Name="SW Philomath Blvd &amp; SW 47th St" BearingToRoad="1.5625226e+002" RoadName="SW Philomath Blvd">
+    <Position Lat="4.455369994000000e+001" Long="-1.233030807000000e+002" />
+  </Platform>
+  <Platform PlatformTag="199" PlatformNo="13157" Name="SW Philomath Blvd &amp; SW 53rd St" BearingToRoad="3.3719995e+002" RoadName="SW Philomath Blvd">
+    <Position Lat="4.455099922000000e+001" Long="-1.233112744000000e+002" />
+  </Platform>
+  <Platform PlatformTag="200" PlatformNo="13142" Name="SW Philomath Blvd &amp; SW Blueberry Dr" BearingToRoad="3.3645422e+002" RoadName="SW Philomath Blvd">
+    <Position Lat="4.455166111000000e+001" Long="-1.233091404000000e+002" />
+  </Platform>
+  <Platform PlatformTag="380" PlatformNo="14200" Name="SW Philomath Blvd &amp; SW Blueberry Dr" BearingToRoad="1.5678885e+002" RoadName="SW Philomath Blvd">
+    <Position Lat="4.455149858101580e+001" Long="-1.233100870001448e+002" />
+  </Platform>
+  <Platform PlatformTag="202" PlatformNo="13126" Name="SW Philomath Blvd &amp; SW Timian St" BearingToRoad="3.3589914e+002" RoadName="SW Philomath Blvd">
+    <Position Lat="4.455284168000000e+001" Long="-1.233053327000000e+002" />
+  </Platform>
+  <Platform PlatformTag="387" PlatformNo="14082" Name="SW Research Way &amp; SW Country Club Dr" BearingToRoad="1.9780537e+001" RoadName="SW Research Way">
+    <Position Lat="4.455151100000000e+001" Long="-1.232964890000000e+002" />
+  </Platform>
+  <Platform PlatformTag="384" PlatformNo="14095" Name="SW Research Way &amp; SW Technology Loop" BearingToRoad="3.5996646e+002" RoadName="SW Research Way">
+    <Position Lat="4.455164700000000e+001" Long="-1.233033750000000e+002" />
+  </Platform>
+  <Platform PlatformTag="201" PlatformNo="13135" Name="SW Technology Loop &amp; SW Research Way" BearingToRoad="6.7054558e+001" RoadName="Southwest Technology Loop">
+    <Position Lat="4.455186800000000e+001" Long="-1.233065870000000e+002" />
+  </Platform>
+  <Platform PlatformTag="233" PlatformNo="13491" Name="SW West Hills Rd &amp; SW Ten Pas Ln" BearingToRoad="1.7983778e+002" RoadName="SW West Hills Rd">
+    <Position Lat="4.455635894000000e+001" Long="-1.233158803000000e+002" />
+  </Platform>
+  <Platform PlatformTag="151" PlatformNo="11920" Name="SW Western Blvd &amp; SW 13th St" BearingToRoad="1.7214888e+002" RoadName="SW Western Blvd">
+    <Position Lat="4.456015493000000e+001" Long="-1.232718574000000e+002" />
+  </Platform>
+  <Platform PlatformTag="152" PlatformNo="11912" Name="SW Western Blvd &amp; SW 16th St" BearingToRoad="1.7066528e+002" RoadName="SW Western Blvd">
+    <Position Lat="4.455978943000000e+001" Long="-1.232753984000000e+002" />
+  </Platform>
+  <Platform PlatformTag="153" PlatformNo="11908" Name="SW Western Blvd &amp; SW 26th St" BearingToRoad="1.4156244e+002" RoadName="SW Western Blvd">
+    <Position Lat="4.455845937000000e+001" Long="-1.232787796000000e+002" />
+  </Platform>
+  <Platform PlatformTag="157" PlatformNo="11867" Name="SW Western Blvd &amp; SW 35th St" BearingToRoad="1.8020403e+002" RoadName="SW Western Blvd">
+    <Position Lat="4.455701184000000e+001" Long="-1.232901028000000e+002" />
+  </Platform>
+  <Platform PlatformTag="167" PlatformNo="11769" Name="SW Western Blvd &amp; SW 35th St" BearingToRoad="1.4164908e+000" RoadName="SW Western Blvd">
+    <Position Lat="4.455684080000000e+001" Long="-1.232892080000000e+002" />
+  </Platform>
+  <Platform PlatformTag="149" PlatformNo="11949" Name="SW Western Blvd &amp; SW 4th St" BearingToRoad="2.0046346e+002" RoadName="SW Western Blvd">
+    <Position Lat="4.455983655000000e+001" Long="-1.232647122000000e+002" />
+  </Platform>
+  <Platform PlatformTag="150" PlatformNo="11931" Name="SW Western Blvd &amp; SW 8th St" BearingToRoad="1.7195509e+002" RoadName="SW Western Blvd">
+    <Position Lat="4.456046811000000e+001" Long="-1.232683767000000e+002" />
+  </Platform>
+  <Platform PlatformTag="154" PlatformNo="11898" Name="SW Western Blvd &amp; SW Grove St" BearingToRoad="1.6405891e+002" RoadName="SW Western Blvd">
+    <Position Lat="4.455713209000000e+001" Long="-1.232816187000000e+002" />
+  </Platform>
+  <Platform PlatformTag="169" PlatformNo="11748" Name="SW Western Blvd &amp; SW Grove St" BearingToRoad="3.4907123e+002" RoadName="SW Western Blvd">
+    <Position Lat="4.455681246000000e+001" Long="-1.232827232000000e+002" />
+  </Platform>
+  <Platform PlatformTag="166" PlatformNo="11776" Name="SW Western Blvd &amp; SW Hillside Dr" BearingToRoad="3.3964462e+002" RoadName="Southwest Western Boulevard">
+    <Position Lat="4.455653300000000e+001" Long="-1.232936050000000e+002" />
+  </Platform>
+  <Platform PlatformTag="158" PlatformNo="11851" Name="SW Western Blvd &amp; SW Ivy Pl" BearingToRoad="1.5722110e+002" RoadName="SW Western Blvd">
+    <Position Lat="4.455661650000000e+001" Long="-1.232936592000000e+002" />
+  </Platform>
+  <Platform PlatformTag="156" PlatformNo="11879" Name="SW Western Blvd &amp; SW Poplar Pl" BearingToRoad="1.7962781e+002" RoadName="SW Western Blvd">
+    <Position Lat="4.455692624000000e+001" Long="-1.232859116000000e+002" />
+  </Platform>
+  <Platform PlatformTag="168" PlatformNo="11753" Name="SW Western Blvd &amp; SW Poplar Pl" BearingToRoad="1.4115086e+000" RoadName="Southwest Western Boulevard">
+    <Position Lat="4.455683700000000e+001" Long="-1.232881730000000e+002" />
+  </Platform>
+  <Platform PlatformTag="401" PlatformNo="13848" Name="Southwest 35th Street" BearingToRoad="1.2656671e+002">
+    <Position Lat="4.454859963585535e+001" Long="-1.232898266082197e+002" />
+  </Platform>
+  <Platform PlatformTag="400" PlatformNo="13830" Name="Southwest 35th Street &amp; Southwest Philomath Boulev" BearingToRoad="9.0137169e+001" RoadName="Southwest 35th Street">
+    <Position Lat="4.455419000000000e+001" Long="-1.232896850000000e+002" />
+  </Platform>
+  <Platform PlatformTag="405" PlatformNo="14988" Name="Southwest 53rd Street" BearingToRoad="6.5967026e+001" RoadName="Southwest 53rd Street">
+    <Position Lat="4.455615939760787e+001" Long="-1.233122219567214e+002" />
+  </Platform>
+  <Platform PlatformTag="404" PlatformNo="13811" Name="Southwest Research Way" BearingToRoad="1.7957961e+002" RoadName="Southwest Research Way">
+    <Position Lat="4.455176563774572e+001" Long="-1.233033864961158e+002" />
+  </Platform>
+  <Platform PlatformTag="403" PlatformNo="13807" Name="Southwest Research Way &amp; Corvallis-Philomath Multi" BearingToRoad="1.9583424e+002" RoadName="Southwest Research Way">
+    <Position Lat="4.455161770636344e+001" Long="-1.232964529115741e+002" />
+  </Platform>
+  <Platform PlatformTag="402" PlatformNo="13824" Name="Southwest Research Way &amp; Southwest Country Club Dr" BearingToRoad="1.6480403e+002" RoadName="Southwest Country Club Drive">
+    <Position Lat="4.454844100000000e+001" Long="-1.232943320000000e+002" />
+  </Platform>
+  <Platform PlatformTag="319" PlatformNo="14432" Name="Timberhill Shopping Center" BearingToRoad="2.7058005e+002" RoadName="NW Kings Blvd">
+    <Position Lat="4.459056161000000e+001" Long="-1.232759268000000e+002" />
+  </Platform>
+</Platforms>

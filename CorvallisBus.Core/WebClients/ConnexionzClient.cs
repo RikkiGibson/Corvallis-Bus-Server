@@ -26,15 +26,12 @@ namespace CorvallisBus.Core.WebClients
         {
             var serializer = new XmlSerializer(typeof(T));
 
-            using (var client = new WebClient())
-            {
-                string s = client.DownloadString(url);
-
-                var reader = new StringReader(s);
-
-                return (T)serializer.Deserialize(reader);
-            }
+            using var client = new WebClient();
+            string s = client.DownloadString(url);
+            var reader = new StringReader(s);
+            return (T)serializer.Deserialize(reader);
         }
+
         /// <summary>
         /// Gets and deserializes XML from the specified Connexionz/CTS endpoints.
         /// </summary>
@@ -42,12 +39,8 @@ namespace CorvallisBus.Core.WebClients
         {
             var serializer = new XmlSerializer(typeof(T));
 
-            string s = string.Empty;
-
-            using (var client = new WebClient())
-            {
-                s = await client.DownloadStringTaskAsync(new Uri(url));
-            }
+            using var client = new WebClient();
+            string s = await client.DownloadStringTaskAsync(new Uri(url));
 
             var reader = new StringReader(s);
 
@@ -59,18 +52,16 @@ namespace CorvallisBus.Core.WebClients
         /// </summary>
         public static List<ConnexionzPlatform> LoadPlatforms()
         {
-            using (var client = new WebClient())
-            {
-                string s = client.DownloadString(BASE_URL + "&Name=Platform.rxml");
+            using var client = new WebClient();
+            string s = client.DownloadString(BASE_URL + "&Name=Platform.rxml");
 
-                XDocument document = XDocument.Parse(s);
+            XDocument document = XDocument.Parse(s);
 
-                return document.Element("Platforms")
-                    .Elements("Platform")
-                    .Where(e => e.Attribute("PlatformNo") is object)
-                    .Select(e => new ConnexionzPlatform(e))
-                    .ToList();
-            }
+            return document.Element("Platforms")
+                .Elements("Platform")
+                .Where(e => e.Attribute("PlatformNo") is object)
+                .Select(e => new ConnexionzPlatform(e))
+                .ToList();
         }
 
         /// <summary>
@@ -92,7 +83,7 @@ namespace CorvallisBus.Core.WebClients
         {
             RoutePosition position = await GetEntityAsync<RoutePosition>(BASE_URL + "&Name=RoutePositionET.xml&PlatformTag=" + platformTag.ToString());
 
-            var positionPlatform = position.Items.FirstOrDefault(p => p is RoutePositionPlatform) as RoutePositionPlatform;
+            var positionPlatform = position.Items.OfType<RoutePositionPlatform>().FirstOrDefault();
 
             return positionPlatform != null ?
                 new ConnexionzPlatformET(positionPlatform) :
