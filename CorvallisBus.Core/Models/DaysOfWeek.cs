@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace CorvallisBus.Core.Models
 {
@@ -22,11 +23,12 @@ namespace CorvallisBus.Core.Models
         All = Weekdays | Weekend,
         Weekdays = Monday | Tuesday | Wednesday | Thursday | Friday,
         Weekend = Sunday | Saturday,
-        NightOwl = Thursday | Friday | Saturday,
+        NightOwl = Thursday | Friday | Saturday, // TODO: remove this
     }
 
     public static class DaysOfWeekUtils
     {
+        private const int MinuteBuffer = 30;
         private static readonly Regex m_dayOfWeekPattern = new Regex("Mon|Tue|Wed|Thu|Fri|Sat|Sun");
 
         private static DaysOfWeek ToDaysOfWeek(string day)
@@ -79,17 +81,48 @@ namespace CorvallisBus.Core.Models
         }
 
         /// <summary>
-        /// Returns a value indicating whether the provided DaysOfWeek value is applicable today.
+        /// Returns a value indicating whether the provided DateTimeOffset falls in to the DaysOfWeek specified
         /// </summary>
-        public static bool IsToday(DaysOfWeek days, TimeSpan lastArrivalTime, DateTimeOffset currentTime)
+        public static bool TodayMayFallInsideDaySchedule(BusStopRouteDaySchedule ds, DateTimeOffset currentTime)
         {
-            var normalizedArrivalTime = lastArrivalTime.Days == 1 ? lastArrivalTime - TimeSpan.FromDays(1) : lastArrivalTime;
+            DaysOfWeek currentDay = GetDaysOfWeekFromCurrentTime(currentTime);
+            DaysOfWeek previousDay = GetDaysOfWeekFromCurrentTime(currentTime.AddDays(-1));
+            TimeSpan lastTime = ds.Times.Last();
 
-            // if the last arrival time is later than the current time, this pushes the "effective day" back by one.
-            // For example Sunday at 1 AM will have an "effective day" of Saturday when looking for the right Night Owl schedule.
-            var effectiveDay = currentTime - normalizedArrivalTime;
+            // simple case where current time is definitely inside the current schedule
+            if((ds.Days & currentDay) == currentDay) {
+                return true;
+            }
+            // slightly more annoying cass where current time is outside the *day* of current schedule, but the schedule spills into the next day 
+            // and the extremely annoying case where current time is definitely outside the current schedule, but only by a bit. 
+            // In this case, there might be outstanding busses from this schedule, so we'll pad it by 30 minutes or so
+            else if((ds.Days & previousDay) == previousDay && lastTime.Hours >= 24) {
+                DateTimeOffset lastScheduleDateTime = new DateTimeOffset(currentTime.Year, currentTime.Month, currentTime.Day, lastTime.Hours-24, lastTime.Minutes, 0, 0, currentTime.Offset);
+                return currentTime.CompareTo(lastScheduleDateTime.AddMinutes(MinuteBuffer)) < 0;
+            } else {
+                return false;
+            }
+        }
 
-            return (ToDaysOfWeek(effectiveDay.DayOfWeek) & days) != DaysOfWeek.None;
+        public static DaysOfWeek GetDaysOfWeekFromCurrentTime(DateTimeOffset currentTime) {
+            switch(currentTime.DayOfWeek) {
+                case DayOfWeek.Monday:
+                    return DaysOfWeek.Monday;
+                case DayOfWeek.Tuesday:
+                    return DaysOfWeek.Tuesday;
+                case DayOfWeek.Wednesday:
+                    return DaysOfWeek.Thursday;
+                case DayOfWeek.Thursday:
+                    return DaysOfWeek.Thursday;
+                case DayOfWeek.Friday:
+                    return DaysOfWeek.Friday;
+                case DayOfWeek.Saturday:
+                    return DaysOfWeek.Saturday;
+                case DayOfWeek.Sunday:
+                    return DaysOfWeek.Sunday;
+                default:
+                    throw new ArgumentException("current time was not a valid day of the week, somehow");
+            }
         }
     }
 }
