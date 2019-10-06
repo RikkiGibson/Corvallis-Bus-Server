@@ -310,13 +310,13 @@ namespace CorvallisBus.Test
         }
 
         [Theory]
-        // [InlineData(DaysOfWeek.Thursday, 2)] // friday morning
-        // [InlineData(DaysOfWeek.Friday, 3)] // saturday morning
-        // [InlineData(DaysOfWeek.Saturday, 4)] // sunday morning
-        // [InlineData(DaysOfWeek.Sunday, 5)] // monday morning
+        [InlineData(DaysOfWeek.Thursday, 2)] // friday morning
+        [InlineData(DaysOfWeek.Friday, 3)] // saturday morning
+        [InlineData(DaysOfWeek.Saturday, 4)] // sunday morning
+        [InlineData(DaysOfWeek.Sunday, 5)] // monday morning
         [InlineData(DaysOfWeek.NightOwl, 2)] // friday morning
         [InlineData(DaysOfWeek.NightOwl, 3)] // saturday morning
-        // [InlineData(DaysOfWeek.NightOwl, 4)] // sunday morning
+        [InlineData(DaysOfWeek.NightOwl, 4)] // sunday morning
         public void TestArrivalTimesAfterMidnightRenderCorrectly(DaysOfWeek daysOfWeek, int dayOfMonth)
         {
             DateTimeOffset testTime = new DateTime(year: 2015, month: 10, dayOfMonth, hour: 1, minute: 00, second: 00);
