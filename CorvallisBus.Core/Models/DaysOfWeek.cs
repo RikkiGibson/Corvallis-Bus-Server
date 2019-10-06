@@ -22,8 +22,7 @@ namespace CorvallisBus.Core.Models
         None = 0,
         All = Weekdays | Weekend,
         Weekdays = Monday | Tuesday | Wednesday | Thursday | Friday,
-        Weekend = Sunday | Saturday,
-        NightOwl = Thursday | Friday | Saturday, // TODO: remove this
+        Weekend = Sunday | Saturday
     }
 
     public static class DaysOfWeekUtils

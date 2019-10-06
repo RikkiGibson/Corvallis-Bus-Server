@@ -89,7 +89,6 @@ namespace CorvallisBus
         {
             var arrivalTimes = Enumerable.Empty<BusArrivalTime>();
 
-            //var daySchedule = routeSchedule.DaySchedules.FirstOrDefault(ds => DaysOfWeekUtils.TodayMayFallInsideDaySchedule(ds, currentTime));
             var daySchedule = GetBestGuessDaySchedule(routeSchedule, currentTime);
 
             if (daySchedule != null)

@@ -14,6 +14,8 @@ namespace CorvallisBus.Test
 
     public partial class TransitManagerTests
     {
+        public const DaysOfWeek NightOwl = DaysOfWeek.Thursday | DaysOfWeek.Friday | DaysOfWeek.Saturday;
+
         [Fact]
         public void TestEstimateReplacesScheduledTime()
         {
@@ -314,9 +316,9 @@ namespace CorvallisBus.Test
         [InlineData(DaysOfWeek.Friday, 3)] // saturday morning
         [InlineData(DaysOfWeek.Saturday, 4)] // sunday morning
         [InlineData(DaysOfWeek.Sunday, 5)] // monday morning
-        [InlineData(DaysOfWeek.NightOwl, 2)] // friday morning
-        [InlineData(DaysOfWeek.NightOwl, 3)] // saturday morning
-        [InlineData(DaysOfWeek.NightOwl, 4)] // sunday morning
+        [InlineData(NightOwl, 2)] // friday morning
+        [InlineData(NightOwl, 3)] // saturday morning
+        [InlineData(NightOwl, 4)] // sunday morning
         public void TestArrivalTimesAfterMidnightRenderCorrectly(DaysOfWeek daysOfWeek, int dayOfMonth)
         {
             DateTimeOffset testTime = new DateTime(year: 2015, month: 10, dayOfMonth, hour: 1, minute: 00, second: 00);
@@ -376,8 +378,8 @@ namespace CorvallisBus.Test
 
         [Theory]
         [InlineData(DaysOfWeek.Friday, 11)] // sunday
-        [InlineData(DaysOfWeek.NightOwl, 12)] // monday
-        [InlineData(DaysOfWeek.NightOwl, 7)] // monday
+        [InlineData(NightOwl, 12)] // monday
+        [InlineData(NightOwl, 7)] // monday
         public void TestArrivalTimesAfterMidnightRequireCorrectDay(DaysOfWeek daysOfWeek, int dayOfMonth)
         {
             DateTimeOffset testTime = new DateTime(year: 2015, month: 10, dayOfMonth, hour: 1, minute: 00, second: 00);
@@ -450,7 +452,7 @@ namespace CorvallisBus.Test
                             daySchedules: new List<BusStopRouteDaySchedule>
                             {
                                 new BusStopRouteDaySchedule(
-                                    days: DaysOfWeek.NightOwl,
+                                    days: NightOwl,
                                     times: new List<TimeSpan>
                                     {
                                         new TimeSpan(23, 25, 0),
@@ -571,7 +573,7 @@ namespace CorvallisBus.Test
                             daySchedules: new List<BusStopRouteDaySchedule>
                             {
                                 new BusStopRouteDaySchedule(
-                                    days: DaysOfWeek.NightOwl,
+                                    days: NightOwl,
                                     times: new List<TimeSpan>
                                     {
                                         new TimeSpan(6, 25, 0),
