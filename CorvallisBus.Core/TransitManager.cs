@@ -115,15 +115,12 @@ namespace CorvallisBus
         // don't show arrival times at 9 AM if it's already 11 AM
         private static IEnumerable<int> MakeRelativeScheduleWithinCutoff(BusStopRouteDaySchedule daySchedule, DateTimeOffset currentTime)
         {
-            var oneDay = TimeSpan.FromDays(1);
-            var latestTime = daySchedule.Times.Last();
-            var timeOfDay = currentTime.TimeOfDay;
+            var scheduleCutoff = currentTime.TimeOfDay + TimeSpan.FromMinutes(20);
 
+            var timeOfDay = currentTime.TimeOfDay;
             // Truncate any seconds on timeOfDay so that we don't get off-by-one errors
             // when converting a scheduled time with a seconds component to minutesFromNow and back.
             timeOfDay -= TimeSpan.FromSeconds(timeOfDay.Seconds);
-
-            var scheduleCutoff = timeOfDay + TimeSpan.FromMinutes(20);
 
             return daySchedule.Times.Where(ts => ts > scheduleCutoff)
                 .Select(ts => (int)(ts - timeOfDay).TotalMinutes);
