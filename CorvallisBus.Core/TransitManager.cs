@@ -67,15 +67,16 @@ namespace CorvallisBus
             var potentialDaySchedules = routeSchedule.DaySchedules.Where(ds => DaysOfWeekUtils.TodayMayFallInsideDaySchedule(ds, currentTime));
 
             int numPotentialSchedules = potentialDaySchedules.Count();
-            if (numPotentialSchedules == 1) daySchedule = potentialDaySchedules.First();
+            if (numPotentialSchedules == 1)
+                daySchedule = potentialDaySchedules.First();
 
 
             // ASSUMPTION: if there are multiple matches, it is because one is a spillover from the previous day, and one is the current day
             // In this case, we wish to continue showing the spillover until it is no longer valid
             if (numPotentialSchedules > 1)
             {
-                daySchedule = potentialDaySchedules.First(ds =>
-                (ds.Days & DaysOfWeekUtils.ToDaysOfWeek(currentTime.DayOfWeek)) != DaysOfWeekUtils.ToDaysOfWeek(currentTime.DayOfWeek));
+                daySchedule = potentialDaySchedules.First(
+                    ds => (ds.Days & DaysOfWeekUtils.ToDaysOfWeek(currentTime.DayOfWeek)) != DaysOfWeekUtils.ToDaysOfWeek(currentTime.DayOfWeek));
             }
 
             if (daySchedule != null && DaysOfWeekUtils.TimeInSpilloverWindow(daySchedule, currentTime))
