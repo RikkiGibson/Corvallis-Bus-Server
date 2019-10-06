@@ -61,22 +61,24 @@ namespace CorvallisBus
                         currentTime));
         }
 
-        private static BusStopRouteDaySchedule? GetBestGuessDaySchedule(BusStopRouteSchedule routeSchedule, DateTimeOffset currentTime) {
+        private static BusStopRouteDaySchedule? GetBestGuessDaySchedule(BusStopRouteSchedule routeSchedule, DateTimeOffset currentTime)
+        {
             BusStopRouteDaySchedule? daySchedule = null;
             var potentialDaySchedules = routeSchedule.DaySchedules.Where(ds => DaysOfWeekUtils.TodayMayFallInsideDaySchedule(ds, currentTime));
-            if(potentialDaySchedules.Count() == 1) daySchedule = potentialDaySchedules.First();
+            if (potentialDaySchedules.Count() == 1) daySchedule = potentialDaySchedules.First();
 
 
             // ASSUMPTION: if there are multiple matches, it is because one is a spillover from the previous day, and one is the current day
             // In this case, we wish to continue showing the spillover until it is no longer valid
-            if(potentialDaySchedules.Count() > 1) {
+            if (potentialDaySchedules.Count() > 1)
+            {
                 daySchedule = potentialDaySchedules.First(ds =>
-                (ds.Days & DaysOfWeekUtils.ToDaysOfWeek(currentTime.DayOfWeek)) !=  DaysOfWeekUtils.ToDaysOfWeek(currentTime.DayOfWeek));
+                (ds.Days & DaysOfWeekUtils.ToDaysOfWeek(currentTime.DayOfWeek)) != DaysOfWeekUtils.ToDaysOfWeek(currentTime.DayOfWeek));
             }
 
             if (daySchedule != null && DaysOfWeekUtils.TimeInSpilloverWindow(daySchedule, currentTime))
                 daySchedule = new BusStopRouteDaySchedule(daySchedule.Days, daySchedule.Times.Select(t => t - TimeSpan.FromDays(1)).ToList());
-            
+
             return daySchedule;
         }
 
@@ -87,13 +89,13 @@ namespace CorvallisBus
 
             //var daySchedule = routeSchedule.DaySchedules.FirstOrDefault(ds => DaysOfWeekUtils.TodayMayFallInsideDaySchedule(ds, currentTime));
             var daySchedule = GetBestGuessDaySchedule(routeSchedule, currentTime);
-            
+
             if (daySchedule != null)
             {
                 var relativeSchedule = MakeRelativeScheduleWithinCutoff(daySchedule, currentTime);
                 arrivalTimes = relativeSchedule.Select(minutes => new BusArrivalTime(minutes, isEstimate: false));
             }
-            
+
             if (stopEstimates.ContainsKey(routeSchedule.RouteNo))
             {
                 var routeEstimates = stopEstimates[routeSchedule.RouteNo];

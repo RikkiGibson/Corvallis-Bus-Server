@@ -494,7 +494,6 @@ namespace CorvallisBus.Test
             Assert.Equal(expectedArrivalTimes, actual[12345]["TEST"]);
         }
 
-        
         [Fact]
         public void EstimatesAreForMonday_WhenEarlyMondayMorningOfWeekday()
         {
@@ -555,7 +554,7 @@ namespace CorvallisBus.Test
 
             Assert.Equal(expectedArrivalTimes, actual[12345]["TEST"]);
         }
-        
+
         [Fact]
         public void EstimatesAreForThursday_WhenEarlyThursdayMorningOfNightOwl()
         {
@@ -616,7 +615,7 @@ namespace CorvallisBus.Test
 
             Assert.Equal(expectedArrivalTimes, actual[12345]["TEST"]);
         }
-        
+
         [Fact]
         public void EstimatesAreForPreviousDay_WhenAdjacentDays_AndEarlyMorningWithOvernightBus()
         {
@@ -683,7 +682,7 @@ namespace CorvallisBus.Test
 
             Assert.Equal(expectedArrivalTimes, actual[12345]["TEST"]);
         }
-        
+
         [Fact]
         public void EstimatesAreForPreviousDay_WhenAdjacentDays_AndEarlyMorningWithOvernightBus_ButPathologicalOrderingOfSchedules()
         {
@@ -699,7 +698,7 @@ namespace CorvallisBus.Test
                             routeNo: "TEST",
                             daySchedules: new List<BusStopRouteDaySchedule>
                             {
-                                
+
                                 new BusStopRouteDaySchedule(
                                     days: DaysOfWeek.Monday,
                                     times: new List<TimeSpan>
