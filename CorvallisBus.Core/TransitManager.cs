@@ -66,7 +66,7 @@ namespace CorvallisBus
             BusStopRouteDaySchedule? daySchedule = null;
             var potentialDaySchedules = routeSchedule.DaySchedules.Where(ds => DaysOfWeekUtils.TodayMayFallInsideDaySchedule(ds, currentTime));
 
-            int numPotentialSchedules = potentialDaySchedules.Count()
+            int numPotentialSchedules = potentialDaySchedules.Count();
             if (numPotentialSchedules == 1) daySchedule = potentialDaySchedules.First();
 
 
