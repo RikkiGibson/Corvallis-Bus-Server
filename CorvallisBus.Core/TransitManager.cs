@@ -274,14 +274,12 @@ namespace CorvallisBus
         private static List<RouteArrivalsSummary> ToRouteArrivalsSummaries(List<string> routeNames,
             ClientStopSchedule stopArrivals, DateTimeOffset currentTime, BusStaticData staticData)
         {
-            var arrivalsSummaries =
-                routeNames.Select(routeName =>
-                            new KeyValuePair<string, List<BusArrivalTime>>(routeName, stopArrivals.GetOrEmpty(routeName)))
-                          .OrderBy(kvp => kvp.Value.DefaultIfEmpty(ARRIVAL_TIME_SEED).Min())
-                          .Select(kvp => new RouteArrivalsSummary(routeName: kvp.Key,
-                                routeArrivalTimes: kvp.Value, currentTime: currentTime))
-                          .Where(ras => staticData.Routes.ContainsKey(ras.RouteName))
-                          .ToList();
+            var arrivalsSummaries = routeNames
+                .Select(routeName => (routeName, arrivalTimes: stopArrivals.GetOrEmpty(routeName)))
+                .OrderBy(pair => pair.arrivalTimes.DefaultIfEmpty(ARRIVAL_TIME_SEED).Min())
+                .Select(pair => new RouteArrivalsSummary(pair.routeName, pair.arrivalTimes, currentTime))
+                .Where(ras => staticData.Routes.ContainsKey(ras.RouteName))
+                .ToList();
 
             return arrivalsSummaries;
         }

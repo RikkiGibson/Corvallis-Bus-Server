@@ -10,7 +10,6 @@ namespace CorvallisBus.Core.Models
         protected readonly IDictionary<TKey, TValue> _dict;
         protected Lookup(IDictionary<TKey, TValue> dict) => _dict = dict;
 
-
         TValue IDictionary<TKey, TValue>.this[TKey key] { get => _dict[key]; set => _dict[key] = value; }
 
         ICollection<TKey> IDictionary<TKey, TValue>.Keys => _dict.Keys;
