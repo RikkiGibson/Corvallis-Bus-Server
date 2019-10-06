@@ -99,7 +99,7 @@ namespace CorvallisBus.Core.Models
 
             if ((ds.Days & previousDay) == previousDay && lastTime.Days >= 1)
             {
-                DateTimeOffset lastScheduleDateTime = currentTime - currentTime.TimeOfDay + lastTime;
+                DateTimeOffset lastScheduleDateTime = new DateTimeOffset(currentTime.Year, currentTime.Month, currentTime.Day, lastTime.Hours, lastTime.Minutes, 0, 0, currentTime.Offset);
                 return currentTime < lastScheduleDateTime.AddMinutes(TransitManager.ESTIMATES_MAX_ADVANCE_MINUTES);
             }
 
