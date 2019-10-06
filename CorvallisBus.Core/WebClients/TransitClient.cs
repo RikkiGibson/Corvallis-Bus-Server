@@ -13,8 +13,6 @@ using System.Net;
 
 namespace CorvallisBus.Core.WebClients
 {
-    using ServerBusSchedule = Dictionary<int, IEnumerable<BusStopRouteSchedule>>;
-
     /// <summary>
     /// Merges data obtained from Connexionz and Google Transit
     /// and makes it ready for delivery to clients.
@@ -117,7 +115,7 @@ namespace CorvallisBus.Core.WebClients
                                 errors.Add($"Route {route.RouteNo} is using platform tag {stopId} as an ID because it has no stop ID");
                                 continue;
                             }
-                            else if (!data.Schedule.ContainsKey(stopId))
+                            else if (!data.Schedule.Contains(stopId))
                             {
                                 errors.Add($"Route {route.RouteNo} is using stop ID {stopId} which has no schedule");
                                 continue;
@@ -202,7 +200,6 @@ namespace CorvallisBus.Core.WebClients
 
             // Now turn it on its head so it's easy to query from a stop-oriented way.
             var result = connexionzPlatforms.ToDictionary(p => p.PlatformNo,
-                // TODO: change type to List?
                 p => routeSchedules.Select(r => new BusStopRouteSchedule(
                     routeNo: r.routeNo,
                     daySchedules: r.daySchedules.Select(ds => new BusStopRouteDaySchedule(
@@ -213,9 +210,10 @@ namespace CorvallisBus.Core.WebClients
                     .ToList()
                 ))
                 .Where(r => r.DaySchedules.Any())
+                .ToList()
             );
 
-            return result;
+            return new ServerBusSchedule(result);
         }
 
         public Task<List<ServiceAlert>> GetServiceAlerts() => ServiceAlertsClient.GetServiceAlerts();

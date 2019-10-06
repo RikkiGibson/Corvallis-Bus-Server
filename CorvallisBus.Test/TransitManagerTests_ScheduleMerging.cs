@@ -21,7 +21,7 @@ namespace CorvallisBus.Test
         {
             DateTimeOffset testTime = new DateTime(2015, 10, 20, 12, 00, 00);
 
-            var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>>
+            var testSchedule = new ServerBusSchedule
             {
                 {
                     12345,
@@ -72,7 +72,7 @@ namespace CorvallisBus.Test
             };
             var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
 
-            Assert.Equal(expectedArrivalTimes, actual[12345]["TEST"]);
+            Assert.Equal(expectedArrivalTimes, actual.GetStopSchedule(12345).GetRouteSchedule("TEST"));
         }
 
         [Fact]
@@ -80,7 +80,7 @@ namespace CorvallisBus.Test
         {
             DateTimeOffset testTime = new DateTime(2015, 10, 20, 12, 00, 00);
 
-            var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>>
+            var testSchedule = new ServerBusSchedule
             {
                 {
                     12345,
@@ -124,7 +124,7 @@ namespace CorvallisBus.Test
             };
             var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
 
-            Assert.Equal(expectedArrivalTimes, actual[12345]["TEST"]);
+            Assert.Equal(expectedArrivalTimes, actual.GetStopSchedule(12345).GetRouteSchedule("TEST"));
         }
 
         [Fact]
@@ -132,7 +132,7 @@ namespace CorvallisBus.Test
         {
             DateTimeOffset testTime = new DateTime(2015, 10, 20, 12, 00, 00);
 
-            var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>>
+            var testSchedule = new ServerBusSchedule
             {
                 {
                     12345,
@@ -183,7 +183,7 @@ namespace CorvallisBus.Test
             };
             var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
 
-            Assert.Equal(expectedArrivalTimes, actual[12345]["TEST"]);
+            Assert.Equal(expectedArrivalTimes, actual.GetStopSchedule(12345).GetRouteSchedule("TEST"));
         }
 
         [Fact]
@@ -191,7 +191,7 @@ namespace CorvallisBus.Test
         {
             DateTimeOffset testTime = new DateTime(2015, 10, 20, 12, 00, 00);
 
-            var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>>
+            var testSchedule = new ServerBusSchedule
             {
                 {
                     12345,
@@ -242,7 +242,7 @@ namespace CorvallisBus.Test
             };
             var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
 
-            Assert.Equal(expectedArrivalTimes, actual[12345]["TEST"]);
+            Assert.Equal(expectedArrivalTimes, actual.GetStopSchedule(12345).GetRouteSchedule("TEST"));
         }
 
         /// <summary>
@@ -256,7 +256,7 @@ namespace CorvallisBus.Test
         {
             DateTimeOffset testTime = new DateTime(2015, 10, 20, 12, 00, 00);
 
-            var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>>
+            var testSchedule = new ServerBusSchedule
             {
                 {
                     12345,
@@ -308,7 +308,7 @@ namespace CorvallisBus.Test
             };
             var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
 
-            Assert.Equal(expectedArrivalTimes, actual[12345]["TEST"]);
+            Assert.Equal(expectedArrivalTimes, actual.GetStopSchedule(12345).GetRouteSchedule("TEST"));
         }
 
         [Theory]
@@ -323,7 +323,7 @@ namespace CorvallisBus.Test
         {
             DateTimeOffset testTime = new DateTime(year: 2015, month: 10, dayOfMonth, hour: 1, minute: 00, second: 00);
 
-            var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>>
+            var testSchedule = new ServerBusSchedule
             {
                 {
                     12345,
@@ -373,7 +373,7 @@ namespace CorvallisBus.Test
             };
             var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
 
-            Assert.Equal(expectedArrivalTimes, actual[12345]["TEST"]);
+            Assert.Equal(expectedArrivalTimes, actual.GetStopSchedule(12345).GetRouteSchedule("TEST"));
         }
 
         [Theory]
@@ -384,7 +384,7 @@ namespace CorvallisBus.Test
         {
             DateTimeOffset testTime = new DateTime(year: 2015, month: 10, dayOfMonth, hour: 1, minute: 00, second: 00);
 
-            var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>>
+            var testSchedule = new ServerBusSchedule
             {
                 {
                     12345,
@@ -433,7 +433,7 @@ namespace CorvallisBus.Test
             };
             var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
 
-            Assert.Equal(expectedArrivalTimes, actual[12345]["TEST"]);
+            Assert.Equal(expectedArrivalTimes, actual.GetStopSchedule(12345).GetRouteSchedule("TEST"));
         }
 
         [Fact]
@@ -441,7 +441,7 @@ namespace CorvallisBus.Test
         {
             DateTimeOffset testTime = new DateTime(2015, 10, 3, 23, 00, 00);
 
-            var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>>
+            var testSchedule = new ServerBusSchedule
             {
                 {
                     12345,
@@ -493,7 +493,7 @@ namespace CorvallisBus.Test
             };
             var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
 
-            Assert.Equal(expectedArrivalTimes, actual[12345]["TEST"]);
+            Assert.Equal(expectedArrivalTimes, actual.GetStopSchedule(12345).GetRouteSchedule("TEST"));
         }
 
         [Fact]
@@ -501,7 +501,7 @@ namespace CorvallisBus.Test
         {
             DateTimeOffset testTime = new DateTime(2019, 9, 30, 7, 00, 00);
 
-            var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>>
+            var testSchedule = new ServerBusSchedule
             {
                 {
                     12345,
@@ -554,7 +554,7 @@ namespace CorvallisBus.Test
             };
             var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
 
-            Assert.Equal(expectedArrivalTimes, actual[12345]["TEST"]);
+            Assert.Equal(expectedArrivalTimes, actual.GetStopSchedule(12345).GetRouteSchedule("TEST"));
         }
 
         [Fact]
@@ -562,7 +562,7 @@ namespace CorvallisBus.Test
         {
             DateTimeOffset testTime = new DateTime(2019, 10, 3, 7, 00, 00);
 
-            var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>>
+            var testSchedule = new ServerBusSchedule
             {
                 {
                     12345,
@@ -615,7 +615,7 @@ namespace CorvallisBus.Test
             };
             var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
 
-            Assert.Equal(expectedArrivalTimes, actual[12345]["TEST"]);
+            Assert.Equal(expectedArrivalTimes, actual.GetStopSchedule(12345).GetRouteSchedule("TEST"));
         }
 
         [Fact]
@@ -623,7 +623,7 @@ namespace CorvallisBus.Test
         {
             DateTimeOffset testTime = new DateTime(2019, 10, 1, 3, 28, 00);
 
-            var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>>
+            var testSchedule = new ServerBusSchedule
             {
                 {
                     12345,
@@ -682,7 +682,7 @@ namespace CorvallisBus.Test
             };
             var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
 
-            Assert.Equal(expectedArrivalTimes, actual[12345]["TEST"]);
+            Assert.Equal(expectedArrivalTimes, actual.GetStopSchedule(12345).GetRouteSchedule("TEST"));
         }
 
         [Fact]
@@ -690,7 +690,7 @@ namespace CorvallisBus.Test
         {
             DateTimeOffset testTime = new DateTime(year: 2019, month: 10, day: 1, hour: 3, minute: 28, second: 00);
 
-            var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>>
+            var testSchedule = new ServerBusSchedule
             {
                 {
                     12345,
@@ -750,7 +750,7 @@ namespace CorvallisBus.Test
             };
             var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
 
-            Assert.Equal(expectedArrivalTimes, actual[12345]["TEST"]);
+            Assert.Equal(expectedArrivalTimes, actual.GetStopSchedule(12345).GetRouteSchedule("TEST"));
         }
     }
 }

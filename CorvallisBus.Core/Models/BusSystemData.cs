@@ -1,5 +1,6 @@
 ﻿using CorvallisBus.Core.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +8,6 @@ using System.Threading.Tasks;
 
 namespace CorvallisBus.Core.Models
 {
-    using ServerBusSchedule = Dictionary<int, IEnumerable<BusStopRouteSchedule>>;
-
     /// <summary>
     /// Represents all of the ahead-of-time derived data about the bus system.
     /// </summary>

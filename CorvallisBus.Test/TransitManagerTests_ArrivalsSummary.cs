@@ -19,7 +19,7 @@ namespace CorvallisBus.Test
         {
             DateTimeOffset testTime = new DateTime(2015, 10, 3, 12, 00, 00);
 
-            var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>> {
+            var testSchedule = new ServerBusSchedule {
                 [12345] = new List<BusStopRouteSchedule> {
                     new BusStopRouteSchedule(
                         routeNo: "TEST",
@@ -84,7 +84,7 @@ namespace CorvallisBus.Test
         {
             DateTimeOffset testTime = new DateTime(year: 2015, month: 10, day: 3, hour: 12, minute: 00, second: 00);
 
-            var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>> {
+            var testSchedule = new ServerBusSchedule {
                 [12345] = new List<BusStopRouteSchedule> {
                         new BusStopRouteSchedule(
                             routeNo: "TEST1",
@@ -178,7 +178,7 @@ namespace CorvallisBus.Test
             // Tuesday
             DateTimeOffset testTime = new DateTime(year: 2015, month: 10, day: 6, hour: 7, minute, second);
 
-            var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>>
+            var testSchedule = new ServerBusSchedule
             {
                 [12345] = new List<BusStopRouteSchedule>
                 {
