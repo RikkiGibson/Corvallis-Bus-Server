@@ -76,13 +76,7 @@ namespace CorvallisBus.Test
 
             var actual = TransitManager.GetArrivalsSummary(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
 
-            Assert.Equal(expected.Count, actual[12345].Count);
-            for (int i = 0; i < expected.Count; i++)
-            {
-                Assert.Equal(expected[i].RouteName, actual[12345][i].RouteName);
-                Assert.Equal(expected[i].ArrivalsSummary, actual[12345][i].ArrivalsSummary);
-                Assert.Equal(expected[i].ScheduleSummary, actual[12345][i].ScheduleSummary);
-            }
+            Assert.Equal(expected, actual[12345]);
         }
 
         [Fact]
@@ -172,13 +166,7 @@ namespace CorvallisBus.Test
 
             var actual = TransitManager.GetArrivalsSummary(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
 
-            Assert.Equal(expected.Count, actual[12345].Count);
-            for (int i = 0; i < expected.Count; i++)
-            {
-                Assert.Equal(expected[i].RouteName, actual[12345][i].RouteName);
-                Assert.Equal(expected[i].ArrivalsSummary, actual[12345][i].ArrivalsSummary);
-                Assert.Equal(expected[i].ScheduleSummary, actual[12345][i].ScheduleSummary);
-            }
+            Assert.Equal(expected, actual[12345]);
         }
 
         [Theory]
