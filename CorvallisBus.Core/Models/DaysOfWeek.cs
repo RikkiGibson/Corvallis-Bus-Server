@@ -27,23 +27,6 @@ namespace CorvallisBus.Core.Models
 
     public static class DaysOfWeekUtils
     {
-        private static readonly Regex m_dayOfWeekPattern = new Regex("Mon|Tue|Wed|Thu|Fri|Sat|Sun");
-
-        public static DaysOfWeek ToDaysOfWeek(string day)
-        {
-            switch (day)
-            {
-                case "Mon": return DaysOfWeek.Monday;
-                case "Tue": return DaysOfWeek.Tuesday;
-                case "Wed": return DaysOfWeek.Wednesday;
-                case "Thu": return DaysOfWeek.Thursday;
-                case "Fri": return DaysOfWeek.Friday;
-                case "Sat": return DaysOfWeek.Saturday;
-                case "Sun": return DaysOfWeek.Sunday;
-                default: return DaysOfWeek.None;
-            }
-        }
-
         /// <summary>
         /// There is a real reason to have this enum instead of just DayOfWeek--
         /// it's useful to be able to OR days together the way we do.
@@ -63,19 +46,6 @@ namespace CorvallisBus.Core.Models
                 case DayOfWeek.Sunday: return DaysOfWeek.Sunday;
                 default: return DaysOfWeek.None;
             }
-        }
-
-        /// <summary>
-        /// Gets all the days of the week contained in the input string using a regular expression.
-        /// </summary>
-        public static DaysOfWeek GetDaysOfWeek(string days)
-        {
-            DaysOfWeek result = DaysOfWeek.None;
-            foreach (Match match in m_dayOfWeekPattern.Matches(days))
-            {
-                result |= ToDaysOfWeek(match.Value);
-            }
-            return result;
         }
 
         /// <summary>
@@ -99,7 +69,7 @@ namespace CorvallisBus.Core.Models
 
             if ((ds.Days & previousDay) == previousDay && lastTime.Days >= 1)
             {
-                DateTimeOffset lastScheduleDateTime = new DateTimeOffset(currentTime.Year, currentTime.Month, currentTime.Day, lastTime.Hours, lastTime.Minutes, 0, 0, currentTime.Offset);
+                DateTimeOffset lastScheduleDateTime = new DateTimeOffset(currentTime.Year, currentTime.Month, currentTime.Day, lastTime.Hours, lastTime.Minutes, 0, currentTime.Offset);
                 return currentTime < lastScheduleDateTime.AddMinutes(TransitManager.ESTIMATES_MAX_ADVANCE_MINUTES);
             }
 
