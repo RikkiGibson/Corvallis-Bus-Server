@@ -95,7 +95,6 @@ namespace CorvallisBus.Core.Models
         /// </summary>
         public static bool TimeInSpilloverWindow(BusStopRouteDaySchedule ds, DateTimeOffset currentTime)
         {
-            DaysOfWeek currentDay = ToDaysOfWeek(currentTime.DayOfWeek);
             DaysOfWeek previousDay = ToDaysOfWeek(currentTime.AddDays(-1).DayOfWeek);
             TimeSpan lastTime = ds.Times.Last();
 
