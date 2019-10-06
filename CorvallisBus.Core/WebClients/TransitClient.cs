@@ -29,7 +29,7 @@ namespace CorvallisBus.Core.WebClients
 
             var routes = CreateRoutes(googleData.Routes, connexionzRoutes);
             var stops = CreateStops(connexionzPlatforms, connexionzRoutes);
-            
+
             var staticData = new BusStaticData(
                 routes: routes.ToDictionary(r => r.RouteNo),
                 stops: stops.ToDictionary(s => s.Id)
@@ -58,12 +58,20 @@ namespace CorvallisBus.Core.WebClients
                 var (stopId, stopRouteSchedules) = (kvp.Key, kvp.Value);
                 foreach (var routeSchedule in stopRouteSchedules)
                 {
+                    DaysOfWeek usedDays = 0;
                     foreach (var routeDaySchedule in routeSchedule.DaySchedules)
                     {
                         if (routeDaySchedule.Days == DaysOfWeek.None)
                         {
                             errors.Add($"Route {routeSchedule.RouteNo} at stop {stopId} has a day schedule for DaysOfWeek.None.");
                         }
+
+                        if ((routeDaySchedule.Days & usedDays) != 0)
+                        {
+                            errors.Add($"Route {routeSchedule.RouteNo} at stop {stopId} has a overlapping day schedule {usedDays & routeDaySchedule.Days}");
+                        }
+
+                        usedDays = usedDays | routeDaySchedule.Days;
 
                         var currentTime = TimeSpan.MinValue;
                         foreach (var nextTime in routeDaySchedule.Times)
@@ -151,7 +159,7 @@ namespace CorvallisBus.Core.WebClients
         private static List<BusStop> CreateStops(List<ConnexionzPlatform> platforms, List<ConnexionzRoute> routes)
         {
             return platforms
-                .Select(p => 
+                .Select(p =>
                     new BusStop(p,
                         routes.Where(r => r.Path.Any(rp => rp.PlatformId == p.PlatformNo))
                             .Select(r => r.RouteNo)
@@ -169,7 +177,7 @@ namespace CorvallisBus.Core.WebClients
         }
 
         public async Task<ConnexionzPlatformET?> GetEta(int platformTag) => await ConnexionzClient.GetPlatformEta(platformTag);
-        
+
         /// <summary>
         /// Creates a bus schedule based on Google Transit data.
         /// </summary>

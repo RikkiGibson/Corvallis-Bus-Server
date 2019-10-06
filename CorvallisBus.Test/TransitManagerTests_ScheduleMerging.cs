@@ -14,6 +14,8 @@ namespace CorvallisBus.Test
 
     public partial class TransitManagerTests
     {
+        public const DaysOfWeek NightOwl = DaysOfWeek.Thursday | DaysOfWeek.Friday | DaysOfWeek.Saturday;
+
         [Fact]
         public void TestEstimateReplacesScheduledTime()
         {
@@ -310,13 +312,13 @@ namespace CorvallisBus.Test
         }
 
         [Theory]
-        [InlineData(DaysOfWeek.Thursday, 2)]
-        [InlineData(DaysOfWeek.Friday, 3)]
-        [InlineData(DaysOfWeek.Saturday, 4)]
-        [InlineData(DaysOfWeek.Sunday, 5)]
-        [InlineData(DaysOfWeek.NightOwl, 2)]
-        [InlineData(DaysOfWeek.NightOwl, 3)]
-        [InlineData(DaysOfWeek.NightOwl, 4)]
+        [InlineData(DaysOfWeek.Thursday, 2)] // friday morning
+        [InlineData(DaysOfWeek.Friday, 3)] // saturday morning
+        [InlineData(DaysOfWeek.Saturday, 4)] // sunday morning
+        [InlineData(DaysOfWeek.Sunday, 5)] // monday morning
+        [InlineData(NightOwl, 2)] // friday morning
+        [InlineData(NightOwl, 3)] // saturday morning
+        [InlineData(NightOwl, 4)] // sunday morning
         public void TestArrivalTimesAfterMidnightRenderCorrectly(DaysOfWeek daysOfWeek, int dayOfMonth)
         {
             DateTimeOffset testTime = new DateTime(year: 2015, month: 10, dayOfMonth, hour: 1, minute: 00, second: 00);
@@ -375,10 +377,9 @@ namespace CorvallisBus.Test
         }
 
         [Theory]
-        [InlineData(DaysOfWeek.Friday, 2)]
-        [InlineData(DaysOfWeek.Friday, 4)]
-        [InlineData(DaysOfWeek.NightOwl, 1)]
-        [InlineData(DaysOfWeek.NightOwl, 5)]
+        [InlineData(DaysOfWeek.Friday, 11)] // sunday
+        [InlineData(NightOwl, 12)] // monday
+        [InlineData(NightOwl, 7)] // monday
         public void TestArrivalTimesAfterMidnightRequireCorrectDay(DaysOfWeek daysOfWeek, int dayOfMonth)
         {
             DateTimeOffset testTime = new DateTime(year: 2015, month: 10, dayOfMonth, hour: 1, minute: 00, second: 00);
@@ -451,7 +452,7 @@ namespace CorvallisBus.Test
                             daySchedules: new List<BusStopRouteDaySchedule>
                             {
                                 new BusStopRouteDaySchedule(
-                                    days: DaysOfWeek.NightOwl,
+                                    days: NightOwl,
                                     times: new List<TimeSpan>
                                     {
                                         new TimeSpan(23, 25, 0),
@@ -489,6 +490,263 @@ namespace CorvallisBus.Test
                 new BusArrivalTime(85, isEstimate: false),
                 new BusArrivalTime(145, isEstimate: false),
                 new BusArrivalTime(205, isEstimate: false)
+            };
+            var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
+
+            Assert.Equal(expectedArrivalTimes, actual[12345]["TEST"]);
+        }
+
+        [Fact]
+        public void EstimatesAreForMonday_WhenEarlyMondayMorningOfWeekday()
+        {
+            DateTimeOffset testTime = new DateTime(2019, 9, 30, 7, 00, 00);
+
+            var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>>
+            {
+                {
+                    12345,
+                    new List<BusStopRouteSchedule>
+                    {
+                        new BusStopRouteSchedule(
+                            routeNo: "TEST",
+                            daySchedules: new List<BusStopRouteDaySchedule>
+                            {
+                                new BusStopRouteDaySchedule(
+                                    days: DaysOfWeek.Weekdays,
+                                    times: new List<TimeSpan>
+                                    {
+                                        new TimeSpan(6, 25, 0),
+                                        new TimeSpan(7, 25, 0),
+                                        new TimeSpan(8, 25, 0),
+                                        new TimeSpan(9, 25, 0),
+                                        new TimeSpan(10, 25, 0)
+                                    }
+                                )
+                            }
+                        )
+                    }
+                }
+            };
+
+            var mockRepo = new Mock<ITransitRepository>();
+            mockRepo.Setup(repo => repo.GetScheduleAsync()).Returns(Task.FromResult(testSchedule));
+            mockRepo.Setup(repo => repo.GetPlatformTagsAsync()).Returns(Task.FromResult(new Dictionary<int, int> { { 12345, 123 } }));
+
+            var testEstimate = new ConnexionzPlatformET(
+                platformTag: 123,
+                routeEstimatedArrivals: new List<ConnexionzRouteET>
+                {
+                    new ConnexionzRouteET(
+                        routeNo: "TEST",
+                        estimatedArrivalTime: new List<int> { 28 }
+                    )
+                }
+            );
+
+            var mockClient = new Mock<ITransitClient>();
+            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult<ConnexionzPlatformET?>(testEstimate));
+
+            var expectedArrivalTimes = new List<BusArrivalTime> {
+                new BusArrivalTime(28, isEstimate: true),
+                new BusArrivalTime(85, isEstimate: false),
+                new BusArrivalTime(145, isEstimate: false),
+                new BusArrivalTime(205, isEstimate: false)
+            };
+            var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
+
+            Assert.Equal(expectedArrivalTimes, actual[12345]["TEST"]);
+        }
+
+        [Fact]
+        public void EstimatesAreForThursday_WhenEarlyThursdayMorningOfNightOwl()
+        {
+            DateTimeOffset testTime = new DateTime(2019, 10, 3, 7, 00, 00);
+
+            var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>>
+            {
+                {
+                    12345,
+                    new List<BusStopRouteSchedule>
+                    {
+                        new BusStopRouteSchedule(
+                            routeNo: "TEST",
+                            daySchedules: new List<BusStopRouteDaySchedule>
+                            {
+                                new BusStopRouteDaySchedule(
+                                    days: NightOwl,
+                                    times: new List<TimeSpan>
+                                    {
+                                        new TimeSpan(6, 25, 0),
+                                        new TimeSpan(7, 25, 0),
+                                        new TimeSpan(8, 25, 0),
+                                        new TimeSpan(9, 25, 0),
+                                        new TimeSpan(10, 25, 0)
+                                    }
+                                )
+                            }
+                        )
+                    }
+                }
+            };
+
+            var mockRepo = new Mock<ITransitRepository>();
+            mockRepo.Setup(repo => repo.GetScheduleAsync()).Returns(Task.FromResult(testSchedule));
+            mockRepo.Setup(repo => repo.GetPlatformTagsAsync()).Returns(Task.FromResult(new Dictionary<int, int> { { 12345, 123 } }));
+
+            var testEstimate = new ConnexionzPlatformET(
+                platformTag: 123,
+                routeEstimatedArrivals: new List<ConnexionzRouteET>
+                {
+                    new ConnexionzRouteET(
+                        routeNo: "TEST",
+                        estimatedArrivalTime: new List<int> { 28 }
+                    )
+                }
+            );
+
+            var mockClient = new Mock<ITransitClient>();
+            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult<ConnexionzPlatformET?>(testEstimate));
+
+            var expectedArrivalTimes = new List<BusArrivalTime> {
+                new BusArrivalTime(28, isEstimate: true),
+                new BusArrivalTime(85, isEstimate: false),
+                new BusArrivalTime(145, isEstimate: false),
+                new BusArrivalTime(205, isEstimate: false)
+            };
+            var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
+
+            Assert.Equal(expectedArrivalTimes, actual[12345]["TEST"]);
+        }
+
+        [Fact]
+        public void EstimatesAreForPreviousDay_WhenAdjacentDays_AndEarlyMorningWithOvernightBus()
+        {
+            DateTimeOffset testTime = new DateTime(2019, 10, 1, 3, 28, 00);
+
+            var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>>
+            {
+                {
+                    12345,
+                    new List<BusStopRouteSchedule>
+                    {
+                        new BusStopRouteSchedule(
+                            routeNo: "TEST",
+                            daySchedules: new List<BusStopRouteDaySchedule>
+                            {
+                                new BusStopRouteDaySchedule(
+                                    days: DaysOfWeek.Tuesday,
+                                    times: new List<TimeSpan>
+                                    {
+                                        new TimeSpan(6, 25, 0),
+                                        new TimeSpan(7, 25, 0),
+                                        new TimeSpan(8, 25, 0),
+                                        new TimeSpan(9, 25, 0),
+                                        new TimeSpan(10, 25, 0)
+                                    }
+                                ),
+                                new BusStopRouteDaySchedule(
+                                    days: DaysOfWeek.Monday,
+                                    times: new List<TimeSpan>
+                                    {
+                                        new TimeSpan(25, 25, 0),
+                                        new TimeSpan(26, 25, 0),
+                                        new TimeSpan(27, 25, 0),
+                                    }
+                                )
+                            }
+                        )
+                    }
+                }
+            };
+
+            var mockRepo = new Mock<ITransitRepository>();
+            mockRepo.Setup(repo => repo.GetScheduleAsync()).Returns(Task.FromResult(testSchedule));
+            mockRepo.Setup(repo => repo.GetPlatformTagsAsync()).Returns(Task.FromResult(new Dictionary<int, int> { { 12345, 123 } }));
+
+            var testEstimate = new ConnexionzPlatformET(
+                platformTag: 123,
+                routeEstimatedArrivals: new List<ConnexionzRouteET>
+                {
+                    new ConnexionzRouteET(
+                        routeNo: "TEST",
+                        estimatedArrivalTime: new List<int> { 3 }
+                    )
+                }
+            );
+
+            var mockClient = new Mock<ITransitClient>();
+            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult<ConnexionzPlatformET?>(testEstimate));
+
+            var expectedArrivalTimes = new List<BusArrivalTime> {
+                new BusArrivalTime(3, isEstimate: true)
+            };
+            var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
+
+            Assert.Equal(expectedArrivalTimes, actual[12345]["TEST"]);
+        }
+
+        [Fact]
+        public void EstimatesAreForPreviousDay_WhenAdjacentDays_AndEarlyMorningWithOvernightBus_ButPathologicalOrderingOfSchedules()
+        {
+            DateTimeOffset testTime = new DateTime(year: 2019, month: 10, day: 1, hour: 3, minute: 28, second: 00);
+
+            var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>>
+            {
+                {
+                    12345,
+                    new List<BusStopRouteSchedule>
+                    {
+                        new BusStopRouteSchedule(
+                            routeNo: "TEST",
+                            daySchedules: new List<BusStopRouteDaySchedule>
+                            {
+
+                                new BusStopRouteDaySchedule(
+                                    days: DaysOfWeek.Monday,
+                                    times: new List<TimeSpan>
+                                    {
+                                        new TimeSpan(25, 25, 0),
+                                        new TimeSpan(26, 25, 0),
+                                        new TimeSpan(27, 25, 0),
+                                    }
+                                ),
+                                new BusStopRouteDaySchedule(
+                                    days: DaysOfWeek.Tuesday,
+                                    times: new List<TimeSpan>
+                                    {
+                                        new TimeSpan(6, 25, 0),
+                                        new TimeSpan(7, 25, 0),
+                                        new TimeSpan(8, 25, 0),
+                                        new TimeSpan(9, 25, 0),
+                                        new TimeSpan(10, 25, 0)
+                                    }
+                                )
+                            }
+                        )
+                    }
+                }
+            };
+
+            var mockRepo = new Mock<ITransitRepository>();
+            mockRepo.Setup(repo => repo.GetScheduleAsync()).Returns(Task.FromResult(testSchedule));
+            mockRepo.Setup(repo => repo.GetPlatformTagsAsync()).Returns(Task.FromResult(new Dictionary<int, int> { { 12345, 123 } }));
+
+            var testEstimate = new ConnexionzPlatformET(
+                platformTag: 123,
+                routeEstimatedArrivals: new List<ConnexionzRouteET>
+                {
+                    new ConnexionzRouteET(
+                        routeNo: "TEST",
+                        estimatedArrivalTime: new List<int> { 3 }
+                    )
+                }
+            );
+
+            var mockClient = new Mock<ITransitClient>();
+            mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult<ConnexionzPlatformET?>(testEstimate));
+
+            var expectedArrivalTimes = new List<BusArrivalTime> {
+                new BusArrivalTime(3, isEstimate: true)
             };
             var actual = TransitManager.GetSchedule(mockRepo.Object, mockClient.Object, testTime, new List<int> { 12345 }).Result;
 

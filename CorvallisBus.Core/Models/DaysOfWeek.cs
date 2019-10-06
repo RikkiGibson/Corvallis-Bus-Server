@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace CorvallisBus.Core.Models
 {
@@ -21,15 +22,14 @@ namespace CorvallisBus.Core.Models
         None = 0,
         All = Weekdays | Weekend,
         Weekdays = Monday | Tuesday | Wednesday | Thursday | Friday,
-        Weekend = Sunday | Saturday,
-        NightOwl = Thursday | Friday | Saturday,
+        Weekend = Sunday | Saturday
     }
 
     public static class DaysOfWeekUtils
     {
         private static readonly Regex m_dayOfWeekPattern = new Regex("Mon|Tue|Wed|Thu|Fri|Sat|Sun");
 
-        private static DaysOfWeek ToDaysOfWeek(string day)
+        public static DaysOfWeek ToDaysOfWeek(string day)
         {
             switch (day)
             {
@@ -50,7 +50,7 @@ namespace CorvallisBus.Core.Models
         /// </summary>
         /// <param name="days"></param>
         /// <returns></returns>
-        private static DaysOfWeek ToDaysOfWeek(DayOfWeek day)
+        public static DaysOfWeek ToDaysOfWeek(DayOfWeek day)
         {
             switch (day)
             {
@@ -79,17 +79,31 @@ namespace CorvallisBus.Core.Models
         }
 
         /// <summary>
-        /// Returns a value indicating whether the provided DaysOfWeek value is applicable today.
+        /// Returns a value indicating whether the provided DateTimeOffset falls in to the DaysOfWeek specified
         /// </summary>
-        public static bool IsToday(DaysOfWeek days, TimeSpan lastArrivalTime, DateTimeOffset currentTime)
+        public static bool TodayMayFallInsideDaySchedule(BusStopRouteDaySchedule ds, DateTimeOffset currentTime)
         {
-            var normalizedArrivalTime = lastArrivalTime.Days == 1 ? lastArrivalTime - TimeSpan.FromDays(1) : lastArrivalTime;
+            DaysOfWeek currentDay = ToDaysOfWeek(currentTime.DayOfWeek);
 
-            // if the last arrival time is later than the current time, this pushes the "effective day" back by one.
-            // For example Sunday at 1 AM will have an "effective day" of Saturday when looking for the right Night Owl schedule.
-            var effectiveDay = currentTime - normalizedArrivalTime;
+            // simple case where current time is definitely inside the current schedule
+            return (ds.Days & currentDay) == currentDay || TimeInSpilloverWindow(ds, currentTime);
+        }
 
-            return (ToDaysOfWeek(effectiveDay.DayOfWeek) & days) != DaysOfWeek.None;
+        /// <summary>
+        /// Returns true if the current time is in the early morning of e.g. Tuesday, and this day schedule contains 'late night runs' for a Monday schedule that spill over in to Tuesday morning
+        /// </summary>
+        public static bool TimeInSpilloverWindow(BusStopRouteDaySchedule ds, DateTimeOffset currentTime)
+        {
+            DaysOfWeek previousDay = ToDaysOfWeek(currentTime.AddDays(-1).DayOfWeek);
+            TimeSpan lastTime = ds.Times.Last();
+
+            if ((ds.Days & previousDay) == previousDay && lastTime.Days >= 1)
+            {
+                DateTimeOffset lastScheduleDateTime = new DateTimeOffset(currentTime.Year, currentTime.Month, currentTime.Day, lastTime.Hours, lastTime.Minutes, 0, 0, currentTime.Offset);
+                return currentTime < lastScheduleDateTime.AddMinutes(TransitManager.ESTIMATES_MAX_ADVANCE_MINUTES);
+            }
+
+            return false;
         }
     }
 }
