@@ -91,21 +91,21 @@ namespace CorvallisBus.Core.Models
             return (ds.Days & currentDay) == currentDay || TimeInSpilloverWindow(ds, currentTime);
         }
 
-
-
         /// <summary>
         /// Returns true if the current time is in the early morning of e.g. Tuesday, and this day schedule contains 'late night runs' for a Monday schedule that spill over in to Tuesday morning
         /// </summary>
-        public static bool TimeInSpilloverWindow(BusStopRouteDaySchedule ds, DateTimeOffset currentTime) {
+        public static bool TimeInSpilloverWindow(BusStopRouteDaySchedule ds, DateTimeOffset currentTime)
+        {
             DaysOfWeek currentDay = ToDaysOfWeek(currentTime.DayOfWeek);
             DaysOfWeek previousDay = ToDaysOfWeek(currentTime.AddDays(-1).DayOfWeek);
             TimeSpan lastTime = ds.Times.Last();
 
-            if((ds.Days & previousDay) == previousDay && lastTime.Days >= 1) {
+            if ((ds.Days & previousDay) == previousDay && lastTime.Days >= 1)
+            {
                 DateTimeOffset lastScheduleDateTime = new DateTimeOffset(currentTime.Year, currentTime.Month, currentTime.Day, lastTime.Hours, lastTime.Minutes, 0, 0, currentTime.Offset);
                 return currentTime < lastScheduleDateTime.AddMinutes(MinuteBuffer);
             }
-            
+
             return false;
         }
     }
