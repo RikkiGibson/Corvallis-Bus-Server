@@ -50,7 +50,7 @@ namespace CorvallisBus.Core.Models
         /// Only usable when <typeparamref name="TValue"/> is a collection type.
         /// </summary>
         /// <returns></returns>
-        public static TValue GetOrEmpty<TKey, TValue>(this Lookup<TKey, TValue> lookup, TKey key) where TValue : class, new()
+        public static TValue GetOrEmpty<TKey, TValue>(this Lookup<TKey, TValue> lookup, TKey key) where TValue : IEnumerable, new()
         {
             return ((IDictionary<TKey, TValue>)lookup).TryGetValue(key, out var value) ? value : new TValue();
         }
