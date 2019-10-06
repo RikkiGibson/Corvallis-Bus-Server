@@ -310,13 +310,13 @@ namespace CorvallisBus.Test
         }
 
         [Theory]
-        [InlineData(DaysOfWeek.Thursday, 2)]
-        [InlineData(DaysOfWeek.Friday, 3)]
-        [InlineData(DaysOfWeek.Saturday, 4)]
-        [InlineData(DaysOfWeek.Sunday, 5)]
-        [InlineData(DaysOfWeek.NightOwl, 2)]
-        [InlineData(DaysOfWeek.NightOwl, 3)]
-        [InlineData(DaysOfWeek.NightOwl, 4)]
+        // [InlineData(DaysOfWeek.Thursday, 2)] // friday morning
+        // [InlineData(DaysOfWeek.Friday, 3)] // saturday morning
+        // [InlineData(DaysOfWeek.Saturday, 4)] // sunday morning
+        // [InlineData(DaysOfWeek.Sunday, 5)] // monday morning
+        [InlineData(DaysOfWeek.NightOwl, 2)] // friday morning
+        [InlineData(DaysOfWeek.NightOwl, 3)] // saturday morning
+        // [InlineData(DaysOfWeek.NightOwl, 4)] // sunday morning
         public void TestArrivalTimesAfterMidnightRenderCorrectly(DaysOfWeek daysOfWeek, int dayOfMonth)
         {
             DateTimeOffset testTime = new DateTime(year: 2015, month: 10, dayOfMonth, hour: 1, minute: 00, second: 00);
@@ -375,10 +375,9 @@ namespace CorvallisBus.Test
         }
 
         [Theory]
-        [InlineData(DaysOfWeek.Friday, 2)]
-        [InlineData(DaysOfWeek.Friday, 4)]
-        [InlineData(DaysOfWeek.NightOwl, 1)]
-        [InlineData(DaysOfWeek.NightOwl, 5)]
+        [InlineData(DaysOfWeek.Friday, 11)] // sunday
+        [InlineData(DaysOfWeek.NightOwl, 12)] // monday
+        [InlineData(DaysOfWeek.NightOwl, 7)] // monday
         public void TestArrivalTimesAfterMidnightRequireCorrectDay(DaysOfWeek daysOfWeek, int dayOfMonth)
         {
             DateTimeOffset testTime = new DateTime(year: 2015, month: 10, dayOfMonth, hour: 1, minute: 00, second: 00);
@@ -617,12 +616,11 @@ namespace CorvallisBus.Test
 
             Assert.Equal(expectedArrivalTimes, actual[12345]["TEST"]);
         }
-
         
         [Fact]
-        public void test()
+        public void EstimatesAreForPreviousDay_WhenAdjacentDays_AndEarlyMorningWithOvernightBus()
         {
-            DateTimeOffset testTime = new DateTime(2019, 10, 3, 3, 28, 00);
+            DateTimeOffset testTime = new DateTime(2019, 10, 1, 3, 28, 00);
 
             var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>>
             {
@@ -635,16 +633,7 @@ namespace CorvallisBus.Test
                             daySchedules: new List<BusStopRouteDaySchedule>
                             {
                                 new BusStopRouteDaySchedule(
-                                    days: DaysOfWeek.NightOwl,
-                                    times: new List<TimeSpan>
-                                    {
-                                        new TimeSpan(1, 25, 0),
-                                        new TimeSpan(2, 25, 0),
-                                        new TimeSpan(3, 25, 0),
-                                    }
-                                ),
-                                new BusStopRouteDaySchedule(
-                                    days: DaysOfWeek.Weekdays,
+                                    days: DaysOfWeek.Tuesday,
                                     times: new List<TimeSpan>
                                     {
                                         new TimeSpan(6, 25, 0),
@@ -652,6 +641,15 @@ namespace CorvallisBus.Test
                                         new TimeSpan(8, 25, 0),
                                         new TimeSpan(9, 25, 0),
                                         new TimeSpan(10, 25, 0)
+                                    }
+                                ),
+                                new BusStopRouteDaySchedule(
+                                    days: DaysOfWeek.Monday,
+                                    times: new List<TimeSpan>
+                                    {
+                                        new TimeSpan(25, 25, 0),
+                                        new TimeSpan(26, 25, 0),
+                                        new TimeSpan(27, 25, 0),
                                     }
                                 )
                             }
@@ -687,9 +685,9 @@ namespace CorvallisBus.Test
         }
         
         [Fact]
-        public void test2()
+        public void EstimatesAreForPreviousDay_WhenAdjacentDays_AndEarlyMorningWithOvernightBus_ButPathologicalOrderingOfSchedules()
         {
-            DateTimeOffset testTime = new DateTime(2019, 10, 3, 3, 28, 00);
+            DateTimeOffset testTime = new DateTime(year: 2019, month: 10, day: 1, hour: 3, minute: 28, second: 00);
 
             var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>>
             {
@@ -701,8 +699,18 @@ namespace CorvallisBus.Test
                             routeNo: "TEST",
                             daySchedules: new List<BusStopRouteDaySchedule>
                             {
+                                
                                 new BusStopRouteDaySchedule(
-                                    days: DaysOfWeek.NightOwl,
+                                    days: DaysOfWeek.Monday,
+                                    times: new List<TimeSpan>
+                                    {
+                                        new TimeSpan(25, 25, 0),
+                                        new TimeSpan(26, 25, 0),
+                                        new TimeSpan(27, 25, 0),
+                                    }
+                                ),
+                                new BusStopRouteDaySchedule(
+                                    days: DaysOfWeek.Tuesday,
                                     times: new List<TimeSpan>
                                     {
                                         new TimeSpan(6, 25, 0),
@@ -710,15 +718,6 @@ namespace CorvallisBus.Test
                                         new TimeSpan(8, 25, 0),
                                         new TimeSpan(9, 25, 0),
                                         new TimeSpan(10, 25, 0)
-                                    }
-                                ),
-                                new BusStopRouteDaySchedule(
-                                    days: DaysOfWeek.NightOwl,
-                                    times: new List<TimeSpan>
-                                    {
-                                        new TimeSpan(1, 25, 0),
-                                        new TimeSpan(2, 25, 0),
-                                        new TimeSpan(3, 25, 0),
                                     }
                                 )
                             }
