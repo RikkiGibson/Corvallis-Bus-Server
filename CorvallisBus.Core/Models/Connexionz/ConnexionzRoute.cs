@@ -21,8 +21,6 @@ namespace CorvallisBus.Core.Models.Connexionz
 
             IsActive = longestPattern.Schedule == "Active";
 
-            Polyline = EncodePolyline(GetPoints(longestPattern.Mif));
-
             var points = GetPoints(longestPattern.Mif);
             // TODO: get the actual data fixed
             if (RouteNo == "4")
@@ -64,7 +62,7 @@ namespace CorvallisBus.Core.Models.Connexionz
             IsActive = isActive;
         }
 
-        public static IEnumerable<LatLong> GetPoints(string mif)
+        private static IEnumerable<LatLong> GetPoints(string mif)
         {
             var matches = Regex.Matches(mif, @"-?\d+\.\d+");
 

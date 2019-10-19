@@ -1,4 +1,5 @@
 ﻿using CorvallisBus.Core.Models;
+using CorvallisBus.Core.Models.Connexionz;
 using CorvallisBus.Core.Models.GoogleTransit;
 using CorvallisBus.Core.Properties;
 using CsvHelper;
@@ -16,13 +17,16 @@ namespace CorvallisBus.Core.WebClients
     {
         public List<GoogleRoute> Routes { get; }
         public List<GoogleRouteSchedule> Schedules { get; }
+        public List<GoogleStop> Stops { get; }
 
         public GoogleTransitData(
             List<GoogleRoute> routes,
-            List<GoogleRouteSchedule> schedules)
+            List<GoogleRouteSchedule> schedules,
+            List<GoogleStop> stops)
         {
             Routes = routes;
             Schedules = schedules;
+            Stops = stops;
         }
     }
 
@@ -39,46 +43,86 @@ namespace CorvallisBus.Core.WebClients
             var stream = new HttpClient().GetStreamAsync("http://www.corvallistransit.com/rtt/public/utility/gtfs.aspx").Result;
             using var archive = new ZipArchive(stream);
 
-            var routesEntry = archive.GetEntry("routes.txt")
-                ?? throw new FileNotFoundException("The Google Transit archive did not contain routes.txt.");
+            var routesEntry = getEntry("routes.txt");
 
-            var scheduleEntry = archive.GetEntry("stop_times.txt")
-                ?? throw new FileNotFoundException("The Google Transit archive did not contain stop_times.txt.");
+            var scheduleEntry = getEntry("stop_times.txt");
+            using var scheduleCsv = new CsvReader(new StreamReader(scheduleEntry.Open()));
+            var stopTimes = scheduleCsv.GetRecords<StopTimesEntry>().ToList();
 
-            var tripsEntry = archive.GetEntry("trips.txt")
-                ?? throw new FileNotFoundException("The Google Transit archive did not contain trips.txt.");
+            var tripsEntry = getEntry("trips.txt");
+            using var tripsCsv = new CsvReader(new StreamReader(tripsEntry.Open()));
+            var trips = tripsCsv.GetRecords<TripsEntry>().ToList();
 
-            var calendarEntry = archive.GetEntry("calendar.txt")
-                ?? throw new FileNotFoundException("The Google Transit archive did not contain calendar.txt.");
+            var calendarEntry = getEntry("calendar.txt");
+            var stopsEntry = getEntry("stops.txt");
+            var shapesEntry = getEntry("shapes.txt");
 
-            var routes = ParseRouteCSV(routesEntry);
-            var schedules = ParseScheduleCSV(scheduleEntry, tripsEntry, calendarEntry);
+            var routes = ParseRouteCSV(routesEntry, trips, stopTimes, shapesEntry);
+            var schedules = ParseScheduleCSV(stopTimes, trips, calendarEntry);
+            var stops = ParseStopsCSV(stopsEntry);
 
             return new GoogleTransitData(
                 routes: routes,
-                schedules: schedules
+                schedules: schedules,
+                stops: stops
             );
+
+            ZipArchiveEntry getEntry(string filename) =>
+                archive.GetEntry(filename) ?? throw new FileNotFoundException($"The Google Transit archive did not contain {filename}.");
+        }
+
+        private static List<GoogleStop> ParseStopsCSV(ZipArchiveEntry entry)
+        {
+            using var csv = new CsvReader(new StreamReader(entry.Open()));
+            var records = csv.GetRecords<GoogleStop>();
+            var stops = records.ToList();
+            return stops;
         }
 
         /// <summary>
         /// Reads a ZipArchive entry as the routes CSV and extracts the route colors and URLs.
         /// </summary>
-        private static List<GoogleRoute> ParseRouteCSV(ZipArchiveEntry entry)
+        private static List<GoogleRoute> ParseRouteCSV(
+            ZipArchiveEntry routesEntry,
+            List<TripsEntry> trips,
+            List<StopTimesEntry> stopTimes,
+            ZipArchiveEntry shapesEntry)
         {
-            using var csv = new CsvReader(new StreamReader(entry.Open()));
-            var records = csv.GetRecords<GoogleRoute>();
-            var routes = records.ToList();
-            return routes;
+            using var routesCsv = new CsvReader(new StreamReader(routesEntry.Open()));
+            var routesRecords = routesCsv.GetRecords<RouteEntry>();
+            var routes = routesRecords.ToList();
+
+            using var shapesCsv = new CsvReader(new StreamReader(shapesEntry.Open()));
+            var shapesRecords = shapesCsv.GetRecords<ShapeEntry>();
+            var shapes = shapesRecords.ToList();
+
+            var shapesByRoute = (
+                from shapeEntry in shapes
+                group shapeEntry by shapeEntry.ShapeId into shapeGroup
+                join trip in trips on shapeGroup.Key equals trip.ShapeId
+                select (trip.RouteId, shapeGroup)
+            ).Distinct();
+
+            var pathsByRoute =
+                from stopTime in stopTimes
+                join trip in trips on stopTime.TripId equals trip.TripId
+                orderby stopTime.StopSequence
+                group stopTime.PlatformTag by trip.RouteId;
+            
+            var fullRoutes =
+                from route in routes
+                join path in pathsByRoute on route.Name equals path.Key
+                join shape in shapesByRoute on route.Name equals shape.RouteId
+                let points = shape.shapeGroup.Select(point => new LatLong(point.ShapePointLat, point.ShapePointLon)).ToList()
+                select new GoogleRoute(route.Name, route.Color, route.Url, points, path.Distinct().ToList());
+
+            var result = fullRoutes.ToList();
+
+            return result;
         }
 
-        private static List<GoogleRouteSchedule> ParseScheduleCSV(ZipArchiveEntry stopTimesTxt, ZipArchiveEntry tripsTxt, ZipArchiveEntry calendarTxt)
+        private static List<GoogleRouteSchedule> ParseScheduleCSV(List<StopTimesEntry> stopTimes, List<TripsEntry> trips, ZipArchiveEntry calendarTxt)
         {
-            using var stopTimesCsv = new CsvReader(new StreamReader(stopTimesTxt.Open()));
-            var stopTimes = stopTimesCsv.GetRecords<StopTimesEntry>();
-
-            using var tripsCsv = new CsvReader(new StreamReader(tripsTxt.Open()));
-            var trips = tripsCsv.GetRecords<TripsEntry>();
-
             using var calendarCsv = new CsvReader(new StreamReader(calendarTxt.Open()));
             var calendars = calendarCsv.GetRecords<CalendarEntry>().ToList();
 
@@ -87,17 +131,17 @@ namespace CorvallisBus.Core.WebClients
                 .Join(calendars, entry => entry.trip.ServiceId, cal => cal.ServiceId, (entry, calendar) => (entry.stopTime, entry.trip, calendar));
 
             var aggTimesAtStop = joinedEntries
-                .GroupBy(t => new { routeNo = t.trip.RouteId, platformTag = t.stopTime.PlatformTag, stopSequence = t.stopTime.StopSequence, days = t.calendar.DaysOfWeek })
+                .GroupBy(t => (routeNo: t.trip.RouteId, platformTag: t.stopTime.PlatformTag, stopSequence: t.stopTime.StopSequence, days: t.calendar.DaysOfWeek))
                 .Select(g => g.OrderBy(t => t.stopTime.ArrivalTime)
                     .Aggregate(new List<TimeSpan>(),
                         (times, t) => { times.Add(t.stopTime.ArrivalTime); return times; },
-                        times => new { g.Key.routeNo, g.Key.days, stopSchedule = new GoogleStopSchedule(g.Key.platformTag, times) }));
+                        times => (g.Key.routeNo, g.Key.days, stopSchedule: new GoogleStopSchedule(g.Key.platformTag, times))));
 
             var aggStopsForRoute = aggTimesAtStop
-                .GroupBy(t => new { t.routeNo, t.days })
+                .GroupBy(t => (t.routeNo, t.days))
                 .Select(g => g.Aggregate(new List<GoogleStopSchedule>(),
                     (list, t) => { list.Add(t.stopSchedule); return list; },
-                    list => new { g.Key.routeNo, g.Key.days, stopSchedules = list }));
+                    list => (g.Key.routeNo, g.Key.days, stopSchedules: list)));
 
             var aggDaysForRoute = aggStopsForRoute
                 .GroupBy(t => t.routeNo)

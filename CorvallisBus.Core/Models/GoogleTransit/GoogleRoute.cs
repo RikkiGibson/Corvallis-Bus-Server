@@ -1,4 +1,5 @@
 ﻿using CsvHelper.Configuration.Attributes;
+using System.Collections.Generic;
 
 namespace CorvallisBus.Core.Models.GoogleTransit
 {
@@ -8,20 +9,29 @@ namespace CorvallisBus.Core.Models.GoogleTransit
     public class GoogleRoute
     {
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        /// <summary>
-        /// A name from the Google Transit CSV
-        /// </summary>
-        [Name("route_id")]
-        public string Name { get; set; }
+        public string Name { get; }
 
-        /// <summary>
-        /// The color of the route as a hex string, e.g. "35EFA0".
-        /// </summary>
-        [Name("route_color")]
-        public string Color { get; set; }
+        public string Color { get; }
 
-        [Name("route_url")]
-        public string Url { get; set; }
+        public string Url { get; }
+
+        public List<LatLong> Shape { get; }
+
+        public List<int> Path { get; }
+
+        public GoogleRoute(
+            string name,
+            string color,
+            string url,
+            List<LatLong> shape,
+            List<int> path)
+        {
+            Name = name;
+            Color = color;
+            Url = url;
+            Shape = shape;
+            Path = path;
+        }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     }
 }

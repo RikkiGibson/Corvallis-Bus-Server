@@ -8,7 +8,7 @@ using System.Text;
 
 namespace CorvallisBus.Core.Models.GoogleTransit
 {
-    class StopTimesEntry
+    struct StopTimesEntry
     {
         private class ArrivalTimeConverter : ITypeConverter
         {
