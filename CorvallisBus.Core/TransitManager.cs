@@ -46,22 +46,29 @@ namespace CorvallisBus
             var schedule = await schedulesTask;
             var estimates = await estimatesTask;
 
-            return stopIds.ToDictionary(platformNo => platformNo, platformNo => new Dictionary<string, List<BusArrivalTime>>());
-
-            // TODO: still have a problem with dupes in the data
-
             var todaySchedule = stopIds.Where(schedule.ContainsKey)
                                        .ToDictionary(platformNo => platformNo, makePlatformSchedule);
             return todaySchedule;
 
-            Dictionary<string, List<BusArrivalTime>> makePlatformSchedule(int platformNo) =>
-                schedule[platformNo].ToDictionary(routeSchedule => routeSchedule.RouteNo,
-                    routeSchedule => InterleaveRouteScheduleAndEstimates(
+            Dictionary<string, List<BusArrivalTime>> makePlatformSchedule(int platformNo)
+            {
+                return schedule[platformNo].ToDictionary(getKey, getValue);
+
+                static string getKey(BusStopRouteSchedule routeSchedule)
+                {
+                    return routeSchedule.RouteNo;
+                }
+
+                List<BusArrivalTime> getValue(BusStopRouteSchedule routeSchedule)
+                {
+                    return InterleaveRouteScheduleAndEstimates(
                         routeSchedule,
                         estimates.ContainsKey(platformNo)
                             ? estimates[platformNo]
                             : new Dictionary<string, List<int>>(),
-                        currentTime));
+                        currentTime);
+                }
+            }
         }
 
         private static BusStopRouteDaySchedule? GetBestGuessDaySchedule(BusStopRouteSchedule routeSchedule, DateTimeOffset currentTime)

@@ -112,26 +112,26 @@ namespace CorvallisBus.Core.WebClients
             var googleSchedulesDict = googleSchedules.ToDictionary(schedule => schedule.RouteNo);
             var routes = googleRoutes.Where(r => googleSchedulesDict.ContainsKey(r.RouteNo));
 
-            var routeSchedules = routes.Select(r => new
-            {
-                routeNo = r.RouteNo,
-                daySchedules = googleSchedulesDict[r.RouteNo].Days.Select(
-                    d => new
-                    {
-                        days = d.Days,
-                        stopSchedules = d.StopSchedules.Zip(r.Path, (ss, stopId) => (stopId, ss.Times))
-                    })
-            });
+            var routeSchedules = routes.Select(r => (
+                routeNo: r.RouteNo,
+                daySchedules: googleSchedulesDict[r.RouteNo].Days.Select(
+                    d => (
+                        days: d.Days,
+                        stopSchedules: d.StopSchedules
+                    ))
+            ));
 
             // Now turn it on its head so it's easy to query from a stop-oriented way.
             var result = googleStops.ToDictionary(p => p.PlatformTag,
                 // TODO: change type to List?
-                p => routeSchedules.Select(r => new BusStopRouteSchedule(
-                    routeNo: r.routeNo,
-                    daySchedules: r.daySchedules.Select(ds => new BusStopRouteDaySchedule(
-                        days: ds.days,
-                        times: ds.stopSchedules.FirstOrDefault(ss => ss.stopId == p.PlatformTag).Times
-                    ))
+                p => routeSchedules
+                    .Select(r => new BusStopRouteSchedule(
+                        routeNo: r.routeNo,
+                        daySchedules: r.daySchedules.Select(ds => new BusStopRouteDaySchedule(
+                            days: ds.days,
+                            // a route may stop at a certain stop on some days but not others.
+                            times: ds.stopSchedules.FirstOrDefault(ss => ss.PlatformTag == p.PlatformTag)?.Times! // filtered out in the .Where below
+                        ))
                     .Where(ds => ds.Times != null)
                     .ToList()
                 ))

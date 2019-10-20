@@ -5,6 +5,7 @@ using CorvallisBus.Core.Properties;
 using CsvHelper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -114,23 +115,26 @@ namespace CorvallisBus.Core.WebClients
                 group shapeEntry by shapeEntry.ShapeId into shapeGroup
                 join trip in trips on shapeGroup.Key equals trip.ShapeId
                 select (trip.RouteId, shapeGroup)
-            ).Distinct(Comparer.Instance);
+            ).Distinct(Comparer.Instance).ToList();
 
-            var pathsByRoute =
+            var pathsByRoute = (
                 from stopTime in stopTimes
                 join trip in trips on stopTime.TripId equals trip.TripId
                 orderby stopTime.StopSequence
-                group stopTime.PlatformTag by trip.RouteId;
+                group stopTime.PlatformTag by trip.RouteId
+            ).ToList();
             
             var fullRoutes =
                 from route in routes
-                join path in pathsByRoute on route.RouteNo equals path.Key
-                join shape in shapesByRoute on route.RouteNo equals shape.RouteId
+                // TODO: there are multiple paths for the same route.
+                // Who even wants that.
+                let path = pathsByRoute.First(p => p.Key == route.RouteNo)
+                let shape = shapesByRoute.First(s => s.RouteId == route.RouteNo)
                 let points = shape.shapeGroup.Select(point => new LatLong(point.ShapePointLat, point.ShapePointLon)).ToList()
                 select new GoogleRoute(route.RouteNo, route.Name, route.Color, route.Url, points, path.Distinct().ToList());
 
             var result = fullRoutes.ToList();
-
+            Debug.Assert(result.Count == routes.Count);
             return result;
         }
 
@@ -161,9 +165,54 @@ namespace CorvallisBus.Core.WebClients
                 .Select(g => g.Aggregate(new List<GoogleDaySchedule>(),
                     (list, t) => { list.Add(new GoogleDaySchedule(t.days, t.stopSchedules)); return list; },
                     list => new GoogleRouteSchedule(g.Key, list)))
+                .Select(rs => new GoogleRouteSchedule(rs.RouteNo, splitDays(rs.Days)))
                 .ToList();
 
             return aggDaysForRoute;
+
+            List<GoogleDaySchedule> splitDays(List<GoogleDaySchedule> originalDays)
+            {
+                var daySchedulesBuilder = new List<GoogleDaySchedule>(7)
+                {
+                    new GoogleDaySchedule(DaysOfWeek.Sunday, new List<GoogleStopSchedule>()),
+                    new GoogleDaySchedule(DaysOfWeek.Monday, new List<GoogleStopSchedule>()),
+                    new GoogleDaySchedule(DaysOfWeek.Tuesday, new List<GoogleStopSchedule>()),
+                    new GoogleDaySchedule(DaysOfWeek.Wednesday, new List<GoogleStopSchedule>()),
+                    new GoogleDaySchedule(DaysOfWeek.Thursday, new List<GoogleStopSchedule>()),
+                    new GoogleDaySchedule(DaysOfWeek.Friday, new List<GoogleStopSchedule>()),
+                    new GoogleDaySchedule(DaysOfWeek.Saturday, new List<GoogleStopSchedule>()),
+                };
+
+                for (int i = 0; i < 7; i++)
+                {
+                    var day = daySchedulesBuilder[i].Days;
+                    foreach (var daySchedule in originalDays)
+                    {
+                        if ((daySchedule.Days & day) != 0)
+                        {
+                            var allStopBuilders = daySchedulesBuilder[i].StopSchedules;
+                            foreach (var stopSchedule in daySchedule.StopSchedules)
+                            {
+                                var stopBuilder = allStopBuilders.FirstOrDefault(ss => ss.PlatformTag == stopSchedule.PlatformTag);
+                                if (stopBuilder is null)
+                                {
+                                    stopBuilder = new GoogleStopSchedule(stopSchedule.PlatformTag, new List<TimeSpan>(stopSchedule.Times));
+                                    allStopBuilders.Add(stopBuilder);
+                                }
+                                else
+                                {
+                                    stopBuilder.Times.AddRange(stopSchedule.Times);
+                                    stopBuilder.Times.Sort();
+                                    // TODO: god, there's no duplicates, right?
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // todo: dedupe?
+                return daySchedulesBuilder;
+            }
         }
     }
 }
