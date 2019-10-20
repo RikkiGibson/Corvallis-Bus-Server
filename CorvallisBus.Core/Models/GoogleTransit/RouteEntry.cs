@@ -12,6 +12,9 @@ namespace CorvallisBus.Core.Models.GoogleTransit
         /// A name from the Google Transit CSV
         /// </summary>
         [Name("route_id")]
+        public string RouteNo { get; set; }
+
+        [Name("route_short_name")]
         public string Name { get; set; }
 
         /// <summary>

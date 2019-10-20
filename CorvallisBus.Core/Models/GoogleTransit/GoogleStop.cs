@@ -9,7 +9,7 @@ namespace CorvallisBus.Core.Models.GoogleTransit
         public int PlatformTag { get; set; }
 
         [Name("stop_code")]
-        public int StopId { get; set; }
+        public int? StopId { get; set; } // prefer stopid if available, otherwise platformtag is ok
 
         [Name("stop_name")]
         public string Name { get; set; }

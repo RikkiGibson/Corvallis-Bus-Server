@@ -36,13 +36,10 @@ namespace CorvallisBus.Core.WebClients
     public static class GoogleTransitClient
     {
         /// <summary>
-        /// Downloads and interprets the ZIP file CTS uploads for Google.  This is primarily to get route colors and route schedules.
+        /// Downloads and interprets the ZIP file CTS uploads for Google. This is primarily to get route colors and route schedules.
         /// </summary>
-        public static GoogleTransitData LoadData()
+        public static GoogleTransitData LoadData(ZipArchive archive)
         {
-            var stream = new HttpClient().GetStreamAsync("http://www.corvallistransit.com/rtt/public/utility/gtfs.aspx").Result;
-            using var archive = new ZipArchive(stream);
-
             var routesEntry = getEntry("routes.txt");
 
             var scheduleEntry = getEntry("stop_times.txt");
@@ -79,6 +76,22 @@ namespace CorvallisBus.Core.WebClients
             return stops;
         }
 
+        private sealed class Comparer : IEqualityComparer<(string RouteId, IGrouping<int, ShapeEntry> shapeGroup)>
+        {
+            public bool Equals((string RouteId, IGrouping<int, ShapeEntry> shapeGroup) x, (string RouteId, IGrouping<int, ShapeEntry> shapeGroup) y)
+            {
+                return x.RouteId == y.RouteId;
+            }
+
+            public int GetHashCode((string RouteId, IGrouping<int, ShapeEntry> shapeGroup) obj)
+            {
+                return obj.GetHashCode();
+            }
+
+            private Comparer() { }
+            public static Comparer Instance { get; } = new Comparer();
+        }
+
         /// <summary>
         /// Reads a ZipArchive entry as the routes CSV and extracts the route colors and URLs.
         /// </summary>
@@ -101,7 +114,7 @@ namespace CorvallisBus.Core.WebClients
                 group shapeEntry by shapeEntry.ShapeId into shapeGroup
                 join trip in trips on shapeGroup.Key equals trip.ShapeId
                 select (trip.RouteId, shapeGroup)
-            ).Distinct();
+            ).Distinct(Comparer.Instance);
 
             var pathsByRoute =
                 from stopTime in stopTimes
@@ -111,10 +124,10 @@ namespace CorvallisBus.Core.WebClients
             
             var fullRoutes =
                 from route in routes
-                join path in pathsByRoute on route.Name equals path.Key
-                join shape in shapesByRoute on route.Name equals shape.RouteId
+                join path in pathsByRoute on route.RouteNo equals path.Key
+                join shape in shapesByRoute on route.RouteNo equals shape.RouteId
                 let points = shape.shapeGroup.Select(point => new LatLong(point.ShapePointLat, point.ShapePointLon)).ToList()
-                select new GoogleRoute(route.Name, route.Color, route.Url, points, path.Distinct().ToList());
+                select new GoogleRoute(route.RouteNo, route.Name, route.Color, route.Url, points, path.Distinct().ToList());
 
             var result = fullRoutes.ToList();
 

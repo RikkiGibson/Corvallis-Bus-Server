@@ -42,7 +42,7 @@ namespace CorvallisBus.Core.Models.GoogleTransit
         [Name("stop_sequence")]
         public int StopSequence { get; set; }
 
-        [Name("timepoint")]
+        [Name("timepoint"), Optional, Default(false)]
         public bool Timepoint { get; set; }
     }
 }

@@ -28,7 +28,7 @@ namespace CorvallisBus.Controllers
         public TransitApiController(IHostingEnvironment env)
         {
             _repository = new MemoryTransitRepository(env.WebRootPath);
-            _client = new TransitClient();
+            _client = new KingTransitClient(); //new CorvallisTransitClient();
             _getCurrentTime = () => TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTimeOffset.Now, _destinationTimeZoneId);
         }
 

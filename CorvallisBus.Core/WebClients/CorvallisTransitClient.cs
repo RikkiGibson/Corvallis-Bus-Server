@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Net;
+using System.IO.Compression;
 
 namespace CorvallisBus.Core.WebClients
 {
@@ -19,13 +20,16 @@ namespace CorvallisBus.Core.WebClients
     /// Merges data obtained from Connexionz and Google Transit
     /// and makes it ready for delivery to clients.
     /// </summary>
-    public class TransitClient : ITransitClient
+    public class CorvallisTransitClient : ITransitClient
     {
         public (BusSystemData data, List<string> errors) LoadTransitData()
         {
             var connexionzPlatforms = ConnexionzClient.LoadPlatforms();
             var connexionzRoutes = ConnexionzClient.LoadRoutes();
-            var googleData = GoogleTransitClient.LoadData();
+
+            var stream = new HttpClient().GetStreamAsync("http://www.corvallistransit.com/rtt/public/utility/gtfs.aspx").Result;
+            using var archive = new ZipArchive(stream);
+            var googleData = GoogleTransitClient.LoadData(archive);
 
             var routes = CreateRoutes(googleData.Routes, connexionzRoutes);
             var stops = CreateStops(connexionzPlatforms, connexionzRoutes);
@@ -171,7 +175,7 @@ namespace CorvallisBus.Core.WebClients
 
         private static List<BusRoute> CreateRoutes(List<GoogleRoute> googleRoutes, List<ConnexionzRoute> connexionzRoutes)
         {
-            var googleRoutesDict = googleRoutes.ToDictionary(gr => gr.Name);
+            var googleRoutesDict = googleRoutes.ToDictionary(gr => gr.RouteNo);
             var routes = connexionzRoutes.Where(r => r.IsActive && googleRoutesDict.ContainsKey(r.RouteNo));
             return routes.Select(r => BusRoute.Create(r, googleRoutesDict)).ToList();
         }
