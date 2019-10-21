@@ -115,7 +115,7 @@ namespace CorvallisBus.Core.WebClients
                 group shapeEntry by shapeEntry.ShapeId into shapeGroup
                 join trip in trips on shapeGroup.Key equals trip.ShapeId
                 select (trip.RouteId, shapeGroup)
-            ).Distinct(Comparer.Instance).ToList();
+            ).Distinct(Comparer.Instance).ToList(); // TODO: is the distinct necessary any more?
 
             var pathsByRoute = (
                 from stopTime in stopTimes
@@ -127,7 +127,7 @@ namespace CorvallisBus.Core.WebClients
             var fullRoutes =
                 from route in routes
                 // TODO: there are multiple paths for the same route.
-                // Who even wants that.
+                // We probably have to pick one.
                 let path = pathsByRoute.First(p => p.Key == route.RouteNo)
                 let shape = shapesByRoute.First(s => s.RouteId == route.RouteNo)
                 let points = shape.shapeGroup.Select(point => new LatLong(point.ShapePointLat, point.ShapePointLon)).ToList()
@@ -172,7 +172,7 @@ namespace CorvallisBus.Core.WebClients
 
             List<GoogleDaySchedule> splitDays(List<GoogleDaySchedule> originalDays)
             {
-                var daySchedulesBuilder = new List<GoogleDaySchedule>(7)
+                var daySchedulesBuilder = new List<GoogleDaySchedule>()
                 {
                     new GoogleDaySchedule(DaysOfWeek.Sunday, new List<GoogleStopSchedule>()),
                     new GoogleDaySchedule(DaysOfWeek.Monday, new List<GoogleStopSchedule>()),
@@ -183,14 +183,14 @@ namespace CorvallisBus.Core.WebClients
                     new GoogleDaySchedule(DaysOfWeek.Saturday, new List<GoogleStopSchedule>()),
                 };
 
-                for (int i = 0; i < 7; i++)
+                foreach (var dayBuilder in daySchedulesBuilder)
                 {
-                    var day = daySchedulesBuilder[i].Days;
+                    var day = dayBuilder.Days;
                     foreach (var daySchedule in originalDays)
                     {
                         if ((daySchedule.Days & day) != 0)
                         {
-                            var allStopBuilders = daySchedulesBuilder[i].StopSchedules;
+                            var allStopBuilders = dayBuilder.StopSchedules;
                             foreach (var stopSchedule in daySchedule.StopSchedules)
                             {
                                 var stopBuilder = allStopBuilders.FirstOrDefault(ss => ss.PlatformTag == stopSchedule.PlatformTag);
@@ -203,14 +203,13 @@ namespace CorvallisBus.Core.WebClients
                                 {
                                     stopBuilder.Times.AddRange(stopSchedule.Times);
                                     stopBuilder.Times.Sort();
-                                    // TODO: god, there's no duplicates, right?
+                                    // TODO: duplicates?
                                 }
                             }
                         }
                     }
                 }
 
-                // todo: dedupe?
                 return daySchedulesBuilder;
             }
         }
