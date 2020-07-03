@@ -71,7 +71,7 @@ namespace CorvallisBus.Core.WebClients
         {
             RoutePattern routePattern = GetEntity<RoutePattern>(BASE_URL + "&Name=RoutePattern.rxml");
 
-            var routePatternProject = (RoutePatternProject)routePattern.Items.Skip(1).FirstOrDefault();
+            var routePatternProject = (RoutePatternProject)routePattern.Items.Skip(1).First();
 
             return routePatternProject.Route.Select(r => new ConnexionzRoute(r)).ToList();
         }

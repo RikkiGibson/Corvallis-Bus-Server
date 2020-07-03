@@ -15,9 +15,9 @@ namespace CorvallisBusWeb.Controllers
     [Route("")]
     public class ExtensionlessFileDownloadController : Controller
     {
-        private readonly IHostingEnvironment _env;
+        private readonly IWebHostEnvironment _env;
 
-        public ExtensionlessFileDownloadController(IHostingEnvironment env)
+        public ExtensionlessFileDownloadController(IWebHostEnvironment env)
         {
             _env = env;
         }

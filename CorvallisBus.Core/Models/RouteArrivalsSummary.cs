@@ -125,7 +125,7 @@ namespace CorvallisBus.Core.Models
             }
         }
 
-        public override bool Equals(object obj) => obj is RouteArrivalsSummary other && Equals(other);
+        public override bool Equals(object? obj) => Equals(obj as RouteArrivalsSummary);
 
         public bool Equals(RouteArrivalsSummary? other)
         {
