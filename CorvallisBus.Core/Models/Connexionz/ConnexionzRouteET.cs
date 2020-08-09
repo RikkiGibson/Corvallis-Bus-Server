@@ -3,23 +3,15 @@ using System.Linq;
 
 namespace CorvallisBus.Core.Models.Connexionz
 {
-    public class ConnexionzRouteET
+    public record ConnexionzRouteET(
+        string RouteNo,
+        List<int> EstimatedArrivalTime
+        )
     {
         public ConnexionzRouteET(RoutePositionPlatformRoute routePositionPlatformRoute)
+            : this(routePositionPlatformRoute.RouteNo,
+                  routePositionPlatformRoute.Destination[0].Trip.Select(t => t.ETA).ToList())
         {
-            RouteNo = routePositionPlatformRoute.RouteNo;
-            EstimatedArrivalTime = routePositionPlatformRoute.Destination[0].Trip.Select(t => t.ETA).ToList();
         }
-
-        public ConnexionzRouteET(
-            string routeNo,
-            List<int> estimatedArrivalTime)
-        {
-            RouteNo = routeNo;
-            EstimatedArrivalTime = estimatedArrivalTime;
-        }
-
-        public string RouteNo { get; }
-        public List<int> EstimatedArrivalTime { get; }
     }
 }

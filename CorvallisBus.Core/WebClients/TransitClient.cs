@@ -31,8 +31,8 @@ namespace CorvallisBus.Core.WebClients
             var stops = CreateStops(connexionzPlatforms, connexionzRoutes);
 
             var staticData = new BusStaticData(
-                routes: routes.ToDictionary(r => r.RouteNo),
-                stops: stops.ToDictionary(s => s.Id)
+                Routes: routes.ToDictionary(r => r.RouteNo),
+                Stops: stops.ToDictionary(s => s.Id)
             );
 
             var platformTagsLookup = connexionzPlatforms.ToDictionary(p => p.PlatformNo, p => p.PlatformTag);
@@ -160,7 +160,7 @@ namespace CorvallisBus.Core.WebClients
         {
             return platforms
                 .Select(p =>
-                    new BusStop(p,
+                    BusStop.Create(p,
                         routes.Where(r => r.Path.Any(rp => rp.PlatformId == p.PlatformNo))
                             .Select(r => r.RouteNo)
                             .ToList(),
@@ -204,10 +204,10 @@ namespace CorvallisBus.Core.WebClients
             var result = connexionzPlatforms.ToDictionary(p => p.PlatformNo,
                 // TODO: change type to List?
                 p => routeSchedules.Select(r => new BusStopRouteSchedule(
-                    routeNo: r.routeNo,
-                    daySchedules: r.daySchedules.Select(ds => new BusStopRouteDaySchedule(
-                        days: ds.days,
-                        times: ds.stopSchedules.FirstOrDefault(ss => ss.PlatformId == p.PlatformNo || ss.PlatformId == p.PlatformTag).Times
+                    RouteNo: r.routeNo,
+                    DaySchedules: r.daySchedules.Select(ds => new BusStopRouteDaySchedule(
+                        Days: ds.days,
+                        Times: ds.stopSchedules.FirstOrDefault(ss => ss.PlatformId == p.PlatformNo || ss.PlatformId == p.PlatformTag).Times
                     ))
                     .Where(ds => ds.Times != null)
                     .ToList()

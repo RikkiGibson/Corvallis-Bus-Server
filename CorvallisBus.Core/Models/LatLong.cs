@@ -4,7 +4,6 @@ namespace CorvallisBus.Core.Models
     public struct LatLong
     {
         public LatLong(double lat, double lon)
-            : this()
         {
             Lat = lat;
             Lon = lon;

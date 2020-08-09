@@ -71,11 +71,9 @@ namespace CorvallisBus.Core.Models
         public static DaysOfWeek GetDaysOfWeek(string days)
         {
             DaysOfWeek result = DaysOfWeek.None;
-#nullable disable warnings // https://github.com/dotnet/runtime/issues/37918
             foreach (Match match in m_dayOfWeekPattern.Matches(days))
             {
                 result |= ToDaysOfWeek(match.Value);
-#nullable restore warnings
             }
             return result;
         }

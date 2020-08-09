@@ -165,7 +165,7 @@ namespace CorvallisBus
                         ? DistanceTo(optionalUserLocation.Value.Lat, optionalUserLocation.Value.Lon, stop.Lat, stop.Long, 'M')
                         : double.NaN;
 
-                return new FavoriteStop(stop.Id, stop.Name, stop.RouteNames, stop.Lat, stop.Long, distanceFromUser, isNearestStop: false);
+                return new FavoriteStop(stop.Id, stop.Name, stop.RouteNames, stop.Lat, stop.Long, distanceFromUser, IsNearestStop: false);
             })
             .ToList();
 
@@ -184,7 +184,7 @@ namespace CorvallisBus
 
                 favoriteStops.Add(new FavoriteStop(nearestStop.Id, nearestStop.Name, nearestStop.RouteNames,
                                                    nearestStop.Lat, nearestStop.Long,
-                                                   distanceFromUser, isNearestStop: true));
+                                                   distanceFromUser, IsNearestStop: true));
             }
 
             favoriteStops.Sort((f1, f2) => f1.DistanceFromUser.CompareTo(f2.DistanceFromUser));
@@ -206,22 +206,22 @@ namespace CorvallisBus
             var secondRoute = routeSchedules.Count > 1 ? staticData.Routes[routeSchedules[1].Key] : null;
 
             return new FavoriteStopViewModel(
-                stopId: favorite.Id,
-                stopName: favorite.Name,
+                StopId: favorite.Id,
+                StopName: favorite.Name,
 
-                firstRouteName: firstRoute != null ? firstRoute.RouteNo : string.Empty,
-                firstRouteColor: firstRoute != null ? firstRoute.Color : string.Empty,
-                firstRouteArrivals: routeSchedules.Count > 0 ? RouteArrivalsSummary.ToEstimateSummary(routeSchedules[0].Value, currentTime) : "No arrivals!",
+                FirstRouteName: firstRoute != null ? firstRoute.RouteNo : string.Empty,
+                FirstRouteColor: firstRoute != null ? firstRoute.Color : string.Empty,
+                FirstRouteArrivals: routeSchedules.Count > 0 ? RouteArrivalsSummary.ToEstimateSummary(routeSchedules[0].Value, currentTime) : "No arrivals!",
 
-                secondRouteName: secondRoute != null ? secondRoute.RouteNo : string.Empty,
-                secondRouteColor: secondRoute != null ? secondRoute.Color : string.Empty,
-                secondRouteArrivals: routeSchedules.Count > 1 ? RouteArrivalsSummary.ToEstimateSummary(routeSchedules[1].Value, currentTime) : string.Empty,
+                SecondRouteName: secondRoute != null ? secondRoute.RouteNo : string.Empty,
+                SecondRouteColor: secondRoute != null ? secondRoute.Color : string.Empty,
+                SecondRouteArrivals: routeSchedules.Count > 1 ? RouteArrivalsSummary.ToEstimateSummary(routeSchedules[1].Value, currentTime) : string.Empty,
 
-                lat: favorite.Lat,
-                @long: favorite.Long,
+                Lat: favorite.Lat,
+                Long: favorite.Long,
 
-                distanceFromUser: double.IsNaN(favorite.DistanceFromUser) ? "" : $"{favorite.DistanceFromUser:F1} miles",
-                isNearestStop: favorite.IsNearestStop
+                DistanceFromUser: double.IsNaN(favorite.DistanceFromUser) ? "" : $"{favorite.DistanceFromUser:F1} miles",
+                IsNearestStop: favorite.IsNearestStop
             );
         }
 
@@ -286,8 +286,7 @@ namespace CorvallisBus
                             new KeyValuePair<string, List<BusArrivalTime>>(routeName,
                                 stopArrivals.ContainsKey(routeName) ? stopArrivals[routeName] : new List<BusArrivalTime>()))
                           .OrderBy(kvp => kvp.Value.DefaultIfEmpty(ARRIVAL_TIME_SEED).Min())
-                          .Select(kvp => new RouteArrivalsSummary(routeName: kvp.Key,
-                                routeArrivalTimes: kvp.Value, currentTime: currentTime))
+                          .Select(kvp => RouteArrivalsSummary.Create(routeName: kvp.Key, routeArrivalTimes: kvp.Value, currentTime: currentTime))
                           .Where(ras => staticData.Routes.ContainsKey(ras.RouteName))
                           .ToList();
 

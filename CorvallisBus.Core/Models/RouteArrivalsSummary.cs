@@ -9,33 +9,24 @@ using System.Threading.Tasks;
 
 namespace CorvallisBus.Core.Models
 {
-    public class RouteArrivalsSummary : IEquatable<RouteArrivalsSummary>
+    public record RouteArrivalsSummary(
+        [property: JsonProperty("routeName")]
+        string RouteName,
+
+        [property: JsonProperty("arrivalsSummary")]
+        string ArrivalsSummary,
+
+        [property: JsonProperty("scheduleSummary")]
+        string ScheduleSummary
+        )
     {
-        [JsonProperty("routeName")]
-        public string RouteName { get; }
 
-        [JsonProperty("arrivalsSummary")]
-        public string ArrivalsSummary { get; }
-
-        [JsonProperty("scheduleSummary")]
-        public string ScheduleSummary { get; }
-
-        public RouteArrivalsSummary(string routeName, List<BusArrivalTime> routeArrivalTimes, DateTimeOffset currentTime)
+        public static RouteArrivalsSummary Create(string routeName, List<BusArrivalTime> routeArrivalTimes, DateTimeOffset currentTime)
         {
-            RouteName = routeName;
-            ArrivalsSummary = ToEstimateSummary(routeArrivalTimes, currentTime);
-            ScheduleSummary = ToScheduleSummary(routeArrivalTimes, currentTime);
-        }
-
-        [JsonConstructor]
-        public RouteArrivalsSummary(
-            string routeName,
-            string arrivalsSummary,
-            string scheduleSummary)
-        {
-            RouteName = routeName;
-            ArrivalsSummary = arrivalsSummary;
-            ScheduleSummary = scheduleSummary;
+            return new RouteArrivalsSummary(
+                routeName,
+                ToEstimateSummary(routeArrivalTimes, currentTime),
+                ToScheduleSummary(routeArrivalTimes, currentTime));
         }
 
         public static string ToEstimateSummary(List<BusArrivalTime> arrivals, DateTimeOffset currentTime)
@@ -125,23 +116,7 @@ namespace CorvallisBus.Core.Models
             }
         }
 
-        public override bool Equals(object? obj) => Equals(obj as RouteArrivalsSummary);
-
-        public bool Equals(RouteArrivalsSummary? other)
-        {
-            if (other is null) { return false; }
-
-            return RouteName == other.RouteName
-                && ArrivalsSummary == other.ArrivalsSummary
-                && ScheduleSummary == other.ScheduleSummary;
-        }
-
-        public override int GetHashCode()
-        {
-            // TODO: System.HashCode.Combine in .NET Core 3
-            return 0;
-        }
-
+        // TODO: use the auto-generated ToString() once it ships
         public override string ToString()
         {
             return $@"{{ RouteName = ""{RouteName}"", ArrivalsSummary = ""{ArrivalsSummary}"", ScheduleSummary = ""{ScheduleSummary}"" }}";

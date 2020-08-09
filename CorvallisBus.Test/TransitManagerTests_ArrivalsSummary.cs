@@ -22,11 +22,11 @@ namespace CorvallisBus.Test
             var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>> {
                 [12345] = new List<BusStopRouteSchedule> {
                     new BusStopRouteSchedule(
-                        routeNo: "TEST",
-                        daySchedules: new List<BusStopRouteDaySchedule> {
+                        RouteNo: "TEST",
+                        DaySchedules: new List<BusStopRouteDaySchedule> {
                             new BusStopRouteDaySchedule(
-                                days: DaysOfWeek.All,
-                                times: new List<TimeSpan> {
+                                Days: DaysOfWeek.All,
+                                Times: new List<TimeSpan> {
                                     new TimeSpan(12, 25, 0),
                                     new TimeSpan(13, 25, 0),
                                     new TimeSpan(14, 25, 0),
@@ -42,22 +42,22 @@ namespace CorvallisBus.Test
             mockRepo.Setup(repo => repo.GetStaticDataAsync()).Returns(
                 Task.FromResult(
                     new BusStaticData(
-                        routes: new Dictionary<string, BusRoute> {
+                        Routes: new Dictionary<string, BusRoute> {
                             ["TEST"] = new BusRoute("TEST", new List<int> { 12345 }, "", "", "")
                         },
-                        stops: new Dictionary<int, BusStop> {
-                            [12345] = new BusStop(0, "", 0, 0, 0, routeNames: new List<string> { "TEST" })
+                        Stops: new Dictionary<int, BusStop> {
+                            [12345] = new BusStop(0, "", 0, 0, 0, RouteNames: new List<string> { "TEST" })
                         }
                     )));
             mockRepo.Setup(repo => repo.GetScheduleAsync()).Returns(Task.FromResult(testSchedule));
             mockRepo.Setup(repo => repo.GetPlatformTagsAsync()).Returns(Task.FromResult(new Dictionary<int, int> { { 12345, 123 } }));
 
             var testEstimate = new ConnexionzPlatformET(
-                platformTag: 123,
-                routeEstimatedArrivals: new List<ConnexionzRouteET> {
+                PlatformTag: 123,
+                RouteEstimatedArrivals: new List<ConnexionzRouteET> {
                     new ConnexionzRouteET(
-                        routeNo: "TEST",
-                        estimatedArrivalTime: new List<int>()
+                        RouteNo: "TEST",
+                        EstimatedArrivalTime: new List<int>()
                     )
                 }
             );
@@ -68,9 +68,9 @@ namespace CorvallisBus.Test
             var expected = new List<RouteArrivalsSummary>
             {
                 new RouteArrivalsSummary(
-                    routeName: "TEST",
-                    arrivalsSummary: "Over 30 minutes, then 1:25 PM",
-                    scheduleSummary: "Hourly until 3:25 PM"
+                    RouteName: "TEST",
+                    ArrivalsSummary: "Over 30 minutes, then 1:25 PM",
+                    ScheduleSummary: "Hourly until 3:25 PM"
                 )
             };
 
@@ -93,11 +93,11 @@ namespace CorvallisBus.Test
             var testSchedule = new Dictionary<int, IEnumerable<BusStopRouteSchedule>> {
                 [12345] = new List<BusStopRouteSchedule> {
                         new BusStopRouteSchedule(
-                            routeNo: "TEST1",
-                            daySchedules: new List<BusStopRouteDaySchedule> {
+                            RouteNo: "TEST1",
+                            DaySchedules: new List<BusStopRouteDaySchedule> {
                                 new BusStopRouteDaySchedule(
-                                    days: DaysOfWeek.All,
-                                    times: new List<TimeSpan> {
+                                    Days: DaysOfWeek.All,
+                                    Times: new List<TimeSpan> {
                                         new TimeSpan(12, 24, 0),
                                         new TimeSpan(13, 24, 0),
                                         new TimeSpan(14, 24, 0),
@@ -107,11 +107,11 @@ namespace CorvallisBus.Test
                             }
                         ),
                         new BusStopRouteSchedule(
-                            routeNo: "TEST2",
-                            daySchedules: new List<BusStopRouteDaySchedule> {
+                            RouteNo: "TEST2",
+                            DaySchedules: new List<BusStopRouteDaySchedule> {
                                 new BusStopRouteDaySchedule(
-                                    days: DaysOfWeek.All,
-                                    times: new List<TimeSpan> {
+                                    Days: DaysOfWeek.All,
+                                    Times: new List<TimeSpan> {
                                         new TimeSpan(12, 25, 0),
                                         new TimeSpan(13, 25, 0),
                                         new TimeSpan(14, 25, 0),
@@ -127,12 +127,12 @@ namespace CorvallisBus.Test
             mockRepo.Setup(repo => repo.GetStaticDataAsync()).Returns(
                 Task.FromResult(
                     new BusStaticData(
-                        routes: new Dictionary<string, BusRoute> {
-                            ["TEST1"] = new BusRoute("TEST1", new List<int> { 12345 }, color: "", url: "", polyline: ""),
-                            ["TEST2"] = new BusRoute("TEST2", new List<int> { 12345 }, color: "", url: "", polyline: "")
+                        Routes: new Dictionary<string, BusRoute> {
+                            ["TEST1"] = new BusRoute("TEST1", new List<int> { 12345 }, Color: "", Url: "", Polyline: ""),
+                            ["TEST2"] = new BusRoute("TEST2", new List<int> { 12345 }, Color: "", Url: "", Polyline: "")
                         },
-                        stops: new Dictionary<int, BusStop> {
-                            [12345] = new BusStop(0, "", 0, 0, 0, routeNames: new List<string> { "TEST1", "TEST2" })
+                        Stops: new Dictionary<int, BusStop> {
+                            [12345] = new BusStop(0, "", 0, 0, 0, RouteNames: new List<string> { "TEST1", "TEST2" })
                         }
                     )));
 
@@ -141,15 +141,15 @@ namespace CorvallisBus.Test
                 Task.FromResult(new Dictionary<int, int> { [12345] = 123 }));
 
             var testEstimate = new ConnexionzPlatformET(
-                platformTag: 123,
-                routeEstimatedArrivals: new List<ConnexionzRouteET> {
+                PlatformTag: 123,
+                RouteEstimatedArrivals: new List<ConnexionzRouteET> {
                     new ConnexionzRouteET(
-                        routeNo: "TEST1",
-                        estimatedArrivalTime: new List<int> { }
+                        RouteNo: "TEST1",
+                        EstimatedArrivalTime: new List<int> { }
                     ),
                     new ConnexionzRouteET(
-                        routeNo: "TEST2",
-                        estimatedArrivalTime: new List<int> { 25 }
+                        RouteNo: "TEST2",
+                        EstimatedArrivalTime: new List<int> { 25 }
                     )
                 }
             );
@@ -159,14 +159,14 @@ namespace CorvallisBus.Test
 
             var expected = new List<RouteArrivalsSummary> {
                 new RouteArrivalsSummary(
-                    routeName: "TEST2",
-                    arrivalsSummary: "25 minutes, then 1:25 PM",
-                    scheduleSummary: "Hourly until 3:25 PM"
+                    RouteName: "TEST2",
+                    ArrivalsSummary: "25 minutes, then 1:25 PM",
+                    ScheduleSummary: "Hourly until 3:25 PM"
                 ),
                 new RouteArrivalsSummary(
-                    routeName: "TEST1",
-                    arrivalsSummary: "Over 30 minutes, then 1:24 PM",
-                    scheduleSummary: "Hourly until 3:24 PM"
+                    RouteName: "TEST1",
+                    ArrivalsSummary: "Over 30 minutes, then 1:24 PM",
+                    ScheduleSummary: "Hourly until 3:24 PM"
                 )
             };
 
@@ -195,12 +195,12 @@ namespace CorvallisBus.Test
                 [12345] = new List<BusStopRouteSchedule>
                 {
                     new BusStopRouteSchedule(
-                        routeNo: "TEST",
-                        daySchedules: new List<BusStopRouteDaySchedule>
+                        RouteNo: "TEST",
+                        DaySchedules: new List<BusStopRouteDaySchedule>
                         {
                             new BusStopRouteDaySchedule(
-                                days: DaysOfWeek.Weekdays,
-                                times: new List<TimeSpan>
+                                Days: DaysOfWeek.Weekdays,
+                                Times: new List<TimeSpan>
                                 {
                                     new TimeSpan(hours: 10, minutes: 30, seconds: 15)
                                 }
@@ -214,28 +214,28 @@ namespace CorvallisBus.Test
             mockRepo.Setup(repo => repo.GetStaticDataAsync()).Returns(
                 Task.FromResult(
                     new BusStaticData(
-                        routes: new Dictionary<string, BusRoute> {
-                            ["TEST"] = new BusRoute("TEST", new List<int> { 12345 }, color: "", url: "", polyline: "")
+                        Routes: new Dictionary<string, BusRoute> {
+                            ["TEST"] = new BusRoute("TEST", new List<int> { 12345 }, Color: "", Url: "", Polyline: "")
                         },
-                        stops: new Dictionary<int, BusStop> {
-                            [12345] = new BusStop(0, "", 0, 0, 0, routeNames: new List<string> { "TEST" })
+                        Stops: new Dictionary<int, BusStop> {
+                            [12345] = new BusStop(0, "", 0, 0, 0, RouteNames: new List<string> { "TEST" })
                         }
                     )));
             mockRepo.Setup(repo => repo.GetScheduleAsync()).Returns(Task.FromResult(testSchedule));
             mockRepo.Setup(repo => repo.GetPlatformTagsAsync()).Returns(Task.FromResult(new Dictionary<int, int> { { 12345, 123 } }));
 
             var testEstimate = new ConnexionzPlatformET(
-                platformTag: 123,
-                routeEstimatedArrivals: new List<ConnexionzRouteET>());
+                PlatformTag: 123,
+                RouteEstimatedArrivals: new List<ConnexionzRouteET>());
 
             var mockClient = new Mock<ITransitClient>();
             mockClient.Setup(client => client.GetEta(123)).Returns(Task.FromResult<ConnexionzPlatformET?>(testEstimate));
 
             var expected = new List<RouteArrivalsSummary> {
                 new RouteArrivalsSummary(
-                    routeName: "TEST",
-                    arrivalsSummary: "10:30 AM",
-                    scheduleSummary: ""
+                    RouteName: "TEST",
+                    ArrivalsSummary: "10:30 AM",
+                    ScheduleSummary: ""
                 )
             };
 

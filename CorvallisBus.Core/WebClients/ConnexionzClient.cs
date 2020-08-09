@@ -60,7 +60,7 @@ namespace CorvallisBus.Core.WebClients
             return document.Element("Platforms")
                 .Elements("Platform")
                 .Where(e => e.Attribute("PlatformNo") is object)
-                .Select(e => new ConnexionzPlatform(e))
+                .Select(e => ConnexionzPlatform.Create(e))
                 .ToList();
         }
 
