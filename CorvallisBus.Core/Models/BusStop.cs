@@ -8,41 +8,41 @@ namespace CorvallisBus.Core.Models
     /// <summary>
     /// A bus stop in the Corvallis Transit System. This is analogous to the Platform entity in Connexionz.
     /// </summary>
+    /// <param name="Id">
+    /// This stop tag is used to get ETAs for the stop from Connexionz.
+    /// </param>
+    /// <param name="Name">
+    /// The name of the stop, for example: &quot;NW Monroe Ave &amp; NW 7th St&quot;.
+    /// </param>
+    /// <param name="Bearing">
+    /// The angle in degrees between this bus stop and the road. This can be treated as
+    /// the angle between the positive X axis and the direction of travel for buses at this stop.
+    /// </param>
+    /// <param name="Lat">
+    /// The latitude value for the stop (between -90 and 90 degrees).
+    /// </param>
+    /// <param name="Long">
+    /// The longitude value for the stop (between -180 and 180 degrees).
+    /// </param>
+    /// <param name="RouteNames">
+    /// List of route names which arrive at this stop.
+    /// </param>
     public record BusStop(
-        /// <summary>
-        /// This stop tag is used to get ETAs for the stop from Connexionz.
-        /// </summary>
         [property: JsonProperty("id")]
         int Id,
 
-        /// <summary>
-        /// The name of the stop, for example: "NW Monroe Ave & NW 7th St".
-        /// </summary>
         [property: JsonProperty("name")]
         string Name,
 
-        /// <summary>
-        /// The angle in degrees between this bus stop and the road. This can be treated as
-        /// the angle between the positive X axis and the direction of travel for buses at this stop.
-        /// </summary>
         [property: JsonProperty("bearing")]
         double Bearing,
 
-        /// <summary>
-        /// The latitude value for the stop (between -90 and 90 degrees).
-        /// </summary>
         [property: JsonProperty("lat")]
         double Lat,
 
-        /// <summary>
-        /// The longitude value for the stop (between -180 and 180 degrees).
-        /// </summary>
         [property: JsonProperty("lng")]
         double Long,
 
-        /// <summary>
-        /// List of route names which arrive at this stop.
-        /// </summary>
         [property: JsonProperty("routeNames")]
         List<string> RouteNames)
     {

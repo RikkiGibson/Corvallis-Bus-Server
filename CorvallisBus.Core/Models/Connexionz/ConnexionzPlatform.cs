@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace CorvallisBus.Core.Models.Connexionz
@@ -6,51 +7,45 @@ namespace CorvallisBus.Core.Models.Connexionz
     /// <summary>
     /// Represents all the information about a Connexionz platform that is pertinent to the app.
     /// </summary>
+    /// <param name="PlatformTag">
+    /// The 3 digit number which is used in the Connexionz API to get arrival estimates.
+    /// </param>
+    /// <param name="PlatformNo">
+    /// The 5 digit number which is printed on bus stop signs in Corvallis.
+    /// </param>
+    /// <param name="BearingToRoad">
+    /// The angle in degrees between this bus stop and the road. This can be treated as
+    /// the angle between the positive X axis and the direction of travel for buses at this stop.
+    /// </param>
     public record ConnexionzPlatform(
-        /// <summary>
-        /// The 3 digit number which is used in the Connexionz API to get arrival estimates.
-        /// </summary>
         int PlatformTag,
-
-        /// <summary>
-        /// The 5 digit number which is printed on bus stop signs in Corvallis.
-        /// </summary>
         int PlatformNo,
-
-        /// <summary>
-        /// The angle in degrees between this bus stop and the road. This can be treated as
-        /// the angle between the positive X axis and the direction of travel for buses at this stop.
-        /// </summary>
         double BearingToRoad,
-
         string Name,
-
         string CompactName,
-
         double Lat,
-
         double Long)
     {
         public static ConnexionzPlatform Create(XElement platform)
         {
-            var platformNoAttr = platform.Attribute("PlatformNo");
+            var platformNoAttr = platform.Attribute("PlatformNo")!;
 
             // Almost all stops except for places like HP and CVHS have this attribute.
             // It's reasonable to default to having those stops point in the positive X axis direction.
             double.TryParse(platform.Attribute("BearingToRoad")?.Value, out double bearing);
 
-            var name = platform.Attribute("Name").Value;
+            var name = platform.Attribute("Name")!.Value;
 
-            XElement position = platform.Element("Position");
+            var position = platform.Element("Position")!;
 
             return new ConnexionzPlatform(
-                PlatformTag: int.Parse(platform.Attribute("PlatformTag").Value),
+                PlatformTag: int.Parse(platform.Attribute("PlatformTag")!.Value),
                 PlatformNo: int.Parse(platformNoAttr.Value),
                 BearingToRoad: bearing,
                 Name: name,
                 CompactName: GetCompactName(name),
-                Lat: double.Parse(position.Attribute("Lat").Value),
-                Long: double.Parse(position.Attribute("Long").Value));
+                Lat: double.Parse(position.Attribute("Lat")!.Value),
+                Long: double.Parse(position.Attribute("Long")!.Value));
         }
 
         private static string GetCompactName(string name)

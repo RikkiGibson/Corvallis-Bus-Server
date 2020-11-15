@@ -12,34 +12,34 @@ namespace CorvallisBus.Core.Models
     /// <summary>
     /// Represents a CTS Route.
     /// </summary>
+    /// <param name="RouteNo">
+    /// Route Number (e.g. 1, 2, NON, CVA, etc).
+    /// </param>
+    /// <param name="Path">
+    /// List of stop ids on this route, in the order the bus reaches them.
+    /// </param>
+    /// <param name="Color">
+    /// CTS-defined color for this route.
+    /// </param>
+    /// <param name="Url">
+    /// URL to the CTS web page for this route.
+    /// </param>
+    /// <param name="Polyline">
+    /// Google maps polyline for this route.
+    /// </param>
     public record BusRoute(
-        /// <summary>
-        /// Route Number (e.g. 1, 2, NON, CVA, etc).
-        /// </summary>
         [JsonProperty("routeNo")]
         string RouteNo,
 
-        /// <summary>
-        /// List of stop ids on this route, in the order the bus reaches them.
-        /// </summary>
         [JsonProperty("path")]
         List<int> Path,
 
-        /// <summary>
-        /// CTS-defined color for this route.
-        /// </summary>
         [JsonProperty("color")]
         string Color,
 
-        /// <summary>
-        /// URL to the CTS web page for this route.
-        /// </summary>
         [JsonProperty("url")]
         string Url,
 
-        /// <summary>
-        /// Google maps polyline for this route.
-        /// </summary>
         [JsonProperty("polyline")]
         string Polyline)
     {

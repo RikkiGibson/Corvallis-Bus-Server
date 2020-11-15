@@ -7,6 +7,5 @@ namespace CorvallisBus.Core.Models
     /// </summary>
     public record BusStopRouteSchedule(
         string RouteNo,
-        List<BusStopRouteDaySchedule> DaySchedules
-        );
+        List<BusStopRouteDaySchedule> DaySchedules);
 }

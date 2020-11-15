@@ -5,8 +5,7 @@ namespace CorvallisBus.Core.Models.Connexionz
 {
     public record ConnexionzRouteET(
         string RouteNo,
-        List<int> EstimatedArrivalTime
-        )
+        List<int> EstimatedArrivalTime)
     {
         public ConnexionzRouteET(RoutePositionPlatformRoute routePositionPlatformRoute)
             : this(routePositionPlatformRoute.RouteNo,

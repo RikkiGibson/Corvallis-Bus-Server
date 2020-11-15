@@ -17,14 +17,12 @@ namespace CorvallisBus.Core.Models
         string ArrivalsSummary,
 
         [property: JsonProperty("scheduleSummary")]
-        string ScheduleSummary
-        )
+        string ScheduleSummary)
     {
 
         public static RouteArrivalsSummary Create(string routeName, List<BusArrivalTime> routeArrivalTimes, DateTimeOffset currentTime)
         {
-            return new RouteArrivalsSummary(
-                routeName,
+            return new RouteArrivalsSummary(routeName,
                 ToEstimateSummary(routeArrivalTimes, currentTime),
                 ToScheduleSummary(routeArrivalTimes, currentTime));
         }
@@ -114,12 +112,6 @@ namespace CorvallisBus.Core.Models
             {
                 return "Last arrival at " + lastTimeDescription;
             }
-        }
-
-        // TODO: use the auto-generated ToString() once it ships
-        public override string ToString()
-        {
-            return $@"{{ RouteName = ""{RouteName}"", ArrivalsSummary = ""{ArrivalsSummary}"", ScheduleSummary = ""{ScheduleSummary}"" }}";
         }
     }
 }

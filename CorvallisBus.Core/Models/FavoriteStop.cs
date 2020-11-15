@@ -12,6 +12,5 @@ namespace CorvallisBus.Core.Models
         double Lat,
         double Long,
         double DistanceFromUser,
-        bool IsNearestStop
-        );
+        bool IsNearestStop);
 }

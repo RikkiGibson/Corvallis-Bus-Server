@@ -9,8 +9,7 @@ namespace CorvallisBus.Core.Models.Connexionz
     /// </summary>
     public record ConnexionzPlatformET(
         int PlatformTag,
-        List<ConnexionzRouteET>? RouteEstimatedArrivals
-        )
+        List<ConnexionzRouteET>? RouteEstimatedArrivals)
     {
         public ConnexionzPlatformET(RoutePositionPlatform routePositionPlatform)
             : this(
