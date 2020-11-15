@@ -29,7 +29,7 @@ namespace CorvallisBus.Core.WebClients
             using var client = new WebClient();
             string s = client.DownloadString(url);
             var reader = new StringReader(s);
-            return (T)serializer.Deserialize(reader);
+            return (T?)serializer.Deserialize(reader) ?? throw new InvalidOperationException();
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace CorvallisBus.Core.WebClients
 
             var reader = new StringReader(s);
 
-            return (T)serializer.Deserialize(reader);
+            return (T?)serializer.Deserialize(reader) ?? throw new InvalidOperationException();
         }
 
         /// <summary>
@@ -57,10 +57,10 @@ namespace CorvallisBus.Core.WebClients
 
             XDocument document = XDocument.Parse(s);
 
-            return document.Element("Platforms")
+            return document.Element("Platforms")!
                 .Elements("Platform")
                 .Where(e => e.Attribute("PlatformNo") is object)
-                .Select(e => new ConnexionzPlatform(e))
+                .Select(e => ConnexionzPlatform.Create(e))
                 .ToList();
         }
 
@@ -69,9 +69,9 @@ namespace CorvallisBus.Core.WebClients
         /// </summary>
         public static List<ConnexionzRoute> LoadRoutes()
         {
-            RoutePattern routePattern = GetEntity<RoutePattern>(BASE_URL + "&Name=RoutePattern.rxml");
+            var routePattern = GetEntity<RoutePattern>(BASE_URL + "&Name=RoutePattern.rxml");
 
-            var routePatternProject = (RoutePatternProject)routePattern.Items.Skip(1).FirstOrDefault();
+            var routePatternProject = (RoutePatternProject)routePattern.Items.Skip(1).First();
 
             return routePatternProject.Route.Select(r => new ConnexionzRoute(r)).ToList();
         }

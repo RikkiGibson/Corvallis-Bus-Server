@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace CorvallisBus.Core.Models.Connexionz
@@ -6,66 +7,46 @@ namespace CorvallisBus.Core.Models.Connexionz
     /// <summary>
     /// Represents all the information about a Connexionz platform that is pertinent to the app.
     /// </summary>
-    public class ConnexionzPlatform
+    /// <param name="PlatformTag">
+    /// The 3 digit number which is used in the Connexionz API to get arrival estimates.
+    /// </param>
+    /// <param name="PlatformNo">
+    /// The 5 digit number which is printed on bus stop signs in Corvallis.
+    /// </param>
+    /// <param name="BearingToRoad">
+    /// The angle in degrees between this bus stop and the road. This can be treated as
+    /// the angle between the positive X axis and the direction of travel for buses at this stop.
+    /// </param>
+    public record ConnexionzPlatform(
+        int PlatformTag,
+        int PlatformNo,
+        double BearingToRoad,
+        string Name,
+        string CompactName,
+        double Lat,
+        double Long)
     {
-        public ConnexionzPlatform(XElement platform)
+        public static ConnexionzPlatform Create(XElement platform)
         {
-            PlatformTag = int.Parse(platform.Attribute("PlatformTag").Value);
-
-            var platformNoAttr = platform.Attribute("PlatformNo");
-
-            PlatformNo = int.Parse(platformNoAttr.Value);
+            var platformNoAttr = platform.Attribute("PlatformNo")!;
 
             // Almost all stops except for places like HP and CVHS have this attribute.
             // It's reasonable to default to having those stops point in the positive X axis direction.
             double.TryParse(platform.Attribute("BearingToRoad")?.Value, out double bearing);
-            BearingToRoad = bearing;
 
-            Name = platform.Attribute("Name").Value;
-            CompactName = GetCompactName(Name);
+            var name = platform.Attribute("Name")!.Value;
 
-            XElement position = platform.Element("Position");
-            Lat = double.Parse(position.Attribute("Lat").Value);
-            Long = double.Parse(position.Attribute("Long").Value);
+            var position = platform.Element("Position")!;
+
+            return new ConnexionzPlatform(
+                PlatformTag: int.Parse(platform.Attribute("PlatformTag")!.Value),
+                PlatformNo: int.Parse(platformNoAttr.Value),
+                BearingToRoad: bearing,
+                Name: name,
+                CompactName: GetCompactName(name),
+                Lat: double.Parse(position.Attribute("Lat")!.Value),
+                Long: double.Parse(position.Attribute("Long")!.Value));
         }
-
-        public ConnexionzPlatform(
-            int platformTag,
-            int platformNo,
-            double bearingToRoad,
-            string name,
-            string compactName,
-            double lat,
-            double @long)
-        {
-            PlatformTag = platformTag;
-            PlatformNo = platformNo;
-            BearingToRoad = bearingToRoad;
-            Name = name;
-            CompactName = compactName;
-            Lat = lat;
-            Long = @long;
-        }
-
-        /// <summary>
-        /// The 3 digit number which is used in the Connexionz API to get arrival estimates.
-        /// </summary>
-        public int PlatformTag { get; }
-
-        /// <summary>
-        /// The 5 digit number which is printed on bus stop signs in Corvallis.
-        /// </summary>
-        public int PlatformNo { get; }
-
-        /// <summary>
-        /// The angle in degrees between this bus stop and the road. This can be treated as
-        /// the angle between the positive X axis and the direction of travel for buses at this stop.
-        /// </summary>
-        public double BearingToRoad { get; }
-
-        public string Name { get; }
-        
-        public string CompactName { get; }
 
         private static string GetCompactName(string name)
         {
@@ -89,10 +70,5 @@ namespace CorvallisBus.Core.Models.Connexionz
 
             return compactName;
         }
-
-        public double Lat { get; }
-
-        public double Long { get; }
-
     }
 }

@@ -31,7 +31,7 @@ namespace CorvallisBus.Core.WebClients
             var anchor = row.Descendants("a").First();
             var relativeLink = anchor.Attributes["href"].Value;
             var link = new Uri(FEED_URL, relativeLink).ToString();
-            var title = anchor.InnerText;
+            var title = HtmlEntity.DeEntitize(anchor.InnerText);
 
             var publishDate = row.Descendants("span")
                 .First(node => node.HasClass("date-display-single"))

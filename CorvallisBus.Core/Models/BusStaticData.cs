@@ -10,20 +10,10 @@ namespace CorvallisBus.Core.Models
     /// Container for the set of static data which is expected to
     /// remain the same during a client application lifecycle.
     /// </summary>
-    public class BusStaticData
-    {
-        [JsonProperty("routes")]
-        public Dictionary<string, BusRoute> Routes { get; }
+    public record BusStaticData(
+        [property: JsonProperty("routes")]
+        Dictionary<string, BusRoute> Routes,
 
-        [JsonProperty("stops")]
-        public Dictionary<int, BusStop> Stops { get; }
-
-        public BusStaticData(
-            Dictionary<string, BusRoute> routes,
-            Dictionary<int, BusStop> stops)
-        {
-            Routes = routes;
-            Stops = stops;
-        }
-    }
+        [property: JsonProperty("stops")]
+        Dictionary<int, BusStop> Stops);
 }
