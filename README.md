@@ -9,7 +9,7 @@ The backend that powers the best apps for the Corvallis Transit System.
 
 ## Prerequisites for running
 
-[.NET Core 3.0 SDK](https://dotnet.microsoft.com/download/dotnet-core/3.0) must be installed. Then you can run the following commands in the repo root directory:
+The [.NET SDK](https://dotnet.microsoft.com/download) must be installed. The precise version that you should install can be found in [global.json](global.json). Then you can run the following commands in the repo root directory:
 ```sh
 # If you want to run tests
 $ dotnet test CorvallisBus.Test
