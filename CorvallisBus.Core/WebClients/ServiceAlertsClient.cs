@@ -20,7 +20,7 @@ namespace CorvallisBus.Core.WebClients
 
             var alerts = htmlDocument.DocumentNode
                 .SelectNodes("//tbody/tr")
-                ?.Select(row => ParseRow(row))
+                ?.Select(ParseRow)
                 .ToList() ?? new List<ServiceAlert>();
 
             return alerts;

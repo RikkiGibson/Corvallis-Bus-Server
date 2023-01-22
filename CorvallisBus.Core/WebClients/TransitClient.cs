@@ -130,6 +130,12 @@ namespace CorvallisBus.Core.WebClients
                                 .Single(ds => ds.Days == firstStopDaySchedule.Days)
                                 .Times;
 
+                            if (routeStopDayArrivalTimes.Count != firstStopDaySchedule.Times.Count)
+                            {
+                                errors.Add($"Warning: {route.RouteNo} does not have the same number of arrivals at all stops. Stop {stopId} has {routeStopDayArrivalTimes.Count} arrivals while stop ID {firstStopId} has {routeStopDayArrivalTimes.Count} arrivals.");
+                                continue;
+                            }
+
                             var nextArrivalTime = routeStopDayArrivalTimes[arrivalNo];
                             if (nextArrivalTime <= currentArrivalTime)
                             {
@@ -139,7 +145,6 @@ namespace CorvallisBus.Core.WebClients
 
                             currentArrivalTime = nextArrivalTime;
                         }
-
                     }
                 }
             }

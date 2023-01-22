@@ -26,6 +26,7 @@ namespace CorvallisBus.Core.WebClients
         {
             var serializer = new XmlSerializer(typeof(T));
 
+#pragma warning disable SYSLIB0014 // WebRequest, HttpWebRequest, ServicePoint, and WebClient are obsolete. Use HttpClient instead.
             using var client = new WebClient();
             string s = client.DownloadString(url);
             var reader = new StringReader(s);

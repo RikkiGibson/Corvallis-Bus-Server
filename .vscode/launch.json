@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/CorvallisBus.Web/bin/Debug/netcoreapp2.0/CorvallisBus.Web.dll",
+            "program": "${workspaceFolder}/CorvallisBus.Web/bin/Debug/net6.0/CorvallisBus.Web.dll",
             "args": [],
             "cwd": "${workspaceFolder}/CorvallisBus.Web",
             "stopAtEntry": false,

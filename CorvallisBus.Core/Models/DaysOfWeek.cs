@@ -27,8 +27,6 @@ namespace CorvallisBus.Core.Models
 
     public static class DaysOfWeekUtils
     {
-        private static readonly Regex m_dayOfWeekPattern = new Regex("Mon|Tue|Wed|Thu|Fri|Sat|Sun");
-
         public static DaysOfWeek ToDaysOfWeek(string day)
         {
             switch (day)
@@ -63,19 +61,6 @@ namespace CorvallisBus.Core.Models
                 case DayOfWeek.Sunday: return DaysOfWeek.Sunday;
                 default: return DaysOfWeek.None;
             }
-        }
-
-        /// <summary>
-        /// Gets all the days of the week contained in the input string using a regular expression.
-        /// </summary>
-        public static DaysOfWeek GetDaysOfWeek(string days)
-        {
-            DaysOfWeek result = DaysOfWeek.None;
-            foreach (Match match in m_dayOfWeekPattern.Matches(days))
-            {
-                result |= ToDaysOfWeek(match.Value);
-            }
-            return result;
         }
 
         /// <summary>

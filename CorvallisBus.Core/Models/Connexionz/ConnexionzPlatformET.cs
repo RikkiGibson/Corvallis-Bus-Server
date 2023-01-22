@@ -16,7 +16,7 @@ namespace CorvallisBus.Core.Models.Connexionz
                 int.Parse(routePositionPlatform.PlatformTag),
                 routePositionPlatform.Route
                     ?.Select(r => new ConnexionzRouteET(r))
-                            ?.ToList())
+                    .ToList())
         {
         }
     }

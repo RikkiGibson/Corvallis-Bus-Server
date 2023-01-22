@@ -57,7 +57,7 @@ namespace CorvallisBus.Controllers
             // ToList() this to force any parsing exception to happen here,
             // rather than later, because I'm lazy and don't wanna reason my way
             // through deferred execution and exception-handling.
-            return stopIds.Split(',').Select(id => int.Parse(id)).ToList();
+            return stopIds.Split(',').Select(int.Parse).ToList();
         }
 
         /// <summary>
