@@ -28,19 +28,19 @@ namespace CorvallisBus.Core.Models
     /// Google maps polyline for this route.
     /// </param>
     public record BusRoute(
-        [JsonProperty("routeNo")]
+        [property: JsonProperty("routeNo")]
         string RouteNo,
 
-        [JsonProperty("path")]
+        [property: JsonProperty("path")]
         List<int> Path,
 
-        [JsonProperty("color")]
+        [property: JsonProperty("color")]
         string Color,
 
-        [JsonProperty("url")]
+        [property: JsonProperty("url")]
         string Url,
 
-        [JsonProperty("polyline")]
+        [property: JsonProperty("polyline")]
         string Polyline)
     {
         public static BusRoute Create(ConnexionzRoute connectionzRoute, Dictionary<string, GoogleRoute> googleRoutes)
