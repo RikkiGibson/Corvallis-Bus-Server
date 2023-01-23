@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using System.Runtime.InteropServices;
 using SendGrid;
 using SendGrid.Helpers.Mail;
+using System.IO;
 
 namespace CorvallisBus.Controllers
 {
@@ -21,12 +22,14 @@ namespace CorvallisBus.Controllers
                 ? "Pacific Standard Time"
                 : "America/Los_Angeles";
 
+        private readonly string _webRootPath;
         private readonly ITransitRepository _repository;
         private readonly ITransitClient _client;
         private readonly Func<DateTimeOffset> _getCurrentTime;
 
         public TransitApiController(IWebHostEnvironment env)
         {
+            _webRootPath = env.WebRootPath;
             _repository = new MemoryTransitRepository(env.WebRootPath);
             _client = new TransitClient();
             _getCurrentTime = () => TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTimeOffset.Now, _destinationTimeZoneId);
@@ -45,6 +48,12 @@ namespace CorvallisBus.Controllers
         public ActionResult GetStaticData()
         {
             return PhysicalFile(_repository.StaticDataPath, "application/json");
+        }
+
+        [HttpGet("swagger.yaml")]
+        public ActionResult GetSwagger()
+        {
+            return PhysicalFile(Path.Join(_webRootPath, "swagger.yaml"), "application/yaml");
         }
 
         public List<int> ParseStopIds(string stopIds)
