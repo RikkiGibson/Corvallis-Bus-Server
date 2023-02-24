@@ -19,7 +19,7 @@ namespace CorvallisBus.Core.WebClients
             {
                 new ServiceAlert(
                     "View Service Alerts website",
-                    "",
+                    "2023-01-01T08:00:00Z",
                     "https://www.corvallisoregon.gov/news?field_microsite_tid=581")
             });
         }
