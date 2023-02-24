@@ -12,7 +12,19 @@ namespace CorvallisBus.Core.WebClients
     {
         static readonly Uri FEED_URL = new Uri("https://www.corvallisoregon.gov/news?field_microsite_tid=581");
         static readonly HttpClient httpClient = new HttpClient();
-        public static async Task<List<ServiceAlert>> GetServiceAlerts()
+
+        public static Task<List<ServiceAlert>> GetServiceAlerts()
+        {
+            return Task.FromResult(new List<ServiceAlert>()
+            {
+                new ServiceAlert(
+                    "View Service Alerts website",
+                    "",
+                    "https://www.corvallisoregon.gov/news?field_microsite_tid=581")
+            });
+        }
+
+        public static async Task<List<ServiceAlert>> GetServiceAlerts_Original()
         {
             var responseStream = await httpClient.GetStreamAsync(FEED_URL);
             var htmlDocument = new HtmlDocument();
