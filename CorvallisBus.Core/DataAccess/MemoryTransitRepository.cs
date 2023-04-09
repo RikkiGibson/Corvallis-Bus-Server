@@ -15,7 +15,7 @@ namespace CorvallisBus.Core.DataAccess
     public class MemoryTransitRepository : ITransitRepository
     {
         private static Dictionary<int, int>? s_platformTags;
-        private static Dictionary<int, IEnumerable<BusStopRouteSchedule>>? s_schedule;
+        private static ServerBusSchedule? s_schedule;
         private static string? s_serializedStaticData;
         private static BusStaticData? s_staticData;
 
@@ -43,11 +43,11 @@ namespace CorvallisBus.Core.DataAccess
             return Task.FromResult(s_platformTags);
         }
 
-        public Task<Dictionary<int, IEnumerable<BusStopRouteSchedule>>> GetScheduleAsync()
+        public Task<ServerBusSchedule> GetScheduleAsync()
         {
             if (s_schedule == null)
             {
-                s_schedule = JsonConvert.DeserializeObject<Dictionary<int, IEnumerable<BusStopRouteSchedule>>>(File.ReadAllText(_schedulePath));
+                s_schedule = JsonConvert.DeserializeObject<ServerBusSchedule>(File.ReadAllText(_schedulePath));
             }
             return Task.FromResult(s_schedule);
         }
@@ -76,7 +76,7 @@ namespace CorvallisBus.Core.DataAccess
             File.WriteAllText(_platformTagsPath, JsonConvert.SerializeObject(platformTags));
         }
 
-        public void SetSchedule(Dictionary<int, IEnumerable<BusStopRouteSchedule>> schedule)
+        public void SetSchedule(ServerBusSchedule schedule)
         {
             s_schedule = schedule;
             File.WriteAllText(_schedulePath, JsonConvert.SerializeObject(schedule));

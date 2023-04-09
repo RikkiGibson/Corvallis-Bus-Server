@@ -7,11 +7,6 @@ using System.Threading.Tasks;
 namespace CorvallisBus.Core.DataAccess
 {
     /// <summary>
-    /// Maps a 5-digit stop ID to a list of route schedules.
-    /// </summary>
-    using ServerBusSchedule = Dictionary<int, IEnumerable<BusStopRouteSchedule>>;
-
-    /// <summary>
     /// This interface abstracts over persistent and cache storage.
     /// </summary>
     public interface ITransitRepository

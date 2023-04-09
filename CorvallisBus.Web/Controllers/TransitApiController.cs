@@ -232,7 +232,7 @@ namespace CorvallisBus.Controllers
             var expectedAuth = Environment.GetEnvironmentVariable("CorvallisBusAuthorization");
             if (!string.IsNullOrEmpty(expectedAuth))
             {
-                string authValue = Request.Headers["Authorization"];
+                var authValue = Request.Headers["Authorization"];
                 if (expectedAuth != authValue)
                 {
                     return Unauthorized();
