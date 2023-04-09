@@ -38,7 +38,7 @@ namespace CorvallisBus.Core.DataAccess
         {
             if (s_platformTags == null)
             {
-                s_platformTags = JsonConvert.DeserializeObject<Dictionary<int, int>>(File.ReadAllText(_platformTagsPath));
+                s_platformTags = JsonConvert.DeserializeObject<Dictionary<int, int>>(File.ReadAllText(_platformTagsPath)) ?? throw new InvalidOperationException();
             }
             return Task.FromResult(s_platformTags);
         }
@@ -47,7 +47,7 @@ namespace CorvallisBus.Core.DataAccess
         {
             if (s_schedule == null)
             {
-                s_schedule = JsonConvert.DeserializeObject<ServerBusSchedule>(File.ReadAllText(_schedulePath));
+                s_schedule = JsonConvert.DeserializeObject<ServerBusSchedule>(File.ReadAllText(_schedulePath)) ?? throw new InvalidOperationException();
             }
             return Task.FromResult(s_schedule);
         }
@@ -65,7 +65,7 @@ namespace CorvallisBus.Core.DataAccess
         {
             if (s_staticData == null)
             {
-                s_staticData = JsonConvert.DeserializeObject<BusStaticData>(await GetSerializedStaticDataAsync());
+                s_staticData = JsonConvert.DeserializeObject<BusStaticData>(await GetSerializedStaticDataAsync()) ?? throw new InvalidOperationException();
             }
             return s_staticData;
         }
