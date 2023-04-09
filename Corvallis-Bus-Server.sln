@@ -1,13 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33513.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorvallisBus.Core", "CorvallisBus.Core\CorvallisBus.Core.csproj", "{F4769A42-44E4-426B-B748-85B64E1D29BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorvallisBus.Core", "CorvallisBus.Core\CorvallisBus.Core.csproj", "{F4769A42-44E4-426B-B748-85B64E1D29BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorvallisBus.Web", "CorvallisBus.Web\CorvallisBus.Web.csproj", "{72F8ED3D-BE4A-44AC-99EC-2CE233E6021F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorvallisBus.Web", "CorvallisBus.Web\CorvallisBus.Web.csproj", "{72F8ED3D-BE4A-44AC-99EC-2CE233E6021F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorvallisBus.Test", "CorvallisBus.Test\CorvallisBus.Test.csproj", "{FAC8CA0C-3ECB-47D6-9A0F-DA18BF0CEFAB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BB996523-EF72-4D0E-B083-E667182E6098}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

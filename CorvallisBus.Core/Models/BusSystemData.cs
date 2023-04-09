@@ -1,4 +1,10 @@
-﻿using CorvallisBus.Core.Models;
+﻿
+global using ServerBusSchedule =
+    System.Collections.Generic.Dictionary<
+        int,
+        System.Collections.Generic.IEnumerable<CorvallisBus.Core.Models.BusStopRouteSchedule>>;
+
+using CorvallisBus.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +13,6 @@ using System.Threading.Tasks;
 
 namespace CorvallisBus.Core.Models
 {
-    using ServerBusSchedule = Dictionary<int, IEnumerable<BusStopRouteSchedule>>;
-
     /// <summary>
     /// Represents all of the ahead-of-time derived data about the bus system.
     /// </summary>

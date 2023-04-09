@@ -13,8 +13,6 @@ using System.Net;
 
 namespace CorvallisBus.Core.WebClients
 {
-    using ServerBusSchedule = Dictionary<int, IEnumerable<BusStopRouteSchedule>>;
-
     /// <summary>
     /// Merges data obtained from Connexionz and Google Transit
     /// and makes it ready for delivery to clients.
@@ -132,7 +130,7 @@ namespace CorvallisBus.Core.WebClients
 
                             if (routeStopDayArrivalTimes.Count != firstStopDaySchedule.Times.Count)
                             {
-                                errors.Add($"Warning: {route.RouteNo} does not have the same number of arrivals at all stops. Stop {stopId} has {routeStopDayArrivalTimes.Count} arrivals while stop ID {firstStopId} has {routeStopDayArrivalTimes.Count} arrivals.");
+                                errors.Add($"Warning: {route.RouteNo} does not have the same number of arrivals at all stops. Stop {stopId} has {routeStopDayArrivalTimes.Count} arrivals while stop ID {firstStopId} has {firstStopDaySchedule.Times.Count} arrivals.");
                                 continue;
                             }
 
@@ -207,7 +205,6 @@ namespace CorvallisBus.Core.WebClients
 
             // Now turn it on its head so it's easy to query from a stop-oriented way.
             var result = connexionzPlatforms.ToDictionary(p => p.PlatformNo,
-                // TODO: change type to List?
                 p => routeSchedules.Select(r => new BusStopRouteSchedule(
                     RouteNo: r.routeNo,
                     DaySchedules: r.daySchedules.Select(ds => new BusStopRouteDaySchedule(
@@ -218,6 +215,8 @@ namespace CorvallisBus.Core.WebClients
                     .ToList()
                 ))
                 .Where(r => r.DaySchedules.Any())
+                .ToList()
+                .AsEnumerable()
             );
 
             return result;
