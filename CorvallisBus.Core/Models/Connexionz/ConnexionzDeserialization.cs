@@ -9,7 +9,6 @@ namespace CorvallisBus.Core.Models.Connexionz;
 
 public class RoutePositionET
 {
-    /// <remarks/>
     [XmlElement("Content", typeof(RoutePositionContent))]
     [XmlElement("Platform", typeof(RoutePositionPlatform))]
     public required object[] Items { get; init; }
